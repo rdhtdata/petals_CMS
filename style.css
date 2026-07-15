@@ -1826,6 +1826,10 @@ button {
 }
 
 @media (max-width: 768px) {
+  .container {
+    padding: 50px 0;
+  }
+
   .grid-2 {
     grid-template-columns: 1fr;
     gap: 40px;
@@ -1834,21 +1838,41 @@ button {
   .nav-menu {
     display: none;
   }
+
+  .main-header {
+    padding: 15px 0;
+  }
   
   .mobile-menu-toggle {
     display: block;
   }
+
+  .call-btn-header {
+    display: none; /* Hide phone number to prevent navbar line wrapping */
+  }
   
   .about-image-stack {
-    height: 400px;
+    height: 380px;
+  }
+
+  .experience-badge {
+    bottom: 5%;
+    left: 5%;
+    padding: 12px 18px;
+  }
+
+  .experience-badge .number {
+    font-size: 1.8rem;
   }
   
   .rooms-grid {
     grid-template-columns: 1fr;
+    gap: 30px;
   }
   
   .form-grid {
     grid-template-columns: 1fr;
+    gap: 15px;
   }
   
   .form-group.full-width {
@@ -1857,10 +1881,7 @@ button {
   
   .modal-form-grid {
     grid-template-columns: 1fr;
-  }
-  
-  .modal-submit-actions {
-    grid-template-columns: 1fr;
+    gap: 15px;
   }
   
   .footer-grid {
@@ -1869,11 +1890,22 @@ button {
   }
   
   .hero-section {
-    min-height: 600px;
+    height: auto;
+    min-height: 100vh;
+    padding-top: 130px;
+    padding-bottom: 60px;
+    display: flex;
+    align-items: center;
+  }
+
+  .hero-container {
+    height: auto;
+    padding-bottom: 0;
   }
   
   .hero-title {
-    font-size: 2.3rem;
+    font-size: 2.2rem;
+    line-height: 1.2;
   }
   
   .hero-ctas {
@@ -1885,6 +1917,73 @@ button {
   .primary-btn {
     width: 100%;
     text-align: center;
+  }
+
+  .map-container {
+    height: 320px;
+  }
+
+  .section-title {
+    font-size: 2rem;
+    margin-bottom: 12px;
+  }
+
+  .modern-form {
+    padding: 30px 20px;
+  }
+}
+
+@media (max-width: 576px) {
+  .quick-booking-bar {
+    grid-template-columns: 1fr;
+    padding: 20px 15px;
+    gap: 15px;
+  }
+
+  .booking-submit-btn {
+    grid-column: span 1;
+    width: 100%;
+    margin-top: 5px;
+  }
+
+  .modal-content {
+    padding: 25px 20px;
+    width: 95%;
+    max-height: 92vh;
+    overflow-y: auto;
+  }
+
+  .modal-form-grid {
+    gap: 12px;
+    margin-bottom: 15px;
+  }
+
+  .guest-pills-container {
+    gap: 8px;
+  }
+
+  .guest-pill {
+    padding: 8px;
+    font-size: 0.8rem;
+  }
+
+  .modal-bottom-summary {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 15px;
+    text-align: center;
+    margin-top: 20px;
+    padding-top: 16px;
+  }
+
+  .price-summary-box {
+    align-items: center;
+    text-align: center;
+  }
+
+  .modal-proceed-btn {
+    width: 100%;
+    justify-content: center;
   }
 }
 
