@@ -159,7 +159,7 @@ function formatDate(date) {
 }
 
 /* ==========================================================================
-   4. Redesigned Multi-step Booking System
+   4. Redesigned Multi-step Booking System with Hash Routing
    ========================================================================== */
 const bookingModal = document.getElementById('booking-modal');
 
@@ -171,13 +171,15 @@ const roomDb = {
   suite: { title: 'Suite Room', price: 6499, thumb: 'images/suite room.jpeg' }
 };
 
+// Opens the modal by updating the hash (pushes history state)
 window.openBookingModal = function(roomCategory = 'deluxe') {
-  if (!bookingModal) return;
-  
-  // Set to Step 1 initially
-  showStep(1);
+  window.location.hash = `booking-${roomCategory}`;
+};
 
-  // Pre-fill selected category hidden values and card context
+// Helper that performs the actual DOM open and prefill (called by router)
+function openBookingModalDirect(roomCategory = 'deluxe') {
+  if (!bookingModal) return;
+
   const roomInput = document.getElementById('modal-room');
   const roomTitle = document.getElementById('modal-room-title');
   const roomRate = document.getElementById('modal-room-rate');
@@ -192,38 +194,34 @@ window.openBookingModal = function(roomCategory = 'deluxe') {
     roomRate.innerHTML = `₹${selectedRoom.price.toLocaleString('en-IN')} <span>/ night</span>`;
   }
   
-  // If dates are entered in the Hero, transfer them to the modal
-  const heroCheckin = document.getElementById('hero-checkin');
-  const heroCheckout = document.getElementById('hero-checkout');
-  const modalCheckin = document.getElementById('modal-checkin');
-  const modalCheckout = document.getElementById('modal-checkout');
-  
-  if (heroCheckin && modalCheckin && heroCheckin.value) {
-    modalCheckin.value = heroCheckin.value;
-  }
-  if (heroCheckout && modalCheckout && heroCheckout.value) {
-    modalCheckout.value = heroCheckout.value;
-  }
-  
-  // Default values
+  // Set default guest count
   selectGuests(1);
 
-  // Calculate nights and total price
+  // Recalculate price
   calculateTotalPrice();
 
-  // Reset form inputs (name/phone)
+  // Reset name/phone inputs
   document.getElementById('modal-name').value = '';
   document.getElementById('modal-phone').value = '';
 
+  // Show Modal Container
   bookingModal.classList.add('active');
   document.body.style.overflow = 'hidden';
+}
+
+// Closes the modal by clearing the hash
+window.closeBookingModal = function() {
+  // Replace hash with empty space without adding history entries
+  history.replaceState(null, null, ' ');
+  // Dispatch hashchange manually to let the router run close routines
+  window.dispatchEvent(new Event('hashchange'));
 };
 
-window.closeBookingModal = function() {
+function closeBookingModalDirect() {
   if (!bookingModal) return;
   bookingModal.classList.remove('active');
   document.body.style.overflow = '';
-};
+}
 
 // Close modal if clicked outside the modal card content area
 if (bookingModal) {
@@ -234,13 +232,7 @@ if (bookingModal) {
   });
 }
 
-// Check Rates search bar button from Hero Section
-window.triggerHeroBooking = function() {
-  const selectedRoom = document.getElementById('hero-room-type').value;
-  openBookingModal(selectedRoom);
-};
-
-// Stepper controller (1, 2, or 3)
+// Stepper controller (shows Step 1, 2, or 3)
 window.showStep = function(stepNum) {
   document.querySelectorAll('.modal-step').forEach((el, index) => {
     if (index + 1 === stepNum) {
@@ -251,7 +243,7 @@ window.showStep = function(stepNum) {
   });
 };
 
-// Guest Selector active toggles
+// Guest Selector toggles
 window.selectGuests = function(count) {
   const guestInput = document.getElementById('modal-guests');
   if (guestInput) {
@@ -308,7 +300,7 @@ window.calculateTotalPrice = function() {
 };
 
 /* ==========================================================================
-   5. Checkout Checkout / Payments (Simulated)
+   5. Checkout & Payments (Simulated)
    ========================================================================== */
 window.proceedToPayment = function() {
   const name = document.getElementById('modal-name').value.trim();
@@ -319,7 +311,12 @@ window.proceedToPayment = function() {
     return;
   }
 
-  // Set checkout panel texts
+  // Navigate to payment screen by pushing hash (history support)
+  window.location.hash = 'payment';
+};
+
+// Actually configures Step 2 screen variables
+function loadPaymentScreen() {
   const roomVal = document.getElementById('modal-room').value;
   const selectedRoom = roomDb[roomVal] || roomDb.deluxe;
   const nights = calculateNights();
@@ -336,10 +333,8 @@ window.proceedToPayment = function() {
 
   // Reset payment tabs / panels
   switchPaymentMethod('card');
-
-  // Go to step 2
   showStep(2);
-};
+}
 
 window.switchPaymentMethod = function(method) {
   const tabCard = document.getElementById('tab-card');
@@ -380,52 +375,51 @@ window.triggerUPIPayment = function() {
 };
 
 window.submitPayment = function() {
-  // Show fake loading overlay state on the CTA button
   const activePanel = document.querySelector('.payment-content-panel.active');
   const submitBtn = activePanel.querySelector('.modal-proceed-btn');
   
   if (submitBtn) {
-    const originalText = submitBtn.textContent;
     submitBtn.disabled = true;
     submitBtn.textContent = 'Processing Payment...';
   }
 
   setTimeout(() => {
-    // Generate Booking reference details
-    const refNum = 'PET-' + new Date().getFullYear() + '-' + Math.random().toString(36).substring(2, 6).toUpperCase();
-    const guestName = document.getElementById('modal-name').value;
-    const roomVal = document.getElementById('modal-room').value;
-    const selectedRoom = roomDb[roomVal] || roomDb.deluxe;
-    const checkin = document.getElementById('modal-checkin').value;
-    const checkout = document.getElementById('modal-checkout').value;
-    const nights = calculateNights();
-    const totalPrice = selectedRoom.price * nights;
-
-    // Fill ticket elements
-    document.getElementById('ticket-ref').textContent = refNum;
-    document.getElementById('ticket-guest-name').textContent = guestName;
-    document.getElementById('ticket-room-name').textContent = selectedRoom.title;
-    document.getElementById('ticket-checkin').textContent = checkin;
-    document.getElementById('ticket-checkout').textContent = checkout;
-    document.getElementById('ticket-nights').textContent = `${nights} Night${nights > 1 ? 's' : ''}`;
-    document.getElementById('ticket-paid').textContent = `₹${totalPrice.toLocaleString('en-IN')}`;
-
-    // Reset button states
     if (submitBtn) {
       submitBtn.disabled = false;
       submitBtn.textContent = 'Pay & Confirm Booking';
     }
-
-    // Go to step 3
-    showStep(3);
+    
+    // Push confirmed state to hash (history support)
+    window.location.hash = 'confirmed';
   }, 1800);
 };
+
+// Actually configures Step 3 ticket details
+function loadConfirmationScreen() {
+  const refNum = 'PET-' + new Date().getFullYear() + '-' + Math.random().toString(36).substring(2, 6).toUpperCase();
+  const guestName = document.getElementById('modal-name').value || 'Valued Guest';
+  const roomVal = document.getElementById('modal-room').value;
+  const selectedRoom = roomDb[roomVal] || roomDb.deluxe;
+  const checkin = document.getElementById('modal-checkin').value;
+  const checkout = document.getElementById('modal-checkout').value;
+  const nights = calculateNights();
+  const totalPrice = selectedRoom.price * nights;
+
+  document.getElementById('ticket-ref').textContent = refNum;
+  document.getElementById('ticket-guest-name').textContent = guestName;
+  document.getElementById('ticket-room-name').textContent = selectedRoom.title;
+  document.getElementById('ticket-checkin').textContent = checkin;
+  document.getElementById('ticket-checkout').textContent = checkout;
+  document.getElementById('ticket-nights').textContent = `${nights} Night${nights > 1 ? 's' : ''}`;
+  document.getElementById('ticket-paid').textContent = `₹${totalPrice.toLocaleString('en-IN')}`;
+
+  showStep(3);
+}
 
 /* ==========================================================================
    6. Backup Direct Connections (WhatsApp & Call)
    ========================================================================== */
 window.submitBookingToWhatsApp = function() {
-  // Grab current entries
   const name = document.getElementById('modal-name').value.trim() || 'Valued Guest';
   const phone = document.getElementById('modal-phone').value.trim() || 'N/A';
   const roomVal = document.getElementById('modal-room').value;
@@ -468,20 +462,105 @@ function initBulkBookingForm() {
     form.addEventListener('submit', (e) => {
       e.preventDefault();
 
-      // Show loader animation simulation
       const submitBtn = form.querySelector('.submit-form-btn');
       submitBtn.disabled = true;
       submitBtn.textContent = 'Processing Query...';
 
       setTimeout(() => {
-        // Hide form, show success message
         form.style.display = 'none';
         if (successBanner) {
           successBanner.style.display = 'block';
           successBanner.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
-      }, 1500); // 1.5s visual confirmation
+      }, 1500);
     });
   }
 }
 
+/* ==========================================================================
+   8. Global Hash router (Handles Browser Back/Forward navigation)
+   ========================================================================= */
+window.addEventListener('hashchange', handleHashRouting);
+
+function handleHashRouting() {
+  const hash = window.location.hash;
+
+  // Handle Mobile Navigation Menu Toggle
+  const navOverlay = document.querySelector('.mobile-nav-overlay');
+  if (navOverlay) {
+    if (hash === '#menu') {
+      navOverlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    } else {
+      navOverlay.classList.remove('active');
+      // Only restore overflow if the booking modal is also closed
+      if (!bookingModal || !bookingModal.classList.contains('active')) {
+        document.body.style.overflow = '';
+      }
+    }
+  }
+
+  // Handle Booking steps checkout routing
+  if (bookingModal) {
+    if (hash.startsWith('#booking-')) {
+      const roomCat = hash.split('-')[1];
+      openBookingModalDirect(roomCat);
+      showStep(1);
+    } else if (hash === '#booking') {
+      openBookingModalDirect('deluxe');
+      showStep(1);
+    } else if (hash === '#payment') {
+      // Ensure modal details are initialized if landing directly or going forward/back
+      if (!bookingModal.classList.contains('active')) {
+        openBookingModalDirect('deluxe');
+      }
+      loadPaymentScreen();
+    } else if (hash === '#confirmed') {
+      if (!bookingModal.classList.contains('active')) {
+        openBookingModalDirect('deluxe');
+      }
+      loadConfirmationScreen();
+    } else {
+      // Close overlay DOM completely if hash is empty or standard anchors
+      closeBookingModalDirect();
+    }
+  }
+
+  // Scroll active links highlighting updates
+  updateActiveNavLink(hash);
+}
+
+// Triggers active nav links highlights
+function updateActiveNavLink(hash) {
+  const links = document.querySelectorAll('.nav-link, .mobile-link');
+  links.forEach(link => {
+    const href = link.getAttribute('href');
+    if (href === hash) {
+      link.classList.add('active');
+    } else {
+      link.classList.remove('active');
+    }
+  });
+}
+
+// Override mobile toggles to use hash instead of direct DOM manipulation
+const menuToggle = document.querySelector('.mobile-menu-toggle');
+if (menuToggle) {
+  const newToggle = menuToggle.cloneNode(true);
+  menuToggle.parentNode.replaceChild(newToggle, menuToggle);
+  newToggle.addEventListener('click', () => {
+    window.location.hash = 'menu';
+  });
+}
+
+const menuClose = document.querySelector('.mobile-menu-close');
+if (menuClose) {
+  const newClose = menuClose.cloneNode(true);
+  menuClose.parentNode.replaceChild(newClose, menuClose);
+  newClose.addEventListener('click', () => {
+    history.back(); // Naturally handles close via router
+  });
+}
+
+// Initial router run to handle initial hash load states on page refresh
+handleHashRouting();
