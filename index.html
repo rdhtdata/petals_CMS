@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Petals Hotel & Suites - Premium accommodation right across Manyata Tech Park, Bangalore. Luxury single, superior, deluxe rooms and suites for corporate and leisure stays.">
+  <title>Petals Hotel & Suites | Luxury Living opposite Manyata Tech Park, Bangalore</title>
+  
+  <!-- FontAwesome for Premium Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Google Fonts: Marcellus for Titles, Plus Jakarta Sans for UI/Body -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Header Section -->
+  <header class="main-header">
+    <div class="header-container">
+      <a href="#" class="brand-logo">
+        <img src="images/brand icon.jpeg" alt="Petals Logo" class="logo-img">
+        <div class="brand-text">
+          <span class="brand-name">PETALS</span>
+          <span class="brand-sub">Suites & Hotel</span>
+        </div>
+      </a>
+
+      <!-- Desktop Nav -->
+      <nav class="nav-menu">
+        <a href="#home" class="nav-link active">Home</a>
+        <a href="#about" class="nav-link">About</a>
+        <a href="#rooms" class="nav-link">Rooms</a>
+        <a href="#proximity" class="nav-link">Location</a>
+        <a href="#corporate" class="nav-link">Bulk Booking</a>
+      </nav>
+
+      <div class="header-actions">
+        <a href="tel:+919482090023" class="call-btn-header">
+          <i class="fa-solid fa-phone"></i>
+          <span>+91 94820 90023</span>
+        </a>
+        <button class="book-now-btn" onclick="openBookingModal()">Book Now</button>
+        <button class="mobile-menu-toggle" aria-label="Toggle Menu">
+          <i class="fa-solid fa-bars-staggered"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Nav Overlay -->
+    <div class="mobile-nav-overlay">
+      <div class="mobile-nav-content">
+        <button class="mobile-menu-close" aria-label="Close Menu">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+        <nav class="mobile-menu-links">
+          <a href="#home" class="mobile-link">Home</a>
+          <a href="#about" class="mobile-link">About</a>
+          <a href="#rooms" class="mobile-link">Rooms & Suites</a>
+          <a href="#proximity" class="mobile-link">Manyata Proximity</a>
+          <a href="#corporate" class="mobile-link">Bulk Booking</a>
+        </nav>
+        <div class="mobile-menu-footer">
+          <a href="tel:+919482090023" class="mob-footer-btn call"><i class="fa-solid fa-phone"></i> Call Now</a>
+          <a href="https://wa.me/919482090023?text=Hi%20Petals%20Hotel,%20I'd%20like%20to%20inquire%20about%20booking%20a%20room." target="_blank" class="mob-footer-btn whatsapp"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section id="home" class="hero-section">
+    <div class="hero-background" style="background-image: linear-gradient(rgba(30, 26, 23, 0.4), rgba(30, 26, 23, 0.7)), url('images/room corridor.jpeg');"></div>
+    <div class="hero-container">
+      <div class="hero-content">
+        <div class="badge-proximity animate-up">
+          <i class="fa-solid fa-location-dot"></i> Opposite Manyata Tech Park, Bangalore
+        </div>
+        <h1 class="hero-title animate-up">A Quiet Oasis In The Heart of Bangalore's Tech Hub</h1>
+        <p class="hero-subtitle animate-up">Modern boutique accommodations designed for business and luxury. Cross the road to Manyata Tech Park; step back into comfort and calm.</p>
+        <div class="hero-ctas animate-up">
+          <button class="primary-btn" onclick="openBookingModal()">Reserve a Room</button>
+          <a href="#rooms" class="secondary-btn-link">Explore Rooms <i class="fa-solid fa-arrow-right-long"></i></a>
+        </div>
+      </div>
+      
+      <!-- Quick Availability Bar -->
+      <div class="quick-booking-bar animate-up">
+        <div class="booking-field">
+          <label><i class="fa-solid fa-calendar-days"></i> Check In</label>
+          <input type="date" id="hero-checkin" required>
+        </div>
+        <div class="booking-field">
+          <label><i class="fa-solid fa-calendar-days"></i> Check Out</label>
+          <input type="date" id="hero-checkout" required>
+        </div>
+        <div class="booking-field">
+          <label><i class="fa-solid fa-bed"></i> Room Type</label>
+          <select id="hero-room-type">
+            <option value="single">Single Room</option>
+            <option value="superior">Superior Room</option>
+            <option value="deluxe" selected>Deluxe Room</option>
+            <option value="suite">Suite Room</option>
+          </select>
+        </div>
+        <div class="booking-field">
+          <label><i class="fa-solid fa-users"></i> Guests</label>
+          <select id="hero-guests">
+            <option value="1">1 Guest</option>
+            <option value="2" selected>2 Guests</option>
+            <option value="3">3 Guests</option>
+            <option value="4+">4+ Guests</option>
+          </select>
+        </div>
+        <button class="booking-submit-btn" onclick="triggerHeroBooking()"><i class="fa-solid fa-magnifying-glass"></i> Check Rates</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- About / USP Section -->
+  <section id="about" class="about-section scroll-reveal">
+    <div class="container grid-2">
+      <div class="about-image-stack">
+        <div class="image-wrapper main-img-wrapper">
+          <img src="images/strir well.jpeg" alt="Stairwell Interior Design" class="about-img main-img">
+        </div>
+        <div class="image-wrapper sub-img-wrapper">
+          <img src="images/room corridor.jpeg" alt="Hotel Corridor Layout" class="about-img sub-img">
+        </div>
+        <div class="experience-badge">
+          <span class="number">100m</span>
+          <span class="text">to Manyata Gate</span>
+        </div>
+      </div>
+      <div class="about-text-content">
+        <span class="section-tag">Welcome to Petals</span>
+        <h2 class="section-title">Where Executive Convenience Meets Premium Serenity</h2>
+        <p class="section-desc">Located right across the street from Bangalore's prime business destination, <strong>Manyata Tech Park</strong>, Petals is tailored specifically for modern business leaders, consultants, and travelers who value their time and comfort.</p>
+        
+        <div class="usp-list">
+          <div class="usp-item">
+            <div class="usp-icon"><i class="fa-solid fa-person-walking"></i></div>
+            <div class="usp-details">
+              <h3>Unbeatable Proximity</h3>
+              <p>Skip the Bangalore traffic. Walk to Manyata Tech Park gates within 2 minutes.</p>
+            </div>
+          </div>
+          <div class="usp-item">
+            <div class="usp-icon"><i class="fa-solid fa-wifi"></i></div>
+            <div class="usp-details">
+              <h3>Executive Ready</h3>
+              <p>Ultra-fast Wi-Fi, desk setups in rooms, and peaceful corporate meeting corners.</p>
+            </div>
+          </div>
+          <div class="usp-item">
+            <div class="usp-icon"><i class="fa-solid fa-bell"></i></div>
+            <div class="usp-details">
+              <h3>Seamless Service</h3>
+              <p>24/7 check-in, gourmet dining, direct room service, and transport support.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Rooms Section -->
+  <section id="rooms" class="rooms-section scroll-reveal">
+    <div class="container text-center">
+      <span class="section-tag">Accommodations</span>
+      <h2 class="section-title">Find Your Perfect Sanctuary</h2>
+      <p class="section-subtitle">Exquisite rooms loaded with contemporary amenities and styled with rich warm textures.</p>
+      
+      <div class="rooms-grid">
+        <!-- Single Room -->
+        <div class="room-card">
+          <div class="room-img-container">
+            <img src="images/single room.jpeg" alt="Single Room" class="room-img">
+            <div class="room-price-tag">₹2,499 <span>/ night</span></div>
+          </div>
+          <div class="room-info">
+            <h3 class="room-title">Single Room</h3>
+            <p class="room-description">Cozy and private, perfectly optimized for solo business travelers on brief trips.</p>
+            <div class="room-specs">
+              <span><i class="fa-solid fa-maximize"></i> 180 sq ft</span>
+              <span><i class="fa-solid fa-bed"></i> Single Bed</span>
+              <span><i class="fa-solid fa-user"></i> 1 Guest</span>
+            </div>
+            <div class="room-actions">
+              <button class="room-book-btn" onclick="openBookingModal('single')">Book Now</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Superior Room -->
+        <div class="room-card">
+          <div class="room-img-container">
+            <img src="images/superior room.jpeg" alt="Superior Room" class="room-img">
+            <div class="room-price-tag">₹3,499 <span>/ night</span></div>
+          </div>
+          <div class="room-info">
+            <h3 class="room-title">Superior Room</h3>
+            <p class="room-description">Extra space with premium bedding, comfortable work desks, and luxury amenities.</p>
+            <div class="room-specs">
+              <span><i class="fa-solid fa-maximize"></i> 250 sq ft</span>
+              <span><i class="fa-solid fa-bed"></i> Queen Bed</span>
+              <span><i class="fa-solid fa-users"></i> 2 Guests</span>
+            </div>
+            <div class="room-actions">
+              <button class="room-book-btn" onclick="openBookingModal('superior')">Book Now</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Deluxe Room -->
+        <div class="room-card">
+          <div class="room-img-container">
+            <img src="images/deluxe room.jpeg" alt="Deluxe Room" class="room-img">
+            <div class="room-price-tag">₹4,499 <span>/ night</span></div>
+          </div>
+          <div class="room-info">
+            <h3 class="room-title">Deluxe Room</h3>
+            <p class="room-description">Our standard of luxury. Offers spacious lounge seating, city views, and rain showers.</p>
+            <div class="room-specs">
+              <span><i class="fa-solid fa-maximize"></i> 320 sq ft</span>
+              <span><i class="fa-solid fa-bed"></i> King Bed</span>
+              <span><i class="fa-solid fa-users"></i> 2 Guests</span>
+            </div>
+            <div class="room-actions">
+              <button class="room-book-btn" onclick="openBookingModal('deluxe')">Book Now</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Suite Room -->
+        <div class="room-card">
+          <div class="room-img-container">
+            <img src="images/suite room.jpeg" alt="Suite Room" class="room-img">
+            <div class="room-price-tag">₹6,499 <span>/ night</span></div>
+          </div>
+          <div class="room-info">
+            <h3 class="room-title">Suite Room</h3>
+            <p class="room-description">An expansive presidential suite featuring a separate living room, pantry, and bath tub.</p>
+            <div class="room-specs">
+              <span><i class="fa-solid fa-maximize"></i> 480 sq ft</span>
+              <span><i class="fa-solid fa-bed"></i> King Bed</span>
+              <span><i class="fa-solid fa-users"></i> 3 Guests</span>
+            </div>
+            <div class="room-actions">
+              <button class="room-book-btn" onclick="openBookingModal('suite')">Book Now</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Proximity & Location Maps Section -->
+  <section id="proximity" class="proximity-section scroll-reveal">
+    <div class="container grid-2">
+      <div class="proximity-details">
+        <span class="section-tag"><i class="fa-solid fa-location-dot"></i> Unbeatable Location</span>
+        <h2 class="section-title">Step Across Into Manyata Tech Park</h2>
+        <p class="section-desc">We are located at a prime junction that bridges corporate life and tranquility. Avoid the Bangalore commute and walk directly to work.</p>
+        
+        <div class="address-card">
+          <div class="address-icon"><i class="fa-solid fa-map-location-dot"></i></div>
+          <div class="address-info">
+            <h4>Our Address</h4>
+            <p>3rd cross Chanakya layout, AC post, opposite to Manyata Tech Park, Bangalore, 560045</p>
+          </div>
+        </div>
+
+        <div class="location-distances">
+          <div class="distance-item">
+            <span class="place">Manyata Tech Park (Main Gate)</span>
+            <span class="distance"><i class="fa-solid fa-person-walking"></i> 2 Mins Walk</span>
+          </div>
+          <div class="distance-item">
+            <span class="place">Hebbal Flyover</span>
+            <span class="distance"><i class="fa-solid fa-car"></i> 10 Mins Drive</span>
+          </div>
+          <div class="distance-item">
+            <span class="place">Kempegowda Int'l Airport</span>
+            <span class="distance"><i class="fa-solid fa-plane"></i> 35 Mins Drive</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Maps Embed Container -->
+      <div class="map-container">
+        <!-- Styled standard embedded Google Maps -->
+        <iframe src="https://maps.google.com/maps?q=3rd%20cross%20Chanakya%20layout,%20AC%20post%20,%20opposite%20to%20Manyatha%20tech%20park,%20banglore%20560045&t=&z=16&ie=UTF8&iwloc=&output=embed" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      </div>
+    </div>
+  </section>
+
+  <!-- Corporate / Bulk Booking Section -->
+  <section id="corporate" class="corporate-section scroll-reveal">
+    <div class="container max-w-800">
+      <div class="text-center">
+        <span class="section-tag">Corporate Partners</span>
+        <h2 class="section-title">Bulk Bookings & Event Requests</h2>
+        <p class="section-subtitle">Planning long stays, business retreats, or group bookings? Submit your requirements for custom corporate pricing packages.</p>
+      </div>
+
+      <form id="bulk-booking-form" class="modern-form">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="bulk-name">Contact Person *</label>
+            <input type="text" id="bulk-name" placeholder="John Doe" required>
+          </div>
+          <div class="form-group">
+            <label for="bulk-company">Company Name</label>
+            <input type="text" id="bulk-company" placeholder="Acme Corporation">
+          </div>
+          <div class="form-group">
+            <label for="bulk-email">Email Address *</label>
+            <input type="email" id="bulk-email" placeholder="john@company.com" required>
+          </div>
+          <div class="form-group">
+            <label for="bulk-phone">Phone Number *</label>
+            <input type="tel" id="bulk-phone" placeholder="+91 98765 43210" required>
+          </div>
+          <div class="form-group">
+            <label for="bulk-rooms">Number of Rooms Required *</label>
+            <input type="number" id="bulk-rooms" min="5" placeholder="Minimum 5 rooms" required>
+          </div>
+          <div class="form-group">
+            <label for="bulk-stay-duration">Approximate Stay Duration (Nights) *</label>
+            <input type="number" id="bulk-stay-duration" min="1" placeholder="e.g. 5" required>
+          </div>
+        </div>
+        <div class="form-group full-width">
+          <label for="bulk-message">Requirement Details *</label>
+          <textarea id="bulk-message" rows="4" placeholder="Mention dates, special setups, or any dining plans..." required></textarea>
+        </div>
+        <div class="text-center button-container">
+          <button type="submit" class="submit-form-btn">Submit Corporate Inquiry</button>
+        </div>
+      </form>
+      
+      <!-- Success Banner (hidden by default) -->
+      <div id="bulk-success-message" class="form-success-banner" style="display: none;">
+        <i class="fa-solid fa-circle-check"></i>
+        <h3>Thank You for Your Query!</h3>
+        <p>Our corporate relations desk has received your booking inquiry. We will contact you at your email and phone within the next 2 hours.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive Booking Modal (Multi-step Overhaul) -->
+  <div id="booking-modal" class="modal-overlay">
+    <div class="modal-content">
+      <button class="modal-close-btn" onclick="closeBookingModal()">&times;</button>
+      
+      <!-- STEP 1: RESERVATION DETAILS -->
+      <div id="modal-step-details" class="modal-step active">
+        <div class="modal-header">
+          <span class="modal-tag">Step 1 of 3: Reservation Details</span>
+          <h3 class="modal-title">Book Your Stay at Petals</h3>
+        </div>
+        
+        <!-- Static Selected Room Context Card -->
+        <div class="selected-room-card">
+          <img id="modal-room-thumb" src="images/deluxe room.jpeg" alt="Room Thumbnail" class="room-card-thumb">
+          <div class="room-card-text">
+            <h4 id="modal-room-title">Deluxe Room</h4>
+            <p id="modal-room-rate">₹4,499 <span>/ night</span></p>
+          </div>
+          <input type="hidden" id="modal-room" value="deluxe">
+        </div>
+
+        <form id="modal-details-form" onsubmit="event.preventDefault(); proceedToPayment();">
+          <div class="modal-form-grid">
+            <div class="form-group">
+              <label for="modal-name">Your Full Name *</label>
+              <input type="text" id="modal-name" placeholder="John Doe" required>
+            </div>
+            <div class="form-group">
+              <label for="modal-phone">Phone Number *</label>
+              <input type="tel" id="modal-phone" placeholder="98765 43210" required>
+            </div>
+            <div class="form-group">
+              <label for="modal-checkin">Check-in Date *</label>
+              <input type="date" id="modal-checkin" required>
+            </div>
+            <div class="form-group">
+              <label for="modal-checkout">Check-out Date *</label>
+              <input type="date" id="modal-checkout" required>
+            </div>
+            
+            <!-- Modern Guest Pill Selector -->
+            <div class="form-group full-width">
+              <label>Number of Guests *</label>
+              <div class="guest-pills-container">
+                <button type="button" class="guest-pill active" onclick="selectGuests(1)">1 Guest</button>
+                <button type="button" class="guest-pill" onclick="selectGuests(2)">2 Guests</button>
+                <button type="button" class="guest-pill" onclick="selectGuests(3)">3 Guests</button>
+              </div>
+              <input type="hidden" id="modal-guests" value="1">
+            </div>
+          </div>
+
+          <!-- Bottom Summary Actions -->
+          <div class="modal-bottom-summary">
+            <div class="price-summary-box">
+              <span class="price-label">Total Amount</span>
+              <div class="price-figures">
+                <span id="modal-total-price" class="price-val">₹4,499</span>
+                <span id="modal-total-nights" class="price-nights">for 1 night</span>
+              </div>
+            </div>
+            <button type="submit" class="modal-proceed-btn">Proceed to Payment <i class="fa-solid fa-arrow-right"></i></button>
+          </div>
+          
+          <div class="modal-footnote">
+            Prefer direct booking? <a href="#" onclick="submitBookingToWhatsApp(); return false;"><i class="fa-brands fa-whatsapp"></i> Chat on WhatsApp</a> or <a href="tel:+919482090023"><i class="fa-solid fa-phone"></i> Call us</a>.
+          </div>
+        </form>
+      </div>
+
+      <!-- STEP 2: SIMULATED PAYMENT SCREEN -->
+      <div id="modal-step-payment" class="modal-step">
+        <div class="modal-header">
+          <span class="modal-tag">Step 2 of 3: Secure Checkout</span>
+          <h3 class="modal-title">Select Payment Method</h3>
+        </div>
+
+        <div class="checkout-summary-stripe">
+          <span id="payment-summary-room">Deluxe Room</span> • 
+          <span id="payment-summary-nights">1 Night</span> • 
+          <span id="payment-summary-guests">1 Guest</span>
+        </div>
+
+        <!-- Payment Toggle Tabs -->
+        <div class="payment-tabs">
+          <button type="button" id="tab-card" class="payment-tab active" onclick="switchPaymentMethod('card')">
+            <i class="fa-regular fa-credit-card"></i> Card Payment
+          </button>
+          <button type="button" id="tab-upi" class="payment-tab" onclick="switchPaymentMethod('upi')">
+            <i class="fa-solid fa-mobile-screen-button"></i> UPI / QR Code
+          </button>
+        </div>
+
+        <!-- Card Section -->
+        <form id="payment-card-form" onsubmit="event.preventDefault(); submitPayment();" class="payment-content-panel active">
+          <div class="modal-form-grid">
+            <div class="form-group full-width">
+              <label for="card-number">Card Number *</label>
+              <div class="input-icon-wrapper">
+                <input type="text" id="card-number" placeholder="4111 2222 3333 4444" minlength="16" maxlength="19" required>
+                <i class="fa-solid fa-lock"></i>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="card-expiry">Expiry Date *</label>
+              <input type="text" id="card-expiry" placeholder="MM/YY" maxlength="5" required>
+            </div>
+            <div class="form-group">
+              <label for="card-cvv">CVV *</label>
+              <input type="password" id="card-cvv" placeholder="•••" maxlength="4" required>
+            </div>
+            <div class="form-group full-width">
+              <label for="card-name">Cardholder Name *</label>
+              <input type="text" id="card-name" placeholder="John Doe" required>
+            </div>
+          </div>
+          
+          <div class="modal-bottom-summary">
+            <div class="price-summary-box">
+              <span class="price-label">Payable Amount</span>
+              <span id="modal-payment-total" class="price-val">₹4,499</span>
+            </div>
+            <button type="submit" class="modal-proceed-btn pay-btn">Pay & Confirm Booking</button>
+          </div>
+        </form>
+
+        <!-- UPI Section -->
+        <div id="payment-upi-panel" class="payment-content-panel">
+          <div class="upi-checkout-layout">
+            <div class="qr-mock-container">
+              <div class="qr-mock-code">
+                <!-- Styled simulated vector QR code -->
+                <i class="fa-solid fa-qrcode"></i>
+                <div class="qr-scanner-line"></div>
+              </div>
+              <p class="qr-mock-text">Scan with BHIM UPI, GPay, PhonePe or Paytm</p>
+            </div>
+            <div class="upi-input-layout">
+              <label for="upi-id">Enter UPI ID for request *</label>
+              <div class="upi-input-group">
+                <input type="text" id="upi-id" placeholder="name@upi">
+                <button type="button" class="upi-verify-btn" onclick="triggerUPIPayment()">Send Request</button>
+              </div>
+              <p class="upi-hint">Sends a secure simulated payment request to your UPI App.</p>
+            </div>
+          </div>
+          
+          <div class="modal-bottom-summary">
+            <div class="price-summary-box">
+              <span class="price-label">Payable Amount</span>
+              <span id="modal-payment-total-upi" class="price-val">₹4,499</span>
+            </div>
+            <button type="button" class="modal-proceed-btn pay-btn" onclick="submitPayment()">Confirm After App Payment</button>
+          </div>
+        </div>
+
+        <div class="modal-footnote flex-between">
+          <a href="#" onclick="showStep(1); return false;" class="back-link"><i class="fa-solid fa-arrow-left"></i> Back to details</a>
+          <span><i class="fa-solid fa-shield-halved"></i> 256-Bit SSL Encrypted Checkout</span>
+        </div>
+      </div>
+
+      <!-- STEP 3: BOOKING CONFIRMATION TICKET -->
+      <div id="modal-step-confirmation" class="modal-step">
+        <div class="ticket-wrapper">
+          <div class="ticket-header">
+            <div class="success-icon-ring">
+              <i class="fa-solid fa-check"></i>
+            </div>
+            <h3>Reservation Confirmed!</h3>
+            <p>Your stay at Petals has been successfully booked.</p>
+          </div>
+          
+          <div class="ticket-body">
+            <div class="ticket-row">
+              <span class="ticket-label">Booking Reference</span>
+              <span id="ticket-ref" class="ticket-val">PET-2026-X98A</span>
+            </div>
+            <div class="ticket-divider">
+              <div class="divider-circle left"></div>
+              <div class="divider-circle right"></div>
+            </div>
+            <div class="ticket-details-grid">
+              <div class="ticket-detail">
+                <span class="ticket-label">Guest</span>
+                <span id="ticket-guest-name">John Doe</span>
+              </div>
+              <div class="ticket-detail">
+                <span class="ticket-label">Room Type</span>
+                <span id="ticket-room-name">Deluxe Room</span>
+              </div>
+              <div class="ticket-detail">
+                <span class="ticket-label">Check-In</span>
+                <span id="ticket-checkin">2026-07-16</span>
+              </div>
+              <div class="ticket-detail">
+                <span class="ticket-label">Check-Out</span>
+                <span id="ticket-checkout">2026-07-17</span>
+              </div>
+              <div class="ticket-detail">
+                <span class="ticket-label">Nights</span>
+                <span id="ticket-nights">1 Night</span>
+              </div>
+              <div class="ticket-detail">
+                <span class="ticket-label">Total Paid</span>
+                <span id="ticket-paid" class="ticket-paid-val">₹4,499</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="ticket-footer text-center">
+            <button class="primary-btn done-btn" onclick="closeBookingModal()">Done</button>
+            <p class="ticket-email-hint">A copy of your booking receipt and check-in barcode has been sent to your registered contact.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating Connect Dock -->
+  <div class="floating-dock">
+    <a href="tel:+919482090023" class="dock-btn phone" aria-label="Call Petals Hotel">
+      <i class="fa-solid fa-phone"></i>
+      <span class="dock-tooltip">Call Hotel</span>
+    </a>
+    <a href="https://wa.me/919482090023?text=Hi%20Petals%20Hotel,%20I'd%20like%20to%20book%20a%20stay." target="_blank" class="dock-btn whatsapp" aria-label="WhatsApp Petals Hotel">
+      <i class="fa-brands fa-whatsapp"></i>
+      <span class="dock-tooltip">WhatsApp Chat</span>
+    </a>
+  </div>
+
+  <!-- Footer Section -->
+  <footer class="main-footer">
+    <div class="container footer-grid">
+      <div class="footer-info">
+        <a href="#" class="brand-logo footer-logo">
+          <img src="images/brand icon.jpeg" alt="Petals Logo" class="logo-img">
+          <div class="brand-text">
+            <span class="brand-name">PETALS</span>
+            <span class="brand-sub text-white">Suites & Hotel</span>
+          </div>
+        </a>
+        <p class="footer-about-text">A modern executive hotel designed to provide peaceful, high-end hospitality directly opposite Bangalore's premier business park.</p>
+      </div>
+
+      <div class="footer-links">
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="#home">Home</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#rooms">Rooms & Suites</a></li>
+          <li><a href="#proximity">Manyata Proximity</a></li>
+          <li><a href="#corporate">Bulk Booking</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-contact">
+        <h4>Get In Touch</h4>
+        <p><i class="fa-solid fa-phone"></i> <a href="tel:+919482090023">+91 94820 90023</a></p>
+        <p><i class="fa-solid fa-envelope"></i> <a href="mailto:info@petalshotels.com">info@petalshotels.com</a></p>
+        <p><i class="fa-solid fa-location-dot"></i> 3rd cross Chanakya layout, AC post, opposite to Manyata Tech Park, Bangalore 560045</p>
+      </div>
+    </div>
+    
+    <div class="footer-bottom text-center">
+      <p>&copy; 2026 Petals Suites & Hotel. All Rights Reserved. Designed for Modern Executives.</p>
+    </div>
+  </footer>
+
+  <script src="main.js"></script>
+</body>
+</html>
