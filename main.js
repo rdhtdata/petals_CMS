@@ -232,6 +232,35 @@ if (bookingModal) {
   });
 }
 
+// Check Rates search bar button from Hero Section
+window.triggerHeroBooking = function() {
+  const selectedRoom = document.getElementById('hero-room-type').value;
+  
+  // Set the hash to open the modal for the selected room type
+  window.location.hash = `booking-${selectedRoom}`;
+
+  // Once hash changes, the router will open the modal. Transfer inputs:
+  const heroCheckin = document.getElementById('hero-checkin');
+  const heroCheckout = document.getElementById('hero-checkout');
+  const heroGuests = document.getElementById('hero-guests');
+  
+  const modalCheckin = document.getElementById('modal-checkin');
+  const modalCheckout = document.getElementById('modal-checkout');
+  
+  if (heroCheckin && modalCheckin && heroCheckin.value) {
+    modalCheckin.value = heroCheckin.value;
+  }
+  if (heroCheckout && modalCheckout && heroCheckout.value) {
+    modalCheckout.value = heroCheckout.value;
+  }
+  if (heroGuests) {
+    const guestsCount = parseInt(heroGuests.value) || 1;
+    selectGuests(guestsCount > 3 ? 3 : guestsCount);
+  }
+  
+  calculateTotalPrice();
+};
+
 // Stepper controller (shows Step 1, 2, or 3)
 window.showStep = function(stepNum) {
   document.querySelectorAll('.modal-step').forEach((el, index) => {

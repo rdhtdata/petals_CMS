@@ -88,6 +88,36 @@
         </div>
       </div>
       
+      <!-- Quick Booking Bar -->
+      <div class="quick-booking-bar animate-up">
+        <div class="booking-field">
+          <label><i class="fa-solid fa-calendar-days"></i> Check In</label>
+          <input type="date" id="hero-checkin" required>
+        </div>
+        <div class="booking-field">
+          <label><i class="fa-solid fa-calendar-days"></i> Check Out</label>
+          <input type="date" id="hero-checkout" required>
+        </div>
+        <div class="booking-field">
+          <label><i class="fa-solid fa-bed"></i> Room Type</label>
+          <select id="hero-room-type">
+            <option value="single">Single Room</option>
+            <option value="superior">Superior Room</option>
+            <option value="deluxe" selected>Deluxe Room</option>
+            <option value="suite">Suite Room</option>
+          </select>
+        </div>
+        <div class="booking-field">
+          <label><i class="fa-solid fa-users"></i> Guests</label>
+          <select id="hero-guests">
+            <option value="1">1 Guest</option>
+            <option value="2" selected>2 Guests</option>
+            <option value="3">3 Guests</option>
+            <option value="4+">4+ Guests</option>
+          </select>
+        </div>
+        <button class="booking-submit-btn" onclick="triggerHeroBooking()"><i class="fa-solid fa-magnifying-glass"></i> Check Rates</button>
+      </div>
     </div>
   </section>
 
