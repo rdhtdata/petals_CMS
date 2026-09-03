@@ -3089,9 +3089,11 @@ button {
 }
 
 /* --------------------------------------------------------------------------
-   23. Responsive Media Queries
+   23. Comprehensive Responsive Media Queries (Laptops, Tablets, Phones)
    -------------------------------------------------------------------------- */
-@media (max-width: 1100px) {
+
+/* Standard Laptops & Smaller Desktops (<= 1200px) */
+@media (max-width: 1200px) {
   .floating-reservation-panel .panel-inner {
     grid-template-columns: 1fr 1fr;
     gap: 16px;
@@ -3108,9 +3110,23 @@ button {
   .surroundings-grid {
     grid-template-columns: repeat(2, 1fr);
   }
+
+  .footer-grid {
+    grid-template-columns: 1.2fr 1fr 1.2fr;
+    gap: 40px;
+  }
 }
 
+/* Tablets & Small Laptops (<= 992px) */
 @media (max-width: 992px) {
+  body {
+    padding-bottom: 70px; /* Offset for fixed mobile bottom action bar */
+  }
+
+  .container {
+    padding: 75px 0;
+  }
+
   .nav-menu,
   .call-btn-header {
     display: none;
@@ -3127,22 +3143,35 @@ button {
     gap: 40px;
   }
 
+  .story-image-stack {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
   .experience-grid {
     grid-template-columns: 1fr;
+    gap: 20px;
   }
 
   .rooms-grid {
     grid-template-columns: 1fr;
+    gap: 28px;
   }
 
   .gallery-mosaic-grid {
     grid-template-columns: 1fr 1fr;
-    grid-auto-rows: 200px;
+    grid-auto-rows: 190px;
+    gap: 14px;
   }
 
   .gallery-item.item-large,
   .gallery-item.item-wide {
     grid-column: span 2;
+  }
+
+  .location-map-wrap {
+    min-height: 380px;
+    height: 380px;
   }
 
   .floating-dock {
@@ -3154,23 +3183,55 @@ button {
   }
 }
 
+/* Standard Tablets & Large Phones (<= 768px) */
 @media (max-width: 768px) {
   :root {
-    --header-height: 76px;
+    --header-height: 72px;
   }
 
   .container {
-    padding: 70px 0;
+    width: 92%;
+    padding: 60px 0;
+  }
+
+  .hero-section {
+    padding-top: var(--header-height);
+    padding-bottom: 30px;
+    min-height: auto;
+  }
+
+  .hero-container {
+    min-height: auto;
+    padding: 30px 0 10px 0;
+  }
+
+  .hero-title {
+    font-size: clamp(2rem, 6.5vw, 2.8rem);
+  }
+
+  .hero-subtitle {
+    font-size: 1rem;
+    line-height: 1.55;
   }
 
   .facts-container {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 24px;
+    gap: 20px;
   }
 
   .fact-sep {
     display: none;
+  }
+
+  .primary-img-wrap {
+    width: 86%;
+    height: 300px;
+  }
+
+  .secondary-img-wrap {
+    width: 56%;
+    height: 190px;
   }
 
   .form-grid {
@@ -3193,12 +3254,16 @@ button {
     grid-template-columns: 1fr;
   }
 
+  .lightbox-container {
+    width: 95%;
+  }
+
   .lightbox-nav.prev {
-    left: 10px;
+    left: 8px;
   }
 
   .lightbox-nav.next {
-    right: 10px;
+    right: 8px;
   }
 
   .footer-bottom-inner {
@@ -3208,25 +3273,154 @@ button {
   }
 }
 
-@media (max-width: 480px) {
-  .hero-title {
-    font-size: 2.2rem;
+/* Mobile Devices & Phablets (<= 640px) */
+@media (max-width: 640px) {
+  .floating-reservation-panel .panel-inner {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    padding: 18px 16px;
+    border-radius: var(--radius-lg);
   }
 
-  .panel-inner {
-    padding: 16px;
+  .panel-submit-btn {
+    grid-column: span 1;
+    width: 100%;
+    padding: 14px;
+  }
+
+  .surroundings-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-ctas {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .hero-primary-btn,
+  .hero-secondary-btn {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
   }
 
   .modal-content {
-    padding: 28px 18px;
+    width: 95%;
+    padding: 24px 16px;
+    border-radius: var(--radius-lg);
+  }
+
+  .modal-bottom-summary {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+  }
+
+  .ticket-details-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .ticket-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .manage-search-bar {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .manage-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Compact Mobile Phones (<= 480px) */
+@media (max-width: 480px) {
+  .container {
+    padding: 45px 0;
+  }
+
+  .section-title {
+    font-size: 1.85rem;
+  }
+
+  .section-subtitle {
+    font-size: 0.92rem;
+    margin-bottom: 35px;
+  }
+
+  .hero-title {
+    font-size: 2.1rem;
+    line-height: 1.18;
+  }
+
+  .primary-img-wrap {
+    width: 88%;
+    height: 240px;
+  }
+
+  .secondary-img-wrap {
+    width: 58%;
+    height: 150px;
+  }
+
+  .story-stat-badge {
+    padding: 10px 14px;
+    left: 10px;
+    bottom: 5px;
+  }
+
+  .stat-highlight {
+    font-size: 1.4rem;
+  }
+
+  .stat-subtext {
+    font-size: 0.65rem;
+  }
+
+  .experience-card {
+    padding: 28px 20px;
+  }
+
+  .exp-number {
+    font-size: 2.2rem;
+    top: 18px;
+    right: 20px;
+  }
+
+  .room-image-wrap {
+    height: 210px;
+  }
+
+  .room-card-body {
+    padding: 20px 16px;
+  }
+
+  .room-name {
+    font-size: 1.35rem;
+  }
+
+  .room-spec-bar {
+    gap: 10px 14px;
   }
 
   .room-card-footer {
     grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .room-detail-btn,
+  .room-reserve-btn {
+    width: 100%;
+    padding: 12px;
   }
 
   .gallery-mosaic-grid {
     grid-template-columns: 1fr;
+    grid-auto-rows: 200px;
   }
 
   .gallery-item.item-large,
@@ -3236,8 +3430,63 @@ button {
     grid-row: span 1;
   }
 
-  .surroundings-grid {
+  .location-map-wrap {
+    min-height: 280px;
+    height: 280px;
+  }
+
+  .distance-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .modern-form {
+    padding: 26px 18px;
+    border-radius: var(--radius-lg);
+  }
+
+  .guest-pills-container {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .guest-pill {
+    padding: 10px 6px;
+    font-size: 0.78rem;
+  }
+
+  .ticket-wrapper {
+    padding: 20px 16px;
+  }
+
+  .lightbox-nav {
+    width: 36px;
+    height: 36px;
+    font-size: 0.95rem;
+  }
+}
+
+/* Smallest Smartphone Screens (<= 360px) */
+@media (max-width: 360px) {
+  .hero-title {
+    font-size: 1.85rem;
+  }
+
+  .facts-container {
     grid-template-columns: 1fr;
+    gap: 16px;
+    text-align: center;
+  }
+
+  .fact-item {
+    align-items: center;
+  }
+
+  .room-spec-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
   }
 }
 
