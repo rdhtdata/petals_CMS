@@ -44,11 +44,24 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(rootDir, 'index.html'));
 });
 
-// Start Server
-app.listen(PORT, () => {
-  console.log('====================================================');
-  console.log(`🌸 Petals Suites & Hotel PMS Server running on port ${PORT}`);
-  console.log(`🌐 Local URL: http://localhost:${PORT}`);
-  console.log(`⚡ eZee PMS Gateway ready`);
-  console.log('====================================================');
-});
+// Start Server with fallback port handling
+const startServer = (port) => {
+  const server = app.listen(port, () => {
+    console.log('====================================================');
+    console.log(`🌸 Petals Suites & Hotel PMS Server running on port ${port}`);
+    console.log(`🌐 Local URL: http://localhost:${port}`);
+    console.log(`⚡ eZee PMS Gateway ready`);
+    console.log('====================================================');
+  });
+
+  server.on('error', (err) => {
+    if (err.code === 'EADDRINUSE') {
+      console.log(`⚠️ Port ${port} is in use, attempting port ${Number(port) + 1}...`);
+      startServer(Number(port) + 1);
+    } else {
+      console.error('Server failed to start:', err);
+    }
+  });
+};
+
+startServer(Number(PORT));
