@@ -365,11 +365,16 @@ button {
 }
 
 .logo-img {
-  width: 44px;
-  height: 44px;
-  border-radius: var(--radius-sm);
-  object-fit: cover;
+  height: 42px;
+  width: auto;
+  max-width: 68px;
+  border-radius: var(--radius-xs);
+  object-fit: contain;
   transition: var(--transition-fast);
+}
+
+.main-header.scrolled .logo-img {
+  height: 38px;
 }
 
 .brand-text {
@@ -584,9 +589,11 @@ button {
 }
 
 .mobile-logo-img {
-  width: 36px;
   height: 36px;
-  border-radius: 6px;
+  width: auto;
+  max-width: 58px;
+  border-radius: var(--radius-xs);
+  object-fit: contain;
 }
 
 .mobile-menu-close {
@@ -2970,6 +2977,14 @@ button {
   grid-template-columns: 1.4fr 1fr 1.2fr;
   gap: 60px;
   padding-bottom: 60px;
+}
+
+.footer-logo .logo-img {
+  height: 48px;
+  width: auto;
+  max-width: 78px;
+  border-radius: var(--radius-xs);
+  object-fit: contain;
 }
 
 .footer-logo .brand-name {
