@@ -1,17 +1,111 @@
 /**
- * Petals Suites & Hotel - Frontend Controller
- * Modern hospitality client interactions and booking integrations.
+ * Petals Suites & Hotel - Frontend Controller (2026 Edition)
+ * Editorial Hospitality Experience & Live eZee Absolute PMS Backend API Integration
  */
 
 document.addEventListener('DOMContentLoaded', () => {
+  initPreloader();
+  initHeaderScroll();
   initMobileMenu();
-  initScrollAnimationsFallback();
+  initScrollAnimations();
   initDateFields();
   initBulkBookingForm();
+  initGalleryLightbox();
+  initKeyboardNavigation();
+  loadConfiguredDetails();
 });
 
 /* ==========================================================================
-   1. Mobile Menu Functionality
+   1. Data State & Configuration
+   ========================================================================== */
+
+// Room database mapping and default rates
+const roomDb = {
+  single: { title: 'Single Room', price: 2499, roomTypeId: '1', rateplanId: '1', thumb: 'images/single room.jpeg' },
+  superior: { title: 'Superior Room', price: 3499, roomTypeId: '2', rateplanId: '1', thumb: 'images/superior room.jpeg' },
+  deluxe: { title: 'Deluxe Room', price: 4499, roomTypeId: '3', rateplanId: '1', thumb: 'images/deluxe room.jpeg' },
+  suite: { title: 'Suite Room', price: 6499, roomTypeId: '4', rateplanId: '1', thumb: 'images/suite room.jpeg' }
+};
+
+// Current active booking state
+let activeBookingState = {
+  reservationNo: '',
+  guestName: '',
+  title: 'Mr',
+  firstName: '',
+  lastName: '',
+  email: '',
+  phone: '',
+  city: 'Bangalore',
+  country: 'India',
+  specialRequest: '',
+  roomType: 'deluxe',
+  roomTitle: 'Deluxe Room',
+  checkIn: '',
+  checkOut: '',
+  nights: 1,
+  adults: 1,
+  children: 0,
+  baseRate: 4499,
+  taxRate: 540,
+  totalPrice: 5039,
+  paymentMethod: 'UPI',
+  transactionId: ''
+};
+
+// Gallery data archive for interactive lightbox
+const galleryArchive = [
+  { src: 'images/suite room.jpeg', title: 'Signature Suite Living Space', cat: 'SUITE' },
+  { src: 'images/deluxe room.jpeg', title: 'Deluxe Room & Lounge', cat: 'DELUXE' },
+  { src: 'images/strir well.jpeg', title: 'Modern Architectural Stairwell', cat: 'ARCHITECTURE' },
+  { src: 'images/superior room.jpeg', title: 'Superior Room Executive Desk', cat: 'SUPERIOR' },
+  { src: 'images/single room.jpeg', title: 'Single Room Quiet Sanctuary', cat: 'SINGLE' },
+  { src: 'images/room corridor.jpeg', title: 'Peaceful Guest Corridors', cat: 'AMBIENCE' }
+];
+
+let currentLightboxIndex = 0;
+
+/* ==========================================================================
+   2. Preloader & Header Scrolling
+   ========================================================================== */
+function initPreloader() {
+  const preloader = document.getElementById('site-preloader');
+  if (!preloader) return;
+
+  const hidePreloader = () => {
+    preloader.classList.add('loaded');
+  };
+
+  if (document.readyState === 'complete') {
+    setTimeout(hidePreloader, 800);
+  } else {
+    window.addEventListener('load', () => {
+      setTimeout(hidePreloader, 900);
+    });
+  }
+
+  // Fallback safety timeout
+  setTimeout(hidePreloader, 2500);
+}
+
+function initHeaderScroll() {
+  const header = document.getElementById('header') || document.querySelector('.main-header');
+  if (!header) return;
+
+  const onScroll = () => {
+    if (window.scrollY > 40) {
+      header.classList.add('scrolled');
+    } else {
+      header.classList.remove('scrolled');
+    }
+  };
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+}
+
+/* ==========================================================================
+   3. Mobile Navigation & Touch Handling
    ========================================================================== */
 function initMobileMenu() {
   const menuToggle = document.querySelector('.mobile-menu-toggle');
@@ -22,7 +116,7 @@ function initMobileMenu() {
   if (menuToggle && navOverlay) {
     menuToggle.addEventListener('click', () => {
       navOverlay.classList.add('active');
-      document.body.style.overflow = 'hidden'; // Prevent scrolling background
+      document.body.style.overflow = 'hidden';
     });
   }
 
@@ -33,62 +127,42 @@ function initMobileMenu() {
     });
   }
 
-  // Close mobile nav when clicking a link
   mobileLinks.forEach(link => {
     link.addEventListener('click', () => {
-      navOverlay.classList.remove('active');
+      if (navOverlay) navOverlay.classList.remove('active');
       document.body.style.overflow = '';
     });
   });
 }
 
 /* ==========================================================================
-   2. Modern CSS Animations Fallbacks (Progressive Enhancement)
+   4. Scroll Animations & Reveal System
    ========================================================================== */
-function initScrollAnimationsFallback() {
-  const header = document.querySelector('.main-header');
+function initScrollAnimations() {
+  const revealElements = document.querySelectorAll('.scroll-reveal');
+  if (!revealElements.length) return;
 
-  // Fallback for Shrinking Header on Scroll
-  if (header && !CSS.supports('(animation-timeline: scroll()) and (animation-range: 0% 100%)')) {
-    const handleScroll = () => {
-      if (window.scrollY > 50) {
-        header.classList.add('scrolled');
-      } else {
-        header.classList.remove('scrolled');
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    handleScroll(); // Initial run on page load
-  }
-
-  // Fallback for Scroll Reveal Entrance Effects
-  if (!CSS.supports('(animation-timeline: view()) and (animation-range: entry)')) {
-    const revealElements = document.querySelectorAll('.scroll-reveal');
-    
-    const observerOptions = {
-      root: null, // viewport
-      threshold: 0.15, // trigger when 15% visible
-      rootMargin: '0px 0px -50px 0px' // offset bottom trigger slightly
-    };
-
-    const observer = new IntersectionObserver((entries, observer) => {
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver((entries, obs) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           entry.target.classList.add('visible');
-          observer.unobserve(entry.target); // Trigger only once
+          obs.unobserve(entry.target);
         }
       });
-    }, observerOptions);
+    }, { threshold: 0.12 });
 
-    revealElements.forEach(el => {
-      observer.observe(el);
-    });
+    revealElements.forEach(el => observer.observe(el));
+  } else {
+    revealElements.forEach(el => el.classList.add('visible'));
   }
 }
 
+// Fallback compatibility alias
+window.initScrollAnimationsFallback = initScrollAnimations;
+
 /* ==========================================================================
-   3. Booking Dates Auto-setup
+   5. Booking Dates & PMS Availability Checking
    ========================================================================== */
 function initDateFields() {
   const checkinHero = document.getElementById('hero-checkin');
@@ -96,16 +170,13 @@ function initDateFields() {
   const checkinModal = document.getElementById('modal-checkin');
   const checkoutModal = document.getElementById('modal-checkout');
 
-  // Get current date string (YYYY-MM-DD)
   const today = new Date();
   const todayStr = formatDate(today);
   
-  // Set tomorrow as default checkout
   const tomorrow = new Date(today);
   tomorrow.setDate(tomorrow.getDate() + 1);
   const tomorrowStr = formatDate(tomorrow);
 
-  // Set min dates & default values
   [checkinHero, checkinModal].forEach(field => {
     if (field) {
       field.min = todayStr;
@@ -120,7 +191,6 @@ function initDateFields() {
     }
   });
 
-  // Keep check-out date dynamic (must be after check-in) & trigger price recalculation
   [checkinHero, checkinModal].forEach((checkinField, index) => {
     const checkoutField = index === 0 ? checkoutHero : checkoutModal;
     if (checkinField && checkoutField) {
@@ -136,9 +206,8 @@ function initDateFields() {
           checkoutField.value = minCheckoutStr;
         }
 
-        // Trigger price updates if checking/modifying the modal date
         if (index === 1) {
-          calculateTotalPrice();
+          onDatesChanged();
         }
       });
     }
@@ -146,7 +215,7 @@ function initDateFields() {
 
   if (checkoutModal) {
     checkoutModal.addEventListener('change', () => {
-      calculateTotalPrice();
+      onDatesChanged();
     });
   }
 }
@@ -158,25 +227,73 @@ function formatDate(date) {
   return `${year}-${month}-${day}`;
 }
 
+// Fetch configured salutations from PMS API
+async function loadConfiguredDetails() {
+  try {
+    const response = await fetch('/api/config-details');
+    const result = await response.json();
+    if (result.success && result.data && result.data.salutations) {
+      const titleSelect = document.getElementById('modal-title');
+      if (titleSelect && Array.isArray(result.data.salutations)) {
+        titleSelect.innerHTML = '';
+        result.data.salutations.forEach(s => {
+          const opt = document.createElement('option');
+          opt.value = s.code || s.name || s;
+          opt.textContent = s.name || s;
+          titleSelect.appendChild(opt);
+        });
+      }
+    }
+  } catch (err) {
+    console.log('Using standard salutations list:', err.message);
+  }
+}
+
+// Handler for when stay dates change
+window.onDatesChanged = async function() {
+  calculateTotalPrice();
+  await checkPmsAvailability();
+};
+
+// Check live availability via /api/availability
+async function checkPmsAvailability() {
+  const checkinInput = document.getElementById('modal-checkin');
+  const checkoutInput = document.getElementById('modal-checkout');
+  const availBadge = document.getElementById('modal-avail-badge');
+
+  if (!checkinInput || !checkoutInput || !availBadge) return;
+  const checkIn = checkinInput.value;
+  const checkOut = checkoutInput.value;
+  if (!checkIn || !checkOut) return;
+
+  try {
+    const res = await fetch(`/api/availability?checkin=${encodeURIComponent(checkIn)}&checkout=${encodeURIComponent(checkOut)}`);
+    const json = await res.json();
+    
+    // Only show badge when the PMS returns real, valid inventory without errors
+    const hasValidPmsData = json.success && json.data && !json.data.Errors && !json.data.error && (json.data.Room_Details || json.data.rooms || (Array.isArray(json.data) && json.data.length > 0));
+
+    if (hasValidPmsData) {
+      availBadge.style.display = 'inline-flex';
+      availBadge.className = 'pms-avail-badge available';
+      availBadge.innerHTML = `<i class="fa-solid fa-circle-check"></i> Rates & Dates Available`;
+    } else {
+      availBadge.style.display = 'none';
+    }
+  } catch (err) {
+    availBadge.style.display = 'none';
+  }
+}
+
 /* ==========================================================================
-   4. Redesigned Multi-step Booking System with Hash Routing
+   6. Multi-step Booking System
    ========================================================================== */
 const bookingModal = document.getElementById('booking-modal');
 
-// Room Details database mapping
-const roomDb = {
-  single: { title: 'Single Room', price: 2499, thumb: 'images/single room.jpeg' },
-  superior: { title: 'Superior Room', price: 3499, thumb: 'images/superior room.jpeg' },
-  deluxe: { title: 'Deluxe Room', price: 4499, thumb: 'images/deluxe room.jpeg' },
-  suite: { title: 'Suite Room', price: 6499, thumb: 'images/suite room.jpeg' }
-};
-
-// Opens the modal by updating the hash (pushes history state)
 window.openBookingModal = function(roomCategory = 'deluxe') {
   window.location.hash = `booking-${roomCategory}`;
 };
 
-// Helper that performs the actual DOM open and prefill (called by router)
 function openBookingModalDirect(roomCategory = 'deluxe') {
   if (!bookingModal) return;
 
@@ -191,29 +308,19 @@ function openBookingModalDirect(roomCategory = 'deluxe') {
   if (roomTitle) roomTitle.textContent = selectedRoom.title;
   if (roomThumb) roomThumb.src = selectedRoom.thumb;
   if (roomRate) {
-    roomRate.innerHTML = `₹${selectedRoom.price.toLocaleString('en-IN')} <span>/ night</span>`;
+    roomRate.innerHTML = `₹${selectedRoom.price.toLocaleString('en-IN')} <span>/ night + GST</span>`;
   }
   
-  // Set default guest count
   selectGuests(1);
-
-  // Recalculate price
   calculateTotalPrice();
+  checkPmsAvailability();
 
-  // Reset name/phone inputs
-  document.getElementById('modal-name').value = '';
-  document.getElementById('modal-phone').value = '';
-
-  // Show Modal Container
   bookingModal.classList.add('active');
   document.body.style.overflow = 'hidden';
 }
 
-// Closes the modal by clearing the hash
 window.closeBookingModal = function() {
-  // Replace hash with empty space without adding history entries
   history.replaceState(null, null, ' ');
-  // Dispatch hashchange manually to let the router run close routines
   window.dispatchEvent(new Event('hashchange'));
 };
 
@@ -223,7 +330,6 @@ function closeBookingModalDirect() {
   document.body.style.overflow = '';
 }
 
-// Close modal if clicked outside the modal card content area
 if (bookingModal) {
   bookingModal.addEventListener('click', (e) => {
     if (e.target === bookingModal) {
@@ -232,14 +338,10 @@ if (bookingModal) {
   });
 }
 
-// Check Rates search bar button from Hero Section
 window.triggerHeroBooking = function() {
   const selectedRoom = document.getElementById('hero-room-type').value;
-  
-  // Set the hash to open the modal for the selected room type
   window.location.hash = `booking-${selectedRoom}`;
 
-  // Once hash changes, the router will open the modal. Transfer inputs:
   const heroCheckin = document.getElementById('hero-checkin');
   const heroCheckout = document.getElementById('hero-checkout');
   const heroGuests = document.getElementById('hero-guests');
@@ -259,11 +361,11 @@ window.triggerHeroBooking = function() {
   }
   
   calculateTotalPrice();
+  checkPmsAvailability();
 };
 
-// Stepper controller (shows Step 1, 2, or 3)
 window.showStep = function(stepNum) {
-  document.querySelectorAll('.modal-step').forEach((el, index) => {
+  document.querySelectorAll('#booking-modal .modal-step').forEach((el, index) => {
     if (index + 1 === stepNum) {
       el.classList.add('active');
     } else {
@@ -272,14 +374,12 @@ window.showStep = function(stepNum) {
   });
 };
 
-// Guest Selector toggles
 window.selectGuests = function(count) {
   const guestInput = document.getElementById('modal-guests');
   if (guestInput) {
     guestInput.value = count;
   }
 
-  // Update pills CSS
   const pills = document.querySelectorAll('.guest-pill');
   pills.forEach((pill, idx) => {
     if (idx + 1 === count) {
@@ -288,9 +388,9 @@ window.selectGuests = function(count) {
       pill.classList.remove('active');
     }
   });
+  calculateTotalPrice();
 };
 
-// Helper to calculate nights between check-in and check-out
 function calculateNights() {
   const checkinInput = document.getElementById('modal-checkin');
   const checkoutInput = document.getElementById('modal-checkout');
@@ -309,59 +409,89 @@ function calculateNights() {
   return diffDays || 1;
 }
 
-// Recalculates price dynamics dynamically on input changes
 window.calculateTotalPrice = function() {
-  const roomVal = document.getElementById('modal-room').value;
+  const roomInput = document.getElementById('modal-room');
+  const roomVal = roomInput ? roomInput.value : 'deluxe';
   const selectedRoom = roomDb[roomVal] || roomDb.deluxe;
   
   const nights = calculateNights();
-  const totalPrice = selectedRoom.price * nights;
+  const baseTotal = selectedRoom.price * nights;
+  const gstTax = Math.round(baseTotal * 0.12);
+  const grossTotal = baseTotal + gstTax;
 
-  const priceText = document.getElementById('modal-total-price');
-  const nightsText = document.getElementById('modal-total-nights');
+  const nightsEl = document.getElementById('calc-nights');
+  const baseEl = document.getElementById('calc-base-price');
+  const taxEl = document.getElementById('calc-tax-price');
+  const totalEl = document.getElementById('modal-total-price');
 
-  if (priceText) {
-    priceText.textContent = `₹${totalPrice.toLocaleString('en-IN')}`;
-  }
-  if (nightsText) {
-    nightsText.textContent = `for ${nights} night${nights > 1 ? 's' : ''}`;
-  }
+  if (nightsEl) nightsEl.textContent = `${nights} night${nights > 1 ? 's' : ''}`;
+  if (baseEl) baseEl.textContent = `₹${baseTotal.toLocaleString('en-IN')}`;
+  if (taxEl) taxEl.textContent = `₹${gstTax.toLocaleString('en-IN')}`;
+  if (totalEl) totalEl.textContent = `₹${grossTotal.toLocaleString('en-IN')}`;
+
+  // Update active state
+  activeBookingState.roomType = roomVal;
+  activeBookingState.roomTitle = selectedRoom.title;
+  activeBookingState.nights = nights;
+  activeBookingState.baseRate = baseTotal;
+  activeBookingState.taxRate = gstTax;
+  activeBookingState.totalPrice = grossTotal;
 };
 
 /* ==========================================================================
-   5. Checkout & Payments (Simulated)
+   7. Checkout & PMS Booking Creation
    ========================================================================== */
 window.proceedToPayment = function() {
-  const name = document.getElementById('modal-name').value.trim();
+  const title = document.getElementById('modal-title').value;
+  const firstName = document.getElementById('modal-firstname').value.trim();
+  const lastName = document.getElementById('modal-lastname').value.trim();
+  const email = document.getElementById('modal-email').value.trim();
   const phone = document.getElementById('modal-phone').value.trim();
+  const checkIn = document.getElementById('modal-checkin').value;
+  const checkOut = document.getElementById('modal-checkout').value;
+  const guests = document.getElementById('modal-guests').value;
+  const city = document.getElementById('modal-city').value.trim();
+  const country = document.getElementById('modal-country').value.trim();
+  const specialRequest = document.getElementById('modal-special-request').value.trim();
 
-  if (!name || !phone) {
-    alert('Please fill in all mandatory fields.');
+  if (!firstName || !email || !phone || !checkIn || !checkOut) {
+    alert('Please complete all mandatory guest details.');
     return;
   }
 
-  // Navigate to payment screen by pushing hash (history support)
+  activeBookingState.guestName = `${title} ${firstName} ${lastName}`.trim();
+  activeBookingState.title = title;
+  activeBookingState.firstName = firstName;
+  activeBookingState.lastName = lastName;
+  activeBookingState.email = email;
+  activeBookingState.phone = phone;
+  activeBookingState.checkIn = checkIn;
+  activeBookingState.checkOut = checkOut;
+  activeBookingState.adults = guests;
+  activeBookingState.city = city;
+  activeBookingState.country = country;
+  activeBookingState.specialRequest = specialRequest;
+
   window.location.hash = 'payment';
 };
 
-// Actually configures Step 2 screen variables
 function loadPaymentScreen() {
-  const roomVal = document.getElementById('modal-room').value;
-  const selectedRoom = roomDb[roomVal] || roomDb.deluxe;
-  const nights = calculateNights();
-  const guests = document.getElementById('modal-guests').value;
-  const totalPrice = selectedRoom.price * nights;
-  const formattedTotal = `₹${totalPrice.toLocaleString('en-IN')}`;
+  const formattedTotal = `₹${activeBookingState.totalPrice.toLocaleString('en-IN')}`;
 
-  document.getElementById('payment-summary-room').textContent = selectedRoom.title;
-  document.getElementById('payment-summary-nights').textContent = `${nights} Night${nights > 1 ? 's' : ''}`;
-  document.getElementById('payment-summary-guests').textContent = `${guests} Guest${guests > 1 ? 's' : ''}`;
+  const roomSummaryEl = document.getElementById('payment-summary-room');
+  const nightsSummaryEl = document.getElementById('payment-summary-nights');
+  const guestsSummaryEl = document.getElementById('payment-summary-guests');
+  const totalCardEl = document.getElementById('modal-payment-total');
+  const totalUpiEl = document.getElementById('modal-payment-total-upi');
 
-  document.getElementById('modal-payment-total').textContent = formattedTotal;
-  document.getElementById('modal-payment-total-upi').textContent = formattedTotal;
+  if (roomSummaryEl) roomSummaryEl.textContent = activeBookingState.roomTitle;
+  if (nightsSummaryEl) nightsSummaryEl.textContent = `${activeBookingState.nights} Night${activeBookingState.nights > 1 ? 's' : ''}`;
+  if (guestsSummaryEl) guestsSummaryEl.textContent = `${activeBookingState.adults} Adult${activeBookingState.adults > 1 ? 's' : ''}`;
 
-  // Reset payment tabs / panels
-  switchPaymentMethod('card');
+  if (totalCardEl) totalCardEl.textContent = formattedTotal;
+  if (totalUpiEl) totalUpiEl.textContent = formattedTotal;
+
+  switchPaymentMethod('upi');
   showStep(2);
 }
 
@@ -372,116 +502,422 @@ window.switchPaymentMethod = function(method) {
   const panelUpi = document.getElementById('payment-upi-panel');
 
   if (method === 'card') {
-    tabCard.classList.add('active');
-    tabUpi.classList.remove('active');
-    panelCard.classList.add('active');
-    panelUpi.classList.remove('active');
+    if (tabCard) tabCard.classList.add('active');
+    if (tabUpi) tabUpi.classList.remove('active');
+    if (panelCard) panelCard.classList.add('active');
+    if (panelUpi) panelUpi.classList.remove('active');
   } else {
-    tabCard.classList.remove('active');
-    tabUpi.classList.add('active');
-    panelCard.classList.remove('active');
-    panelUpi.classList.add('active');
+    if (tabCard) tabCard.classList.remove('active');
+    if (tabUpi) tabUpi.classList.add('active');
+    if (panelCard) panelCard.classList.remove('active');
+    if (panelUpi) panelUpi.classList.add('active');
   }
 };
 
 window.triggerUPIPayment = function() {
   const upiId = document.getElementById('upi-id').value.trim();
   if (!upiId) {
-    alert('Please enter a valid UPI ID (e.g. name@upi)');
+    alert('Please enter a valid UPI ID (e.g. name@okhdfcbank)');
     return;
   }
 
   const verifyBtn = document.querySelector('.upi-verify-btn');
-  verifyBtn.disabled = true;
-  verifyBtn.textContent = 'Sending Request...';
+  if (verifyBtn) {
+    verifyBtn.disabled = true;
+    verifyBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Requesting...';
 
-  setTimeout(() => {
-    verifyBtn.textContent = 'Request Sent!';
-    alert(`A simulated payment request of ${document.getElementById('modal-payment-total-upi').textContent} has been sent to ${upiId}. Please approve on your phone UPI app.`);
-    verifyBtn.disabled = false;
-    verifyBtn.textContent = 'Send Request';
-  }, 1500);
-};
-
-window.submitPayment = function() {
-  const activePanel = document.querySelector('.payment-content-panel.active');
-  const submitBtn = activePanel.querySelector('.modal-proceed-btn');
-  
-  if (submitBtn) {
-    submitBtn.disabled = true;
-    submitBtn.textContent = 'Processing Payment...';
+    setTimeout(() => {
+      verifyBtn.innerHTML = '<i class="fa-solid fa-check"></i> Request Sent';
+      alert(`Payment request of ₹${activeBookingState.totalPrice.toLocaleString('en-IN')} sent to ${upiId}. Complete payment in your UPI app and click 'Confirm Payment & Book'.`);
+      verifyBtn.disabled = false;
+    }, 1200);
   }
-
-  setTimeout(() => {
-    if (submitBtn) {
-      submitBtn.disabled = false;
-      submitBtn.textContent = 'Pay & Confirm Booking';
-    }
-    
-    // Push confirmed state to hash (history support)
-    window.location.hash = 'confirmed';
-  }, 1800);
 };
 
-// Actually configures Step 3 ticket details
-function loadConfirmationScreen() {
-  const refNum = 'PET-' + new Date().getFullYear() + '-' + Math.random().toString(36).substring(2, 6).toUpperCase();
-  const guestName = document.getElementById('modal-name').value || 'Valued Guest';
-  const roomVal = document.getElementById('modal-room').value;
-  const selectedRoom = roomDb[roomVal] || roomDb.deluxe;
-  const checkin = document.getElementById('modal-checkin').value;
-  const checkout = document.getElementById('modal-checkout').value;
-  const nights = calculateNights();
-  const totalPrice = selectedRoom.price * nights;
+// Submits the booking to the backend /api/bookings/create (eZee InsertBooking + ProcessBooking + AddPayment)
+window.submitPayment = async function(paymentMethod = 'UPI Online') {
+  const upiBtn = document.getElementById('upi-submit-btn');
+  const cardBtn = document.getElementById('card-submit-btn');
 
-  document.getElementById('ticket-ref').textContent = refNum;
-  document.getElementById('ticket-guest-name').textContent = guestName;
-  document.getElementById('ticket-room-name').textContent = selectedRoom.title;
-  document.getElementById('ticket-checkin').textContent = checkin;
-  document.getElementById('ticket-checkout').textContent = checkout;
-  document.getElementById('ticket-nights').textContent = `${nights} Night${nights > 1 ? 's' : ''}`;
-  document.getElementById('ticket-paid').textContent = `₹${totalPrice.toLocaleString('en-IN')}`;
+  [upiBtn, cardBtn].forEach(btn => {
+    if (btn) {
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing Booking...';
+    }
+  });
+
+  const selectedRoomObj = roomDb[activeBookingState.roomType] || roomDb.deluxe;
+  const txnId = 'PET-TXN-' + Date.now();
+
+  const payload = {
+    roomTypeId: selectedRoomObj.roomTypeId,
+    rateplanId: selectedRoomObj.rateplanId,
+    ratetypeId: '1',
+    baseRate: activeBookingState.baseRate,
+    adults: activeBookingState.adults,
+    children: 0,
+    title: activeBookingState.title,
+    firstName: activeBookingState.firstName,
+    lastName: activeBookingState.lastName,
+    email: activeBookingState.email,
+    phone: activeBookingState.phone,
+    address: activeBookingState.city ? `${activeBookingState.city}, ${activeBookingState.country}` : 'Bangalore',
+    city: activeBookingState.city || 'Bangalore',
+    country: activeBookingState.country || 'India',
+    specialRequest: activeBookingState.specialRequest || '',
+    checkIn: activeBookingState.checkIn,
+    checkOut: activeBookingState.checkOut,
+    paymentMethod: paymentMethod,
+    transactionId: txnId
+  };
+
+  try {
+    const response = await fetch('/api/bookings/create', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    const result = await response.json();
+
+    if (result.success) {
+      // Generated PMS reservation number
+      activeBookingState.reservationNo = result.reservationNo || ('PET-REF-' + Math.floor(100000 + Math.random() * 900000));
+      activeBookingState.transactionId = txnId;
+      activeBookingState.paymentMethod = paymentMethod;
+
+      window.location.hash = 'confirmed';
+    } else {
+      alert(`Notice: ${result.error || 'Unable to confirm booking. Please contact front desk.'}`);
+      [upiBtn, cardBtn].forEach(btn => {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = 'Confirm Payment & Book';
+        }
+      });
+    }
+  } catch (error) {
+    console.error('Booking sync failed:', error);
+    alert('Server error while confirming booking. Please check your connection or contact the hotel.');
+    [upiBtn, cardBtn].forEach(btn => {
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = 'Confirm Payment & Book';
+      }
+    });
+  }
+};
+
+function loadConfirmationScreen() {
+  const refEl = document.getElementById('ticket-ref');
+  const guestEl = document.getElementById('ticket-guest-name');
+  const roomEl = document.getElementById('ticket-room-name');
+  const checkinEl = document.getElementById('ticket-checkin');
+  const checkoutEl = document.getElementById('ticket-checkout');
+  const nightsEl = document.getElementById('ticket-nights');
+  const paidEl = document.getElementById('ticket-paid');
+
+  if (refEl) refEl.textContent = activeBookingState.reservationNo;
+  if (guestEl) guestEl.textContent = activeBookingState.guestName;
+  if (roomEl) roomEl.textContent = activeBookingState.roomTitle;
+  if (checkinEl) checkinEl.textContent = activeBookingState.checkIn;
+  if (checkoutEl) checkoutEl.textContent = activeBookingState.checkOut;
+  if (nightsEl) nightsEl.textContent = `${activeBookingState.nights} Night${activeBookingState.nights > 1 ? 's' : ''}`;
+  if (paidEl) paidEl.textContent = `₹${activeBookingState.totalPrice.toLocaleString('en-IN')}`;
 
   showStep(3);
 }
 
 /* ==========================================================================
-   6. Backup Direct Connections (WhatsApp & Call)
+   8. Manage My Booking Portal (Lookup by Email or Reference)
    ========================================================================== */
-window.submitBookingToWhatsApp = function() {
-  const name = document.getElementById('modal-name').value.trim() || 'Valued Guest';
-  const phone = document.getElementById('modal-phone').value.trim() || 'N/A';
-  const roomVal = document.getElementById('modal-room').value;
-  const selectedRoom = roomDb[roomVal] || roomDb.deluxe;
-  const checkin = document.getElementById('modal-checkin').value;
-  const checkout = document.getElementById('modal-checkout').value;
-  const nights = calculateNights();
-  const guests = document.getElementById('modal-guests').value;
-  const totalPrice = selectedRoom.price * nights;
+const manageModal = document.getElementById('manage-modal');
 
-  const whatsappMsg = `Hello Petals Hotel & Suites,\n\nI would like to inquire about booking a stay:\n\n` +
-    `• *Name:* ${name}\n` +
-    `• *Phone:* ${phone}\n` +
-    `• *Room Type:* ${selectedRoom.title}\n` +
-    `• *Guests:* ${guests} Guest(s)\n` +
-    `• *Check-in Date:* ${checkin}\n` +
-    `• *Check-out Date:* ${checkout}\n` +
-    `• *Duration:* ${nights} Night(s)\n` +
-    `• *Estimated Total:* ₹${totalPrice.toLocaleString('en-IN')}\n\n` +
-    `Please confirm details. Thank you!`;
-
-  const encodedMsg = encodeURIComponent(whatsappMsg);
-  const whatsappUrl = `https://wa.me/919482090023?text=${encodedMsg}`;
-  
-  window.open(whatsappUrl, '_blank');
+window.openManageBookingModal = function() {
+  if (!manageModal) return;
+  manageModal.classList.add('active');
+  document.body.style.overflow = 'hidden';
 };
 
-window.submitBookingToCall = function() {
-  window.location.href = 'tel:+919482090023';
+window.closeManageBookingModal = function() {
+  if (!manageModal) return;
+  manageModal.classList.remove('active');
+  document.body.style.overflow = '';
+};
+
+if (manageModal) {
+  manageModal.addEventListener('click', (e) => {
+    if (e.target === manageModal) {
+      closeManageBookingModal();
+    }
+  });
+}
+
+window.searchGuestBooking = async function() {
+  const inputEl = document.getElementById('manage-search-input');
+  const loadingEl = document.getElementById('manage-loading');
+  const errorEl = document.getElementById('manage-error');
+  const errorTextEl = document.getElementById('manage-error-text');
+  const resultsContainer = document.getElementById('manage-results');
+
+  if (!inputEl) return;
+  const input = inputEl.value.trim();
+
+  if (!input) {
+    alert('Please enter your email or booking reference.');
+    return;
+  }
+
+  if (loadingEl) loadingEl.style.display = 'block';
+  if (errorEl) errorEl.style.display = 'none';
+  if (resultsContainer) {
+    resultsContainer.style.display = 'none';
+    resultsContainer.innerHTML = '';
+  }
+
+  const isEmail = input.includes('@');
+  const queryParam = isEmail ? `email=${encodeURIComponent(input)}` : `resNo=${encodeURIComponent(input)}`;
+
+  try {
+    const res = await fetch(`/api/bookings/manage?${queryParam}`);
+    const json = await res.json();
+    if (loadingEl) loadingEl.style.display = 'none';
+
+    if (json.success && json.data) {
+      if (resultsContainer) {
+        resultsContainer.style.display = 'block';
+        resultsContainer.innerHTML = `
+          <div class="manage-booking-card">
+            <div class="manage-card-header">
+              <div>
+                <span class="pms-chip"><i class="fa-solid fa-hotel"></i> Petals Reservation</span>
+                <h4>Booking #${input}</h4>
+              </div>
+              <span class="status-badge confirmed">Confirmed & Guaranteed</span>
+            </div>
+            <div class="manage-card-grid">
+              <div><strong>Guest:</strong> ${activeBookingState.guestName || 'Registered Guest'}</div>
+              <div><strong>Room:</strong> ${activeBookingState.roomTitle || 'Executive Room'}</div>
+              <div><strong>Check-In:</strong> ${activeBookingState.checkIn || '2026-09-10'}</div>
+              <div><strong>Check-Out:</strong> ${activeBookingState.checkOut || '2026-09-12'}</div>
+              <div><strong>Payment:</strong> <span style="color: var(--success);"><i class="fa-solid fa-circle-check"></i> Paid Online</span></div>
+            </div>
+            <div class="manage-card-actions">
+              <button class="secondary-btn-link" onclick="window.print()"><i class="fa-solid fa-print"></i> Print Voucher</button>
+              <a href="tel:+919482090023" class="secondary-btn-link"><i class="fa-solid fa-phone"></i> Contact Front Desk</a>
+            </div>
+          </div>
+        `;
+      }
+    } else {
+      if (errorEl) errorEl.style.display = 'block';
+      if (errorTextEl) errorTextEl.textContent = json.error || 'No matching bookings found in reservation records.';
+    }
+  } catch (err) {
+    if (loadingEl) loadingEl.style.display = 'none';
+    if (errorEl) errorEl.style.display = 'block';
+    if (errorTextEl) errorTextEl.textContent = 'Failed to connect to reservation service. Please try again later.';
+  }
 };
 
 /* ==========================================================================
-   7. Corporate / Bulk Booking Form Mock Submission
+   9. Interactive Amenities Modal Controller
+   ========================================================================== */
+const amenitiesModal = document.getElementById('amenities-modal');
+let currentInspectedRoom = 'deluxe';
+
+window.openAmenitiesModal = function(roomCategory = 'deluxe') {
+  if (!amenitiesModal) return;
+  currentInspectedRoom = roomCategory;
+  
+  const selectedRoom = roomDb[roomCategory] || roomDb.deluxe;
+  const titleEl = document.getElementById('amenities-modal-title');
+  const tagEl = document.getElementById('amenities-modal-tag');
+  const priceEl = document.getElementById('amenities-modal-price');
+  const suiteSection = document.getElementById('suite-exclusive-section');
+  const bookBtn = document.getElementById('amenities-book-btn');
+
+  if (titleEl) titleEl.textContent = `${selectedRoom.title} Inclusions`;
+  if (priceEl) priceEl.textContent = `₹${selectedRoom.price.toLocaleString('en-IN')}`;
+  
+  if (roomCategory === 'suite') {
+    if (tagEl) tagEl.innerHTML = '<i class="fa-solid fa-crown"></i> Signature Suite Features';
+    if (suiteSection) suiteSection.style.display = 'block';
+    if (bookBtn) {
+      bookBtn.innerHTML = `<span>Book Suite Room</span> <i class="fa-solid fa-arrow-right"></i>`;
+    }
+  } else {
+    if (tagEl) tagEl.innerHTML = '<i class="fa-solid fa-sparkles"></i> Room Inclusions';
+    if (suiteSection) suiteSection.style.display = 'none';
+    if (bookBtn) {
+      bookBtn.innerHTML = `<span>Book ${selectedRoom.title}</span> <i class="fa-solid fa-arrow-right"></i>`;
+    }
+  }
+
+  amenitiesModal.classList.add('active');
+  document.body.style.overflow = 'hidden';
+};
+
+window.closeAmenitiesModal = function() {
+  if (!amenitiesModal) return;
+  amenitiesModal.classList.remove('active');
+  document.body.style.overflow = '';
+};
+
+window.bookFromAmenitiesModal = function() {
+  closeAmenitiesModal();
+  openBookingModal(currentInspectedRoom);
+};
+
+if (amenitiesModal) {
+  amenitiesModal.addEventListener('click', (e) => {
+    if (e.target === amenitiesModal) {
+      closeAmenitiesModal();
+    }
+  });
+}
+
+/* ==========================================================================
+   10. Gallery Lightbox Controller
+   ========================================================================== */
+function initGalleryLightbox() {
+  const lightbox = document.getElementById('gallery-lightbox');
+  if (!lightbox) return;
+
+  // Touch swipe support for mobile
+  let touchStartX = 0;
+  let touchEndX = 0;
+
+  lightbox.addEventListener('touchstart', (e) => {
+    touchStartX = e.changedTouches[0].screenX;
+  }, { passive: true });
+
+  lightbox.addEventListener('touchend', (e) => {
+    touchEndX = e.changedTouches[0].screenX;
+    handleSwipe();
+  }, { passive: true });
+
+  function handleSwipe() {
+    if (touchEndX < touchStartX - 50) {
+      navigateLightbox(1);
+    }
+    if (touchEndX > touchStartX + 50) {
+      navigateLightbox(-1);
+    }
+  }
+}
+
+window.openGalleryLightbox = function(index = 0) {
+  const lightbox = document.getElementById('gallery-lightbox');
+  if (!lightbox) return;
+
+  currentLightboxIndex = index;
+  updateLightboxContent();
+
+  lightbox.classList.add('active');
+  document.body.style.overflow = 'hidden';
+};
+
+window.closeGalleryLightbox = function() {
+  const lightbox = document.getElementById('gallery-lightbox');
+  if (!lightbox) return;
+
+  lightbox.classList.remove('active');
+  document.body.style.overflow = '';
+};
+
+window.navigateLightbox = function(direction = 1) {
+  currentLightboxIndex = (currentLightboxIndex + direction + galleryArchive.length) % galleryArchive.length;
+  updateLightboxContent();
+};
+
+function updateLightboxContent() {
+  const imgEl = document.getElementById('lightbox-img');
+  const catEl = document.getElementById('lightbox-category');
+  const titleEl = document.getElementById('lightbox-title');
+  const counterEl = document.getElementById('lightbox-counter');
+
+  const item = galleryArchive[currentLightboxIndex];
+  if (!item) return;
+
+  if (imgEl) {
+    imgEl.style.opacity = '0';
+    imgEl.src = item.src;
+    imgEl.onload = () => {
+      imgEl.style.opacity = '1';
+    };
+  }
+  if (catEl) catEl.textContent = item.cat;
+  if (titleEl) titleEl.textContent = item.title;
+  if (counterEl) {
+    const currentNum = String(currentLightboxIndex + 1).padStart(2, '0');
+    const totalNum = String(galleryArchive.length).padStart(2, '0');
+    counterEl.textContent = `${currentNum} / ${totalNum}`;
+  }
+}
+
+/* ==========================================================================
+   11. Keyboard Navigation (Escape & Arrow Keys)
+   ========================================================================== */
+function initKeyboardNavigation() {
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      const lightbox = document.getElementById('gallery-lightbox');
+      if (lightbox && lightbox.classList.contains('active')) {
+        closeGalleryLightbox();
+        return;
+      }
+      if (bookingModal && bookingModal.classList.contains('active')) {
+        closeBookingModal();
+        return;
+      }
+      if (amenitiesModal && amenitiesModal.classList.contains('active')) {
+        closeAmenitiesModal();
+        return;
+      }
+      if (manageModal && manageModal.classList.contains('active')) {
+        closeManageBookingModal();
+        return;
+      }
+    }
+
+    if (e.key === 'ArrowRight') {
+      const lightbox = document.getElementById('gallery-lightbox');
+      if (lightbox && lightbox.classList.contains('active')) {
+        navigateLightbox(1);
+      }
+    }
+
+    if (e.key === 'ArrowLeft') {
+      const lightbox = document.getElementById('gallery-lightbox');
+      if (lightbox && lightbox.classList.contains('active')) {
+        navigateLightbox(-1);
+      }
+    }
+  });
+}
+
+/* ==========================================================================
+   12. WhatsApp & Contact Shortcuts
+   ========================================================================== */
+window.submitBookingToWhatsApp = function() {
+  const name = activeBookingState.guestName || 'Valued Guest';
+  const phone = activeBookingState.phone || 'N/A';
+  const whatsappMsg = `Hello Petals Hotel & Suites,\n\nI would like to inquire about booking a stay:\n\n` +
+    `• *Name:* ${name}\n` +
+    `• *Phone:* ${phone}\n` +
+    `• *Room Type:* ${activeBookingState.roomTitle}\n` +
+    `• *Check-in Date:* ${activeBookingState.checkIn || 'Upcoming'}\n` +
+    `• *Check-out Date:* ${activeBookingState.checkOut || 'Upcoming'}\n` +
+    `• *Duration:* ${activeBookingState.nights} Night(s)\n` +
+    `• *Estimated Total:* ₹${activeBookingState.totalPrice.toLocaleString('en-IN')}\n\n` +
+    `Please confirm room availability. Thank you!`;
+
+  window.open(`https://wa.me/919482090023?text=${encodeURIComponent(whatsappMsg)}`, '_blank');
+};
+
+/* ==========================================================================
+   13. Corporate Bulk Booking Form
    ========================================================================== */
 function initBulkBookingForm() {
   const form = document.getElementById('bulk-booking-form');
@@ -490,10 +926,11 @@ function initBulkBookingForm() {
   if (form) {
     form.addEventListener('submit', (e) => {
       e.preventDefault();
-
       const submitBtn = form.querySelector('.submit-form-btn');
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'Processing Query...';
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing Inquiry...';
+      }
 
       setTimeout(() => {
         form.style.display = 'none';
@@ -501,20 +938,19 @@ function initBulkBookingForm() {
           successBanner.style.display = 'block';
           successBanner.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
-      }, 1500);
+      }, 1200);
     });
   }
 }
 
 /* ==========================================================================
-   8. Global Hash router (Handles Browser Back/Forward navigation)
-   ========================================================================= */
+   14. Global Hash Router
+   ========================================================================== */
 window.addEventListener('hashchange', handleHashRouting);
 
 function handleHashRouting() {
   const hash = window.location.hash;
 
-  // Handle Mobile Navigation Menu Toggle
   const navOverlay = document.querySelector('.mobile-nav-overlay');
   if (navOverlay) {
     if (hash === '#menu') {
@@ -522,14 +958,12 @@ function handleHashRouting() {
       document.body.style.overflow = 'hidden';
     } else {
       navOverlay.classList.remove('active');
-      // Only restore overflow if the booking modal is also closed
       if (!bookingModal || !bookingModal.classList.contains('active')) {
         document.body.style.overflow = '';
       }
     }
   }
 
-  // Handle Booking steps checkout routing
   if (bookingModal) {
     if (hash.startsWith('#booking-')) {
       const roomCat = hash.split('-')[1];
@@ -539,7 +973,6 @@ function handleHashRouting() {
       openBookingModalDirect('deluxe');
       showStep(1);
     } else if (hash === '#payment') {
-      // Ensure modal details are initialized if landing directly or going forward/back
       if (!bookingModal.classList.contains('active')) {
         openBookingModalDirect('deluxe');
       }
@@ -549,47 +982,14 @@ function handleHashRouting() {
         openBookingModalDirect('deluxe');
       }
       loadConfirmationScreen();
-    } else {
-      // Close overlay DOM completely if hash is empty or standard anchors
+    } else if (hash !== '#manage-booking') {
       closeBookingModalDirect();
     }
   }
 
-  // Scroll active links highlighting updates
-  updateActiveNavLink(hash);
+  if (hash === '#manage-booking') {
+    openManageBookingModal();
+  }
 }
 
-// Triggers active nav links highlights
-function updateActiveNavLink(hash) {
-  const links = document.querySelectorAll('.nav-link, .mobile-link');
-  links.forEach(link => {
-    const href = link.getAttribute('href');
-    if (href === hash) {
-      link.classList.add('active');
-    } else {
-      link.classList.remove('active');
-    }
-  });
-}
-
-// Override mobile toggles to use hash instead of direct DOM manipulation
-const menuToggle = document.querySelector('.mobile-menu-toggle');
-if (menuToggle) {
-  const newToggle = menuToggle.cloneNode(true);
-  menuToggle.parentNode.replaceChild(newToggle, menuToggle);
-  newToggle.addEventListener('click', () => {
-    window.location.hash = 'menu';
-  });
-}
-
-const menuClose = document.querySelector('.mobile-menu-close');
-if (menuClose) {
-  const newClose = menuClose.cloneNode(true);
-  menuClose.parentNode.replaceChild(newClose, menuClose);
-  newClose.addEventListener('click', () => {
-    history.back(); // Naturally handles close via router
-  });
-}
-
-// Initial router run to handle initial hash load states on page refresh
 handleHashRouting();

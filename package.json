@@ -1,0 +1,23 @@
+{
+  "name": "petal-suites-pms",
+  "version": "1.0.0",
+  "description": "Petals Suites & Hotel - eZee PMS Integration & Booking Engine",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "node server/server.js",
+    "dev": "node --watch server/server.js"
+  },
+  "keywords": [
+    "hotel",
+    "ezee-pms",
+    "booking-engine",
+    "hospitality"
+  ],
+  "author": "Petals Suites",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2"
+  }
+}
