@@ -704,7 +704,7 @@ window.searchGuestBooking = async function() {
             </div>
             <div class="manage-card-actions">
               <button class="secondary-btn-link" onclick="window.print()"><i class="fa-solid fa-print"></i> Print Voucher</button>
-              <a href="tel:+919482090023" class="secondary-btn-link"><i class="fa-solid fa-phone"></i> Contact Front Desk</a>
+              <a href="tel:+918123698844" class="secondary-btn-link"><i class="fa-solid fa-phone"></i> Contact Front Desk</a>
             </div>
           </div>
         `;
@@ -913,7 +913,7 @@ window.submitBookingToWhatsApp = function() {
     `• *Estimated Total:* ₹${activeBookingState.totalPrice.toLocaleString('en-IN')}\n\n` +
     `Please confirm room availability. Thank you!`;
 
-  window.open(`https://wa.me/919482090023?text=${encodeURIComponent(whatsappMsg)}`, '_blank');
+  window.open(`https://wa.me/918123698844?text=${encodeURIComponent(whatsappMsg)}`, '_blank');
 };
 
 /* ==========================================================================
@@ -932,13 +932,46 @@ function initBulkBookingForm() {
         submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing Inquiry...';
       }
 
+      const name = document.getElementById('bulk-name') ? document.getElementById('bulk-name').value.trim() : '';
+      const company = document.getElementById('bulk-company') ? document.getElementById('bulk-company').value.trim() : '';
+      const email = document.getElementById('bulk-email') ? document.getElementById('bulk-email').value.trim() : '';
+      const phone = document.getElementById('bulk-phone') ? document.getElementById('bulk-phone').value.trim() : '';
+      const rooms = document.getElementById('bulk-rooms') ? document.getElementById('bulk-rooms').value.trim() : '';
+      const duration = document.getElementById('bulk-stay-duration') ? document.getElementById('bulk-stay-duration').value.trim() : '';
+      const message = document.getElementById('bulk-message') ? document.getElementById('bulk-message').value.trim() : '';
+
+      const corpMsg = `Hello Petals Hotel & Suites,\n\nI would like to submit a Corporate / Bulk Booking Inquiry:\n\n` +
+        `• *Contact Person:* ${name || 'N/A'}\n` +
+        `• *Company:* ${company || 'N/A'}\n` +
+        `• *Email:* ${email || 'N/A'}\n` +
+        `• *Phone:* ${phone || 'N/A'}\n` +
+        `• *Rooms Required:* ${rooms || '5+'}\n` +
+        `• *Stay Duration:* ${duration || '1'} Night(s)\n` +
+        `• *Requirement Details:* ${message || 'Standard corporate inquiry'}\n\n` +
+        `Please share availability and customized corporate tariff. Thank you!`;
+
+      const whatsappUrl = `https://wa.me/918123698844?text=${encodeURIComponent(corpMsg)}`;
+
       setTimeout(() => {
         form.style.display = 'none';
         if (successBanner) {
+          successBanner.innerHTML = `
+            <i class="fa-solid fa-circle-check"></i>
+            <h3>Thank You for Your Query!</h3>
+            <p>Our corporate relations desk has received your booking inquiry. We will contact you at <strong>${email || phone}</strong> shortly.</p>
+            <div style="margin-top: 18px;">
+              <a href="${whatsappUrl}" target="_blank" class="primary-btn" style="background: #25D366; color: #FFFFFF; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 14px rgba(37, 211, 102, 0.35);">
+                <i class="fa-brands fa-whatsapp"></i> Chat with Corporate Desk on WhatsApp
+              </a>
+            </div>
+          `;
           successBanner.style.display = 'block';
           successBanner.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
-      }, 1200);
+
+        // Open WhatsApp directly with inquiry details
+        window.open(whatsappUrl, '_blank');
+      }, 1000);
     });
   }
 }
