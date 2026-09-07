@@ -3,6 +3,17 @@
  * Editorial Hospitality Experience & Live eZee Absolute PMS Backend API Integration
  */
 
+// Helper to escape HTML characters and prevent DOM XSS vulnerabilities
+function escapeHTML(str) {
+  if (str === null || str === undefined) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   initPreloader();
   initHeaderScroll();
@@ -691,15 +702,15 @@ window.searchGuestBooking = async function() {
             <div class="manage-card-header">
               <div>
                 <span class="pms-chip"><i class="fa-solid fa-hotel"></i> Petals Reservation</span>
-                <h4>Booking #${input}</h4>
+                <h4>Booking #${escapeHTML(input)}</h4>
               </div>
               <span class="status-badge confirmed">Confirmed & Guaranteed</span>
             </div>
             <div class="manage-card-grid">
-              <div><strong>Guest:</strong> ${activeBookingState.guestName || 'Registered Guest'}</div>
-              <div><strong>Room:</strong> ${activeBookingState.roomTitle || 'Executive Room'}</div>
-              <div><strong>Check-In:</strong> ${activeBookingState.checkIn || '2026-09-10'}</div>
-              <div><strong>Check-Out:</strong> ${activeBookingState.checkOut || '2026-09-12'}</div>
+              <div><strong>Guest:</strong> ${escapeHTML(activeBookingState.guestName || 'Registered Guest')}</div>
+              <div><strong>Room:</strong> ${escapeHTML(activeBookingState.roomTitle || 'Executive Room')}</div>
+              <div><strong>Check-In:</strong> ${escapeHTML(activeBookingState.checkIn || '2026-09-10')}</div>
+              <div><strong>Check-Out:</strong> ${escapeHTML(activeBookingState.checkOut || '2026-09-12')}</div>
               <div><strong>Payment:</strong> <span style="color: var(--success);"><i class="fa-solid fa-circle-check"></i> Paid Online</span></div>
             </div>
             <div class="manage-card-actions">
@@ -958,7 +969,7 @@ function initBulkBookingForm() {
           successBanner.innerHTML = `
             <i class="fa-solid fa-circle-check"></i>
             <h3>Thank You for Your Query!</h3>
-            <p>Our corporate relations desk has received your booking inquiry. We will contact you at <strong>${email || phone}</strong> shortly.</p>
+            <p>Our corporate relations desk has received your booking inquiry. We will contact you at <strong>${escapeHTML(email || phone)}</strong> shortly.</p>
             <div style="margin-top: 18px;">
               <a href="${whatsappUrl}" target="_blank" class="primary-btn" style="background: #25D366; color: #FFFFFF; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 14px rgba(37, 211, 102, 0.35);">
                 <i class="fa-brands fa-whatsapp"></i> Chat with Corporate Desk on WhatsApp
