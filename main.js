@@ -24,6 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initGalleryLightbox();
   initKeyboardNavigation();
   loadConfiguredDetails();
+  initVersionTracker();
 });
 
 /* ==========================================================================
@@ -1037,3 +1038,39 @@ function handleHashRouting() {
 }
 
 handleHashRouting();
+
+/* ==========================================================================
+   15. Automatic Version Tracker & Cache-Busting Sync
+   ========================================================================== */
+function initVersionTracker() {
+  const currentVersion = document.querySelector('meta[name="app-version"]')?.getAttribute('content');
+  if (!currentVersion) return;
+
+  const checkForNewVersion = async () => {
+    try {
+      const res = await fetch(`/api/version?_t=${Date.now()}`);
+      if (!res.ok) return;
+      const data = await res.json();
+      if (data && data.appVersion && data.appVersion !== currentVersion) {
+        console.log(`🌸 Petals Website Update Detected: ${data.appVersion} (Current: ${currentVersion}). Refreshing fresh assets...`);
+        // If booking modal is not currently open/being filled, reload seamlessly to apply new assets
+        const modalActive = document.getElementById('booking-modal')?.classList.contains('active');
+        if (!modalActive) {
+          window.location.reload();
+        }
+      }
+    } catch (err) {
+      // Ignore background network errors
+    }
+  };
+
+  // Check when user switches back to this browser tab
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+      checkForNewVersion();
+    }
+  });
+
+  // Check periodically every 5 minutes
+  setInterval(checkForNewVersion, 5 * 60 * 1000);
+}

@@ -51,6 +51,23 @@ const sanitizeText = (str, maxLen = 200) => {
   return str.replace(/[<>]/g, '').trim().slice(0, maxLen);
 };
 
+const pkg = require('../../package.json');
+const BUILD_TIME = new Date().toISOString();
+const APP_VERSION = `${pkg.version || '1.0.0'}-${Buffer.from(BUILD_TIME).toString('base64url').slice(-8)}`;
+
+/**
+ * 0. GET /api/version
+ * Returns live application version and server build timestamp
+ */
+router.get('/version', (req, res) => {
+  res.json({
+    version: pkg.version || '1.0.0',
+    appVersion: APP_VERSION,
+    buildTime: BUILD_TIME,
+    uptimeSeconds: Math.floor(process.uptime())
+  });
+});
+
 /**
  * 1. GET /api/availability
  * Query params: checkin (YYYY-MM-DD), checkout (YYYY-MM-DD)
