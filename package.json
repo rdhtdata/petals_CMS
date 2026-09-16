@@ -1,6 +1,6 @@
 {
   "name": "petal-suites-pms",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Petals Suites & Hotel - eZee PMS Integration & Booking Engine",
   "main": "server/server.js",
   "scripts": {
