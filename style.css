@@ -3072,6 +3072,25 @@ button {
   align-items: center;
   font-size: 0.8rem;
   color: rgba(255, 255, 255, 0.5);
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.footer-designed-by {
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.footer-designed-by a {
+  color: var(--accent-gold, #C5A880);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color var(--transition-fast), border-bottom var(--transition-fast);
+  border-bottom: 1px solid transparent;
+}
+
+.footer-designed-by a:hover {
+  color: #FFFFFF;
+  border-bottom: 1px solid var(--accent-gold, #C5A880);
 }
 
 /* --------------------------------------------------------------------------
