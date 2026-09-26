@@ -462,21 +462,32 @@ button {
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 18px;
+  gap: 16px;
+}
+
+.header-phone-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .call-btn-header {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.9);
-  padding: 8px 14px;
+  color: rgba(255, 255, 255, 0.92);
+  padding: 7px 13px;
   border-radius: var(--radius-full);
   background: rgba(255, 255, 255, 0.12);
   backdrop-filter: blur(6px);
   transition: var(--transition-fast);
+}
+
+.call-btn-header.alt-call-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 .call-btn-header:hover {
@@ -487,6 +498,11 @@ button {
 .main-header.scrolled .call-btn-header {
   color: var(--text-primary);
   background: var(--bg-secondary);
+}
+
+.main-header.scrolled .call-btn-header.alt-call-btn {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-subtle);
 }
 
 .main-header.scrolled .call-btn-header:hover {
@@ -2129,78 +2145,13 @@ button {
   background: var(--border-medium);
 }
 
-/* Modal Stepper Header */
-.modal-stepper {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  margin-bottom: 24px;
-}
-
-.step-indicator {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  opacity: 0.45;
-  transition: var(--transition-fast);
-}
-
-.step-indicator.active,
-.step-indicator.completed {
-  opacity: 1;
-}
-
-.step-num {
-  width: 24px;
-  height: 24px;
-  border-radius: var(--radius-full);
-  background: var(--bg-secondary);
-  color: var(--text-primary);
-  font-size: 0.72rem;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.step-indicator.active .step-num {
-  background: var(--accent);
-  color: #FFFFFF;
-}
-
-.step-indicator.completed .step-num {
-  background: var(--success);
-  color: #FFFFFF;
-}
-
-.step-name {
-  font-size: 0.72rem;
-  letter-spacing: 0.12em;
-  font-weight: 700;
-  color: var(--text-primary);
-}
-
-.step-line {
-  width: 32px;
-  height: 1.5px;
-  background: var(--border-subtle);
-}
-
-.step-line.active {
-  background: var(--accent);
-}
-
-.modal-step {
-  display: none;
-}
-
-.modal-step.active {
-  display: block;
+/* Direct Reservation Modal Styling */
+.direct-booking-modal-content {
+  max-width: 620px;
 }
 
 .modal-header {
-  margin-bottom: 24px;
+  margin-bottom: 20px;
 }
 
 .modal-tag {
@@ -2208,19 +2159,63 @@ button {
   letter-spacing: 0.2em;
   color: var(--accent);
   font-weight: 700;
-  display: block;
-  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
 }
 
 .modal-title {
   font-size: 1.7rem;
   color: var(--text-primary);
+  line-height: 1.2;
 }
 
 .modal-subtitle {
   font-size: 0.88rem;
   color: var(--text-secondary);
-  margin-top: 4px;
+  margin-top: 6px;
+  line-height: 1.45;
+}
+
+/* Advisory Banner */
+.booking-advisory-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  background: rgba(188, 163, 127, 0.12);
+  border: 1px solid rgba(188, 163, 127, 0.35);
+  border-radius: var(--radius-md);
+  padding: 14px 18px;
+  margin-bottom: 20px;
+}
+
+.advisory-icon-wrap {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  background: var(--accent);
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.advisory-text-wrap strong {
+  display: block;
+  font-size: 0.92rem;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+
+.advisory-text-wrap p {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.45;
+  margin: 0;
 }
 
 /* Selected Room Card Preview */
@@ -2230,14 +2225,14 @@ button {
   gap: 16px;
   background: var(--bg-secondary);
   border-radius: var(--radius-md);
-  padding: 12px 16px;
+  padding: 14px 16px;
   border: 1px solid var(--border-subtle);
-  margin-bottom: 24px;
+  margin-bottom: 22px;
 }
 
 .room-card-thumb {
-  width: 72px;
-  height: 52px;
+  width: 80px;
+  height: 56px;
   border-radius: var(--radius-sm);
   object-fit: cover;
 }
@@ -2245,87 +2240,231 @@ button {
 .room-card-text h4 {
   font-size: 1.05rem;
   margin-bottom: 2px;
+  color: var(--text-primary);
 }
 
 .room-card-text p {
   font-size: 0.85rem;
   color: var(--text-secondary);
+  font-weight: 600;
 }
 
-.pms-avail-badge {
+.direct-booking-badge {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  font-size: 0.72rem;
-  font-weight: 700;
+  gap: 6px;
+  font-size: 0.74rem;
+  font-weight: 600;
   color: var(--success);
   background: var(--success-bg);
-  padding: 3px 8px;
+  padding: 3px 10px;
   border-radius: var(--radius-full);
   margin-top: 4px;
 }
 
-/* Modal Form Grid */
-.modal-form-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
+/* Direct Call Cards Section */
+.direct-call-section {
+  margin-bottom: 20px;
 }
 
-.guest-name-row {
-  grid-column: span 2;
+.section-micro-label {
+  display: block;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+}
+
+.call-cards-grid {
   display: grid;
-  grid-template-columns: 85px 1fr 1fr;
+  grid-template-columns: 1fr 1fr;
   gap: 12px;
 }
 
-.guest-pills-container {
+.call-action-card {
   display: flex;
-  gap: 10px;
-}
-
-.guest-pill {
-  flex: 1;
-  padding: 10px;
-  border-radius: var(--radius-sm);
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border-radius: var(--radius-lg);
+  background: var(--bg-surface);
   border: 1.5px solid var(--border-subtle);
-  background: var(--bg-primary);
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--text-primary);
+  text-decoration: none;
+  transition: var(--transition-base);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
 }
 
-.guest-pill.active {
+.call-action-card:hover {
+  transform: translateY(-2px);
   border-color: var(--accent);
-  background: var(--accent-light);
-  color: var(--text-primary);
+  box-shadow: 0 6px 20px rgba(188, 163, 127, 0.22);
 }
 
-/* Price Breakdown Card */
-.modal-price-breakdown {
-  background: var(--bg-primary);
-  border-radius: var(--radius-md);
-  padding: 18px 20px;
-  border: 1px solid var(--border-subtle);
-  margin: 20px 0;
+.call-action-card.primary-call {
+  background: linear-gradient(135deg, rgba(31, 27, 24, 0.03) 0%, rgba(188, 163, 127, 0.08) 100%);
+}
+
+.call-action-card.alt-call {
+  background: linear-gradient(135deg, rgba(250, 247, 242, 0.8) 0%, rgba(37, 211, 102, 0.06) 100%);
+}
+
+.call-icon-box {
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius-full);
+  background: var(--bg-dark);
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.05rem;
+  flex-shrink: 0;
+  transition: var(--transition-fast);
+}
+
+.call-action-card.alt-call .call-icon-box {
+  background: var(--accent);
+}
+
+.call-action-card:hover .call-icon-box {
+  transform: scale(1.08);
+}
+
+.call-info {
   display: flex;
   flex-direction: column;
-  gap: 8px;
 }
 
-.breakdown-row {
+.call-label {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.call-number {
+  font-size: 0.98rem;
+  color: var(--text-primary);
+  font-weight: 700;
+  margin: 2px 0;
+}
+
+.call-subtext {
+  font-size: 0.72rem;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* WhatsApp Direct Section */
+.whatsapp-direct-section {
+  background: var(--bg-primary);
+  border-radius: var(--radius-lg);
+  padding: 18px 20px;
+  border: 1px solid var(--border-subtle);
+  margin-bottom: 18px;
+}
+
+.whatsapp-header-line {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.wa-icon-ring {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  background: var(--whatsapp);
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.wa-title-box strong {
+  display: block;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+}
+
+.wa-title-box p {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.quick-inquiry-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.quick-inquiry-row .form-group.mini {
+  margin-bottom: 0;
+}
+
+.quick-inquiry-row .form-group.mini label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.quick-inquiry-row .form-group.mini input,
+.quick-inquiry-row .form-group.mini select {
+  width: 100%;
+  padding: 9px 10px;
+  font-size: 0.82rem;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--border-subtle);
+  background: var(--bg-surface);
+}
+
+.whatsapp-submit-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: var(--whatsapp);
+  color: #FFFFFF;
+  padding: 13px;
+  border-radius: var(--radius-full);
+  font-size: 0.92rem;
+  font-weight: 700;
+  box-shadow: 0 4px 14px rgba(37, 211, 102, 0.28);
+  transition: var(--transition-base);
+}
+
+.whatsapp-submit-btn:hover {
+  background: #1eb956;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
+}
+
+.modal-contact-footer {
+  text-align: center;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 14px;
+}
+
+.modal-bottom-summary {
   display: flex;
   justify-content: space-between;
-  font-size: 0.88rem;
-  color: var(--text-secondary);
-}
-
-.breakdown-row.total-row {
-  border-top: 1px solid var(--border-subtle);
-  padding-top: 10px;
-  margin-top: 4px;
-  font-size: 1.05rem;
-  color: var(--text-primary);
+  align-items: center;
+  margin-top: 24px;
+  gap: 16px;
 }
 
 .modal-proceed-btn {
@@ -2336,158 +2475,16 @@ button {
   gap: 10px;
   background: var(--bg-dark);
   color: #FFFFFF;
-  padding: 16px;
+  padding: 14px 22px;
   border-radius: var(--radius-full);
   font-size: 0.95rem;
   font-weight: 600;
+  transition: var(--transition-base);
 }
 
 .modal-proceed-btn:hover {
   background: var(--accent-hover);
-}
-
-.modal-footnote {
-  text-align: center;
-  font-size: 0.82rem;
-  color: var(--text-muted);
-  margin-top: 16px;
-}
-
-.modal-footnote a {
-  color: var(--accent);
-  font-weight: 600;
-}
-
-/* Payment Step 2 */
-.checkout-summary-stripe {
-  background: var(--bg-secondary);
-  border-radius: var(--radius-sm);
-  padding: 10px 14px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--text-primary);
-  margin-bottom: 20px;
-  text-align: center;
-}
-
-.payment-tabs {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-bottom: 24px;
-}
-
-.payment-tab {
-  padding: 12px;
-  border-radius: var(--radius-md);
-  border: 1.5px solid var(--border-subtle);
-  background: var(--bg-primary);
-  font-size: 0.88rem;
-  font-weight: 600;
-  color: var(--text-primary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-}
-
-.payment-tab.active {
-  border-color: var(--accent);
-  background: var(--bg-surface);
-  box-shadow: var(--shadow-sm);
-}
-
-.payment-content-panel {
-  display: none;
-}
-
-.payment-content-panel.active {
-  display: block;
-}
-
-.upi-checkout-layout {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  align-items: center;
-  padding: 16px 0 24px 0;
-}
-
-.qr-mock-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-}
-
-.qr-mock-code {
-  width: 140px;
-  height: 140px;
-  background: #FFFFFF;
-  border: 1.5px solid var(--border-medium);
-  border-radius: var(--radius-md);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 5rem;
-  color: var(--text-primary);
-  position: relative;
-  overflow: hidden;
-}
-
-.qr-scanner-line {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background: var(--accent);
-  box-shadow: 0 0 8px var(--accent);
-  animation: qrScan 2.4s infinite ease-in-out;
-}
-
-@keyframes qrScan {
-  0%, 100% { top: 5%; }
-  50% { top: 90%; }
-}
-
-.qr-mock-text {
-  font-size: 0.82rem;
-  color: var(--text-muted);
-  text-align: center;
-}
-
-.upi-input-layout {
-  width: 100%;
-}
-
-.upi-input-group {
-  display: flex;
-  gap: 8px;
-  margin-top: 6px;
-}
-
-.upi-input-group input {
-  flex: 1;
-  padding: 12px;
-  border: 1.5px solid var(--border-subtle);
-  border-radius: var(--radius-sm);
-}
-
-.upi-verify-btn {
-  background: var(--bg-dark);
-  color: #FFFFFF;
-  padding: 12px 18px;
-  border-radius: var(--radius-sm);
-  font-size: 0.85rem;
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-.upi-hint {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-  margin-top: 6px;
+  transform: translateY(-2px);
 }
 
 .price-summary-box {
@@ -2495,253 +2492,16 @@ button {
   flex-direction: column;
 }
 
-.price-label {
-  font-size: 0.72rem;
-  text-transform: uppercase;
-  color: var(--text-muted);
-}
-
-.price-val {
-  font-family: var(--font-title);
-  font-size: 1.4rem;
-  color: var(--accent);
-}
-
-.modal-bottom-summary {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  margin-top: 24px;
-}
-
-.modal-bottom-summary .pay-btn {
-  flex: 1;
-}
-
-.input-icon-wrapper {
-  position: relative;
-}
-
-.input-icon-wrapper input {
-  padding-right: 36px;
-}
-
-.input-icon-wrapper i {
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--text-muted);
-}
-
-.back-link {
-  color: var(--text-secondary);
-  font-size: 0.82rem;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-/* Confirmation Voucher Step 3 */
-.ticket-wrapper {
-  background: var(--bg-primary);
-  border-radius: var(--radius-lg);
-  border: 1.5px dashed var(--accent);
-  padding: 30px;
-}
-
-.ticket-header {
-  text-align: center;
-  margin-bottom: 24px;
-}
-
-.success-icon-ring {
-  width: 54px;
-  height: 54px;
-  border-radius: var(--radius-full);
-  background: var(--success);
-  color: #FFFFFF;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.5rem;
-  margin: 0 auto 14px auto;
-}
-
-.ticket-header h3 {
-  font-size: 1.5rem;
-  margin-bottom: 4px;
-}
-
-.ticket-header p {
-  font-size: 0.88rem;
-  color: var(--text-secondary);
-}
-
-.ticket-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-}
-
-.ticket-label {
+.price-summary-box .price-label {
   font-size: 0.75rem;
-  text-transform: uppercase;
   color: var(--text-muted);
-  letter-spacing: 0.1em;
+  text-transform: uppercase;
 }
 
-.ticket-val {
-  font-family: var(--font-title);
-  font-size: 1.15rem;
-  color: var(--accent);
-  font-weight: 600;
-}
-
-.ticket-details-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
-  padding: 16px 0;
-}
-
-.ticket-detail {
-  display: flex;
-  flex-direction: column;
-}
-
-.ticket-detail span:last-child {
-  font-size: 0.92rem;
-  font-weight: 600;
+.price-summary-box .price-val {
+  font-size: 1.3rem;
+  font-weight: 700;
   color: var(--text-primary);
-}
-
-.ticket-paid-val {
-  color: var(--success) !important;
-  font-size: 1.1rem !important;
-}
-
-.ticket-actions {
-  display: flex;
-  gap: 12px;
-  margin: 20px 0 12px 0;
-}
-
-.print-btn {
-  flex: 1;
-  justify-content: center;
-}
-
-.done-btn {
-  flex: 1;
-}
-
-.ticket-email-hint {
-  font-size: 0.78rem;
-  color: var(--text-muted);
-}
-
-/* --------------------------------------------------------------------------
-   18. Manage Booking Modal
-   -------------------------------------------------------------------------- */
-.manage-modal-content {
-  max-width: 580px;
-}
-
-.manage-search-bar {
-  display: flex;
-  gap: 10px;
-  margin: 20px 0;
-}
-
-.manage-input-wrap {
-  flex: 1;
-  position: relative;
-}
-
-.manage-input-wrap i {
-  position: absolute;
-  left: 14px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--text-muted);
-}
-
-.manage-input-wrap input {
-  width: 100%;
-  padding: 14px 14px 14px 40px;
-  border: 1.5px solid var(--border-subtle);
-  border-radius: var(--radius-sm);
-  background: var(--bg-primary);
-}
-
-.manage-btn {
-  padding: 14px 22px;
-  border-radius: var(--radius-sm);
-}
-
-.manage-status-msg {
-  padding: 16px;
-  text-align: center;
-  font-size: 0.9rem;
-  color: var(--text-secondary);
-}
-
-.manage-status-msg.error {
-  color: var(--danger);
-  background: #FDEDEC;
-  border-radius: var(--radius-sm);
-}
-
-.manage-booking-card {
-  background: var(--bg-primary);
-  border-radius: var(--radius-md);
-  padding: 24px;
-  border: 1px solid var(--border-subtle);
-  margin-top: 16px;
-}
-
-.manage-card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-bottom: 14px;
-  border-bottom: 1px solid var(--border-subtle);
-  margin-bottom: 14px;
-}
-
-.pms-chip {
-  font-size: 0.72rem;
-  color: var(--accent);
-  font-weight: 700;
-  text-transform: uppercase;
-}
-
-.status-badge {
-  font-size: 0.72rem;
-  font-weight: 700;
-  padding: 4px 10px;
-  border-radius: var(--radius-full);
-}
-
-.status-badge.confirmed {
-  background: var(--success-bg);
-  color: var(--success);
-}
-
-.manage-card-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  font-size: 0.88rem;
-  margin-bottom: 20px;
-}
-
-.manage-card-actions {
-  display: flex;
-  gap: 12px;
 }
 
 /* --------------------------------------------------------------------------
@@ -3327,6 +3087,16 @@ button {
     width: 95%;
     padding: 24px 16px;
     border-radius: var(--radius-lg);
+  }
+
+  .call-cards-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .quick-inquiry-row {
+    grid-template-columns: 1fr;
+    gap: 10px;
   }
 
   .modal-bottom-summary {

@@ -47,17 +47,23 @@
         <a href="#location" class="nav-link">Location</a>
         <a href="#gallery" class="nav-link">Gallery</a>
         <a href="#corporate" class="nav-link">Corporate</a>
-        <a href="#manage-booking" class="nav-link nav-link-manage" onclick="openManageBookingModal(); return false;">
-          <i class="fa-regular fa-file-lines"></i> Manage Booking
+        <a href="#" class="nav-link nav-link-manage" onclick="openBookingModal(); return false;">
+          <i class="fa-solid fa-phone-volume"></i> Direct Booking
         </a>
       </nav>
 
       <!-- Header Action CTAs -->
       <div class="header-actions">
-        <a href="tel:+918123698844" class="call-btn-header" aria-label="Call Petals Hotel">
-          <i class="fa-solid fa-phone"></i>
-          <span>+91 8123698844</span>
-        </a>
+        <div class="header-phone-group">
+          <a href="tel:+918123698844" class="call-btn-header" aria-label="Call Petals Hotel Front Desk" title="Front Desk">
+            <i class="fa-solid fa-phone"></i>
+            <span>+91 8123698844</span>
+          </a>
+          <a href="tel:+919535028844" class="call-btn-header alt-call-btn" aria-label="Call Petals Hotel Reservations Desk" title="Reservations">
+            <i class="fa-solid fa-phone-volume"></i>
+            <span>+91 9535028844</span>
+          </a>
+        </div>
         <button class="book-now-btn" onclick="openBookingModal()">Book a Stay</button>
         <button class="mobile-menu-toggle" aria-label="Open Navigation Menu">
           <span class="menu-bar"></span>
@@ -85,13 +91,14 @@
           <a href="#location" class="mobile-link"><span class="mob-idx">03</span> Location</a>
           <a href="#gallery" class="mobile-link"><span class="mob-idx">04</span> Gallery</a>
           <a href="#corporate" class="mobile-link"><span class="mob-idx">05</span> Corporate Inquiry</a>
-          <a href="#manage-booking" class="mobile-link" onclick="openManageBookingModal(); return false;"><span class="mob-idx">06</span> Manage Booking</a>
+          <a href="#" class="mobile-link" onclick="openBookingModal(); return false;"><span class="mob-idx">06</span> Direct Reservation</a>
         </nav>
 
         <div class="mobile-menu-footer">
           <button class="primary-btn mob-book-btn" onclick="openBookingModal()">Reserve a Room <i class="fa-solid fa-arrow-right"></i></button>
           <div class="mob-footer-actions">
-            <a href="tel:+918123698844" class="mob-footer-btn call"><i class="fa-solid fa-phone"></i> Call Hotel</a>
+            <a href="tel:+918123698844" class="mob-footer-btn call"><i class="fa-solid fa-phone"></i> +91 8123698844</a>
+            <a href="tel:+919535028844" class="mob-footer-btn call alt"><i class="fa-solid fa-phone-volume"></i> +91 9535028844</a>
             <a href="https://wa.me/918123698844?text=Hi%20Petals%20Hotel,%20I'd%20like%20to%20inquire%20about%20booking%20a%20stay." target="_blank" class="mob-footer-btn whatsapp"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
           </div>
         </div>
@@ -213,10 +220,10 @@
       <div class="story-visual-column">
         <div class="story-image-stack">
           <div class="story-img-card primary-img-wrap">
-            <img src="images/strir well.jpeg" alt="Petals Architectural Interior" class="story-img">
+            <img src="images/new images/95B5EFF4-37B4-4134-8A17-1BF4864F04FB.png" alt="Petals Architectural Interior" class="story-img">
           </div>
           <div class="story-img-card secondary-img-wrap">
-            <img src="images/deluxe room.jpeg" alt="Petals Suite Design" class="story-img">
+            <img src="images/new images/6CD23204-3814-4FF8-AAC1-406CCAB18107.png" alt="Petals Suite Design" class="story-img">
           </div>
           <div class="story-stat-badge">
             <span class="stat-highlight">2 MIN</span>
@@ -333,7 +340,7 @@
         <!-- Single Room -->
         <div class="room-card" data-room="single">
           <div class="room-image-wrap">
-            <img src="images/single room.jpeg" alt="Single Room at Petals" class="room-card-img" loading="lazy">
+            <img src="images/new images/49371E1E-93FC-4078-A3D1-E47DD74D4D38.png" alt="Single Room at Petals" class="room-card-img" loading="lazy">
             <div class="room-price-badge">
               <span class="price-val">₹2,499</span>
               <span class="price-period">/ night</span>
@@ -358,7 +365,7 @@
                 <i class="fa-solid fa-angle-right"></i>
               </button>
               <button class="room-reserve-btn" onclick="openBookingModal('single')">
-                <span>Book Now</span>
+                <span>Book / Inquire</span>
                 <i class="fa-solid fa-arrow-right"></i>
               </button>
             </div>
@@ -368,7 +375,7 @@
         <!-- Superior Room -->
         <div class="room-card" data-room="superior">
           <div class="room-image-wrap">
-            <img src="images/superior room.jpeg" alt="Superior Room at Petals" class="room-card-img" loading="lazy">
+            <img src="images/new images/7A1DDD63-3A46-4E2B-977B-D46A7ABF6BF2.png" alt="Superior Room at Petals" class="room-card-img" loading="lazy">
             <div class="room-price-badge">
               <span class="price-val">₹3,499</span>
               <span class="price-period">/ night</span>
@@ -393,7 +400,7 @@
                 <i class="fa-solid fa-angle-right"></i>
               </button>
               <button class="room-reserve-btn" onclick="openBookingModal('superior')">
-                <span>Book Now</span>
+                <span>Book / Inquire</span>
                 <i class="fa-solid fa-arrow-right"></i>
               </button>
             </div>
@@ -403,7 +410,7 @@
         <!-- Deluxe Room -->
         <div class="room-card" data-room="deluxe">
           <div class="room-image-wrap">
-            <img src="images/deluxe room.jpeg" alt="Deluxe Room at Petals" class="room-card-img" loading="lazy">
+            <img src="images/new images/6CD23204-3814-4FF8-AAC1-406CCAB18107.png" alt="Deluxe Room at Petals" class="room-card-img" loading="lazy">
             <div class="room-price-badge">
               <span class="price-val">₹4,499</span>
               <span class="price-period">/ night</span>
@@ -428,7 +435,7 @@
                 <i class="fa-solid fa-angle-right"></i>
               </button>
               <button class="room-reserve-btn" onclick="openBookingModal('deluxe')">
-                <span>Book Now</span>
+                <span>Book / Inquire</span>
                 <i class="fa-solid fa-arrow-right"></i>
               </button>
             </div>
@@ -438,7 +445,7 @@
         <!-- Suite Room (Signature Highlight) -->
         <div class="room-card suite-card-highlight" data-room="suite">
           <div class="room-image-wrap">
-            <img src="images/suite room.jpeg" alt="Signature Suite Room at Petals" class="room-card-img" loading="lazy">
+            <img src="images/new images/8D8120F5-A1E6-4B69-9FA7-C466C821E74B.png" alt="Signature Suite Room at Petals" class="room-card-img" loading="lazy">
             <div class="suite-crown-badge">
               <i class="fa-solid fa-crown"></i> SIGNATURE SUITE
             </div>
@@ -472,7 +479,7 @@
                 <i class="fa-solid fa-angle-right"></i>
               </button>
               <button class="room-reserve-btn suite-reserve" onclick="openBookingModal('suite')">
-                <span>Book the Suite</span>
+                <span>Book / Inquire Suite</span>
                 <i class="fa-solid fa-arrow-right"></i>
               </button>
             </div>
@@ -493,7 +500,7 @@
 
       <div class="gallery-mosaic-grid">
         <div class="gallery-item item-large" onclick="openGalleryLightbox(0)">
-          <img src="images/suite room.jpeg" alt="Signature Presidential Suite" class="gallery-thumb" loading="lazy">
+          <img src="images/new images/8D8120F5-A1E6-4B69-9FA7-C466C821E74B.png" alt="Signature Presidential Suite" class="gallery-thumb" loading="lazy">
           <div class="gallery-overlay">
             <span class="gallery-cat">SUITE</span>
             <h4>Signature Suite Living Space</h4>
@@ -502,16 +509,16 @@
         </div>
 
         <div class="gallery-item" onclick="openGalleryLightbox(1)">
-          <img src="images/deluxe room.jpeg" alt="Deluxe Room Interior" class="gallery-thumb" loading="lazy">
+          <img src="images/new images/048DF31C-D323-4B44-B9A6-006C4207BF7E.png" alt="Petals Property Exterior" class="gallery-thumb" loading="lazy">
           <div class="gallery-overlay">
-            <span class="gallery-cat">DELUXE</span>
-            <h4>Deluxe Room & Lounge</h4>
+            <span class="gallery-cat">EXTERIOR</span>
+            <h4>Property Exterior & Facade</h4>
             <span class="gallery-cta"><i class="fa-solid fa-expand"></i> View</span>
           </div>
         </div>
 
         <div class="gallery-item item-tall" onclick="openGalleryLightbox(2)">
-          <img src="images/strir well.jpeg" alt="Architectural Stairwell" class="gallery-thumb" loading="lazy">
+          <img src="images/new images/95B5EFF4-37B4-4134-8A17-1BF4864F04FB.png" alt="Modern Architectural Stairwell" class="gallery-thumb" loading="lazy">
           <div class="gallery-overlay">
             <span class="gallery-cat">ARCHITECTURE</span>
             <h4>Modern Architectural Stairwell</h4>
@@ -520,7 +527,7 @@
         </div>
 
         <div class="gallery-item" onclick="openGalleryLightbox(3)">
-          <img src="images/superior room.jpeg" alt="Superior Room Desk" class="gallery-thumb" loading="lazy">
+          <img src="images/new images/7A1DDD63-3A46-4E2B-977B-D46A7ABF6BF2.png" alt="Superior Room Desk" class="gallery-thumb" loading="lazy">
           <div class="gallery-overlay">
             <span class="gallery-cat">SUPERIOR</span>
             <h4>Superior Room Executive Desk</h4>
@@ -529,16 +536,16 @@
         </div>
 
         <div class="gallery-item" onclick="openGalleryLightbox(4)">
-          <img src="images/single room.jpeg" alt="Single Room Comfort" class="gallery-thumb" loading="lazy">
+          <img src="images/new images/20A73FFC-76E0-41C6-B736-60C07B05FD06.png" alt="Modern Bath and Restroom" class="gallery-thumb" loading="lazy">
           <div class="gallery-overlay">
-            <span class="gallery-cat">SINGLE</span>
-            <h4>Single Room Quiet Sanctuary</h4>
+            <span class="gallery-cat">RESTROOM</span>
+            <h4>Modern Bath & Restroom</h4>
             <span class="gallery-cta"><i class="fa-solid fa-expand"></i> View</span>
           </div>
         </div>
 
         <div class="gallery-item item-wide" onclick="openGalleryLightbox(5)">
-          <img src="images/room corridor.jpeg" alt="Hotel Corridor Ambience" class="gallery-thumb" loading="lazy">
+          <img src="images/new images/64C37745-E467-48AE-A017-8048789C1514.png" alt="Peaceful Guest Corridors" class="gallery-thumb" loading="lazy">
           <div class="gallery-overlay">
             <span class="gallery-cat">AMBIENCE</span>
             <h4>Peaceful Guest Corridors</h4>
@@ -791,355 +798,105 @@
     </div>
   </section>
 
-  <!-- Interactive Booking Modal (eZee Absolute PMS Backend Connected) -->
+  <!-- Direct Reservation & Inquiries Modal -->
   <div id="booking-modal" class="modal-overlay" aria-hidden="true">
-    <div class="modal-content">
-      <button class="modal-close-btn" onclick="closeBookingModal()" aria-label="Close Booking Modal">&times;</button>
-      
-      <!-- STEP 1: RESERVATION DETAILS -->
-      <div id="modal-step-details" class="modal-step active">
-        <!-- Progress Stepper -->
-        <div class="modal-stepper">
-          <div class="step-indicator active">
-            <span class="step-num">01</span>
-            <span class="step-name">STAY</span>
-          </div>
-          <div class="step-line"></div>
-          <div class="step-indicator">
-            <span class="step-num">02</span>
-            <span class="step-name">PAYMENT</span>
-          </div>
-          <div class="step-line"></div>
-          <div class="step-indicator">
-            <span class="step-num">03</span>
-            <span class="step-name">CONFIRM</span>
-          </div>
-        </div>
-
-        <div class="modal-header">
-          <span class="modal-tag">RESERVATION DETAILS</span>
-          <h3 class="modal-title">Book Your Stay at Petals</h3>
-        </div>
-        
-        <!-- Room Context & Availability Status Indicator -->
-        <div class="selected-room-card">
-          <img id="modal-room-thumb" src="images/deluxe room.jpeg" alt="Selected Room Thumbnail" class="room-card-thumb">
-          <div class="room-card-text">
-            <h4 id="modal-room-title">Deluxe Room</h4>
-            <p id="modal-room-rate">₹4,499 <span>/ night + GST</span></p>
-            <span id="modal-avail-badge" class="pms-avail-badge" style="display: none;">
-              <i class="fa-solid fa-circle-check"></i> Rates & Dates Available
-            </span>
-          </div>
-          <input type="hidden" id="modal-room" value="deluxe">
-          <input type="hidden" id="modal-roomtype-id" value="1">
-          <input type="hidden" id="modal-rateplan-id" value="1">
-        </div>
-
-        <form id="modal-details-form" onsubmit="event.preventDefault(); proceedToPayment();">
-          <div class="modal-form-grid">
-            <div class="guest-name-row">
-              <div class="form-group salutation-group">
-                <label for="modal-title">Title *</label>
-                <select id="modal-title" required>
-                  <option value="Mr" selected>Mr.</option>
-                  <option value="Ms">Ms.</option>
-                  <option value="Mrs">Mrs.</option>
-                  <option value="Dr">Dr.</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label for="modal-firstname">First Name *</label>
-                <input type="text" id="modal-firstname" placeholder="John" required>
-              </div>
-              <div class="form-group">
-                <label for="modal-lastname">Last Name *</label>
-                <input type="text" id="modal-lastname" placeholder="Doe" required>
-              </div>
-            </div>
-            <div class="form-group">
-              <label for="modal-email">Email Address *</label>
-              <input type="email" id="modal-email" placeholder="john@example.com" required>
-            </div>
-            <div class="form-group">
-              <label for="modal-phone">Mobile / Phone *</label>
-              <input type="tel" id="modal-phone" placeholder="9876543210" required>
-            </div>
-            <div class="form-group">
-              <label for="modal-checkin">Check-in Date *</label>
-              <input type="date" id="modal-checkin" required onchange="onDatesChanged()">
-            </div>
-            <div class="form-group">
-              <label for="modal-checkout">Check-out Date *</label>
-              <input type="date" id="modal-checkout" required onchange="onDatesChanged()">
-            </div>
-            
-            <!-- Guest Count Pills -->
-            <div class="form-group full-width">
-              <label>Guests & Occupancy *</label>
-              <div class="guest-pills-container">
-                <button type="button" class="guest-pill active" onclick="selectGuests(1)">1 Adult</button>
-                <button type="button" class="guest-pill" onclick="selectGuests(2)">2 Adults</button>
-                <button type="button" class="guest-pill" onclick="selectGuests(3)">3 Adults</button>
-              </div>
-              <input type="hidden" id="modal-guests" value="1">
-            </div>
-
-            <!-- Address & Special Requests -->
-            <div class="form-group">
-              <label for="modal-city">City</label>
-              <input type="text" id="modal-city" placeholder="Bangalore">
-            </div>
-            <div class="form-group">
-              <label for="modal-country">Country</label>
-              <input type="text" id="modal-country" value="India">
-            </div>
-            <div class="form-group full-width">
-              <label for="modal-special-request">Special Requests / Preferences</label>
-              <input type="text" id="modal-special-request" placeholder="e.g. Quiet floor, early check-in, high floor">
-            </div>
-          </div>
-
-          <!-- Transparent Price Calculation Breakdown -->
-          <div class="modal-price-breakdown">
-            <div class="breakdown-row">
-              <span>Base Room Rate (<span id="calc-nights">1 night</span>)</span>
-              <span id="calc-base-price">₹4,499</span>
-            </div>
-            <div class="breakdown-row">
-              <span>Taxes & Fees (12% GST)</span>
-              <span id="calc-tax-price">₹540</span>
-            </div>
-            <div class="breakdown-row total-row">
-              <strong>Total Amount Payable</strong>
-              <strong id="modal-total-price">₹5,039</strong>
-            </div>
-          </div>
-
-          <!-- Bottom Summary Actions -->
-          <div class="modal-bottom-summary">
-            <button type="submit" class="modal-proceed-btn">
-              <span>Proceed to Payment</span>
-              <i class="fa-solid fa-arrow-right"></i>
-            </button>
-          </div>
-          
-          <div class="modal-footnote">
-            Prefer direct booking assistance? <a href="#" onclick="submitBookingToWhatsApp(); return false;"><i class="fa-brands fa-whatsapp"></i> Chat on WhatsApp</a> or <a href="tel:+918123698844"><i class="fa-solid fa-phone"></i> Call Front Desk</a>.
-          </div>
-        </form>
-      </div>
-
-      <!-- STEP 2: PAYMENT & PMS SYNC SCREEN -->
-      <div id="modal-step-payment" class="modal-step">
-        <!-- Progress Stepper -->
-        <div class="modal-stepper">
-          <div class="step-indicator completed">
-            <span class="step-num"><i class="fa-solid fa-check"></i></span>
-            <span class="step-name">STAY</span>
-          </div>
-          <div class="step-line active"></div>
-          <div class="step-indicator active">
-            <span class="step-num">02</span>
-            <span class="step-name">PAYMENT</span>
-          </div>
-          <div class="step-line"></div>
-          <div class="step-indicator">
-            <span class="step-num">03</span>
-            <span class="step-name">CONFIRM</span>
-          </div>
-        </div>
-
-        <div class="modal-header">
-          <span class="modal-tag">SECURE CHECKOUT</span>
-          <h3 class="modal-title">Complete Payment</h3>
-        </div>
-
-        <div class="checkout-summary-stripe">
-          <span id="payment-summary-room">Deluxe Room</span> • 
-          <span id="payment-summary-nights">1 Night</span> • 
-          <span id="payment-summary-guests">1 Guest</span>
-        </div>
-
-        <!-- Payment Toggle Tabs -->
-        <div class="payment-tabs">
-          <button type="button" id="tab-upi" class="payment-tab active" onclick="switchPaymentMethod('upi')">
-            <i class="fa-solid fa-mobile-screen-button"></i> UPI / QR Code
-          </button>
-          <button type="button" id="tab-card" class="payment-tab" onclick="switchPaymentMethod('card')">
-            <i class="fa-regular fa-credit-card"></i> Card Payment
-          </button>
-        </div>
-
-        <!-- UPI Section -->
-        <div id="payment-upi-panel" class="payment-content-panel active">
-          <div class="upi-checkout-layout">
-            <div class="qr-mock-container">
-              <div class="qr-mock-code">
-                <i class="fa-solid fa-qrcode"></i>
-                <div class="qr-scanner-line"></div>
-              </div>
-              <p class="qr-mock-text">Scan & Pay via BHIM UPI, GPay, PhonePe or Paytm</p>
-            </div>
-            <div class="upi-input-layout">
-              <label for="upi-id">Or enter your UPI ID</label>
-              <div class="upi-input-group">
-                <input type="text" id="upi-id" placeholder="name@upi">
-                <button type="button" class="upi-verify-btn" onclick="triggerUPIPayment()">Verify & Request</button>
-              </div>
-              <p class="upi-hint"><i class="fa-solid fa-shield-halved"></i> Instant verification and guaranteed room reservation.</p>
-            </div>
-          </div>
-          
-          <div class="modal-bottom-summary">
-            <div class="price-summary-box">
-              <span class="price-label">Payable Amount</span>
-              <span id="modal-payment-total-upi" class="price-val">₹5,039</span>
-            </div>
-            <button type="button" id="upi-submit-btn" class="modal-proceed-btn pay-btn" onclick="submitPayment('UPI')">
-              <span>Confirm Payment & Book</span>
-              <i class="fa-solid fa-arrow-right"></i>
-            </button>
-          </div>
-        </div>
-
-        <!-- Card Section -->
-        <form id="payment-card-form" onsubmit="event.preventDefault(); submitPayment('Credit/Debit Card');" class="payment-content-panel">
-          <div class="modal-form-grid">
-            <div class="form-group full-width">
-              <label for="card-number">Card Number *</label>
-              <div class="input-icon-wrapper">
-                <input type="text" id="card-number" placeholder="4111 •••• •••• 4444" minlength="16" maxlength="19" required>
-                <i class="fa-solid fa-lock"></i>
-              </div>
-            </div>
-            <div class="form-group">
-              <label for="card-expiry">Expiry Date *</label>
-              <input type="text" id="card-expiry" placeholder="MM/YY" maxlength="5" required>
-            </div>
-            <div class="form-group">
-              <label for="card-cvv">CVV *</label>
-              <input type="password" id="card-cvv" placeholder="•••" maxlength="4" required>
-            </div>
-            <div class="form-group full-width">
-              <label for="card-name">Cardholder Name *</label>
-              <input type="text" id="card-name" placeholder="John Doe" required>
-            </div>
-          </div>
-          
-          <div class="modal-bottom-summary">
-            <div class="price-summary-box">
-              <span class="price-label">Payable Amount</span>
-              <span id="modal-payment-total" class="price-val">₹5,039</span>
-            </div>
-            <button type="submit" id="card-submit-btn" class="modal-proceed-btn pay-btn">
-              <span>Pay & Confirm Booking</span>
-              <i class="fa-solid fa-arrow-right"></i>
-            </button>
-          </div>
-        </form>
-
-        <div class="modal-footnote flex-between">
-          <a href="#" onclick="showStep(1); return false;" class="back-link"><i class="fa-solid fa-arrow-left"></i> Back to stay details</a>
-          <span><i class="fa-solid fa-shield-halved"></i> 256-Bit SSL Encrypted Checkout</span>
-        </div>
-      </div>
-
-      <!-- STEP 3: CONFIRMED RESERVATION VOUCHER -->
-      <div id="modal-step-confirmation" class="modal-step">
-        <div class="ticket-wrapper">
-          <div class="ticket-header">
-            <div class="success-icon-ring">
-              <i class="fa-solid fa-check"></i>
-            </div>
-            <h3>Reservation Confirmed</h3>
-            <p>Your stay at Petals Suites & Hotel is guaranteed. We look forward to welcoming you.</p>
-          </div>
-          
-          <div class="ticket-body">
-            <div class="ticket-row">
-              <span class="ticket-label">Booking Reference</span>
-              <span id="ticket-ref" class="ticket-val">PET-2026-X98A</span>
-            </div>
-            <div class="ticket-divider">
-              <div class="divider-circle left"></div>
-              <div class="divider-circle right"></div>
-            </div>
-            <div class="ticket-details-grid">
-              <div class="ticket-detail">
-                <span class="ticket-label">Guest Name</span>
-                <span id="ticket-guest-name">John Doe</span>
-              </div>
-              <div class="ticket-detail">
-                <span class="ticket-label">Room Category</span>
-                <span id="ticket-room-name">Deluxe Room</span>
-              </div>
-              <div class="ticket-detail">
-                <span class="ticket-label">Check-In Date</span>
-                <span id="ticket-checkin">2026-09-10</span>
-              </div>
-              <div class="ticket-detail">
-                <span class="ticket-label">Check-Out Date</span>
-                <span id="ticket-checkout">2026-09-12</span>
-              </div>
-              <div class="ticket-detail">
-                <span class="ticket-label">Stay Duration</span>
-                <span id="ticket-nights">2 Nights</span>
-              </div>
-              <div class="ticket-detail">
-                <span class="ticket-label">Total Amount Paid</span>
-                <span id="ticket-paid" class="ticket-paid-val">₹10,078</span>
-              </div>
-            </div>
-          </div>
-          
-          <div class="ticket-footer text-center">
-            <div class="ticket-actions">
-              <button class="secondary-btn-link print-btn" onclick="window.print()">
-                <i class="fa-solid fa-print"></i> Print Voucher
-              </button>
-              <button class="primary-btn done-btn" onclick="closeBookingModal()">Done</button>
-            </div>
-            <p class="ticket-email-hint">A digital voucher and receipt have been dispatched to your registered email address.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- MANAGE MY BOOKING MODAL -->
-  <div id="manage-modal" class="modal-overlay" aria-hidden="true">
-    <div class="modal-content manage-modal-content">
-      <button class="modal-close-btn" onclick="closeManageBookingModal()" aria-label="Close Portal">&times;</button>
+    <div class="modal-content direct-booking-modal-content">
+      <button class="modal-close-btn" onclick="closeBookingModal()" aria-label="Close Reservation Modal">&times;</button>
       
       <div class="modal-header">
-        <span class="modal-tag"><i class="fa-solid fa-suitcase"></i> GUEST PORTAL</span>
-        <h3 class="modal-title">Manage Your Stay</h3>
-        <p class="modal-subtitle">Retrieve reservation details, check booking status, or re-print your confirmation voucher.</p>
+        <span class="modal-tag"><i class="fa-solid fa-phone-volume"></i> DIRECT RESERVATIONS</span>
+        <h3 class="modal-title">Book Your Stay with Petals</h3>
+        <p class="modal-subtitle">Contact our reservation desk directly for real-time room availability, customized corporate packages, and instant booking confirmation.</p>
       </div>
 
-      <div class="manage-search-bar">
-        <div class="manage-input-wrap">
-          <i class="fa-solid fa-magnifying-glass"></i>
-          <input type="text" id="manage-search-input" placeholder="Enter Email address or Booking Reference (e.g. 1024)">
+      <!-- Advisory Banner -->
+      <div class="booking-advisory-banner">
+        <div class="advisory-icon-wrap">
+          <i class="fa-solid fa-bell-concierge"></i>
         </div>
-        <button type="button" class="primary-btn manage-btn" onclick="searchGuestBooking()">
-          <span>Find Booking</span>
-          <i class="fa-solid fa-arrow-right"></i>
-        </button>
+        <div class="advisory-text-wrap">
+          <strong>Direct Booking Notice</strong>
+          <p>Online automated booking and payment is temporarily paused. Please contact our 24/7 Front Desk directly via phone or WhatsApp to reserve your room immediately with guaranteed direct rates.</p>
+        </div>
       </div>
 
-      <!-- Search State Indicator -->
-      <div id="manage-loading" class="manage-status-msg" style="display: none;">
-        <i class="fa-solid fa-spinner fa-spin"></i> Searching reservation records...
-      </div>
-      <div id="manage-error" class="manage-status-msg error" style="display: none;">
-        <i class="fa-solid fa-circle-exclamation"></i> <span id="manage-error-text">No booking found matching your details.</span>
+      <!-- Selected Room Context -->
+      <div class="selected-room-card">
+        <img id="modal-room-thumb" src="images/new images/6CD23204-3814-4FF8-AAC1-406CCAB18107.png" alt="Selected Room Thumbnail" class="room-card-thumb">
+        <div class="room-card-text">
+          <h4 id="modal-room-title">Deluxe Room</h4>
+          <p id="modal-room-rate">₹4,499 <span>/ night + GST</span></p>
+          <span class="direct-booking-badge">
+            <i class="fa-solid fa-shield-check"></i> Best Rate Guaranteed via Direct Call / WhatsApp
+          </span>
+        </div>
+        <input type="hidden" id="modal-room" value="deluxe">
       </div>
 
-      <!-- Results Container -->
-      <div id="manage-results" class="manage-results-container" style="display: none;">
-        <!-- Dynamically rendered via JS -->
+      <!-- Dual Phone Call Cards -->
+      <div class="direct-call-section">
+        <span class="section-micro-label">CALL OUR 24/7 FRONT DESK DIRECTLY:</span>
+        <div class="call-cards-grid">
+          <a href="tel:+918123698844" class="call-action-card primary-call" aria-label="Call Primary Front Desk +91 8123698844">
+            <div class="call-icon-box"><i class="fa-solid fa-phone"></i></div>
+            <div class="call-info">
+              <span class="call-label">Primary Front Desk</span>
+              <strong class="call-number">+91 8123698844</strong>
+              <span class="call-subtext"><i class="fa-solid fa-bolt"></i> Tap to Call (24/7 Desk)</span>
+            </div>
+          </a>
+
+          <a href="tel:+919535028844" class="call-action-card alt-call" aria-label="Call Alternative Desk +91 9535028844">
+            <div class="call-icon-box"><i class="fa-solid fa-phone-volume"></i></div>
+            <div class="call-info">
+              <span class="call-label">Alternative / Reservations</span>
+              <strong class="call-number">+91 9535028844</strong>
+              <span class="call-subtext"><i class="fa-solid fa-bolt"></i> Tap to Call (Instant Support)</span>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <!-- WhatsApp Booking Quick Assistance -->
+      <div class="whatsapp-direct-section">
+        <div class="whatsapp-card-inner">
+          <div class="whatsapp-header-line">
+            <div class="wa-icon-ring"><i class="fa-brands fa-whatsapp"></i></div>
+            <div class="wa-title-box">
+              <strong>Prefer WhatsApp?</strong>
+              <p>Send your stay dates for instant quotation & room confirmation</p>
+            </div>
+          </div>
+
+          <div class="quick-inquiry-row">
+            <div class="form-group mini">
+              <label for="modal-checkin"><i class="fa-regular fa-calendar"></i> Check-in</label>
+              <input type="date" id="modal-checkin" aria-label="Check-in Date">
+            </div>
+            <div class="form-group mini">
+              <label for="modal-checkout"><i class="fa-regular fa-calendar"></i> Check-out</label>
+              <input type="date" id="modal-checkout" aria-label="Check-out Date">
+            </div>
+            <div class="form-group mini">
+              <label for="modal-guests"><i class="fa-solid fa-user-group"></i> Guests</label>
+              <select id="modal-guests" aria-label="Number of Guests">
+                <option value="1">1 Guest</option>
+                <option value="2" selected>2 Guests</option>
+                <option value="3">3 Guests</option>
+                <option value="4+">4+ Guests</option>
+              </select>
+            </div>
+          </div>
+
+          <button type="button" class="whatsapp-submit-btn" onclick="submitBookingToWhatsApp()">
+            <i class="fa-brands fa-whatsapp"></i>
+            <span>Send Reservation Inquiry via WhatsApp</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="modal-contact-footer">
+        <p><i class="fa-solid fa-location-dot"></i> Directly opposite Manyata Tech Park, Bangalore · 24/7 Front Desk Available</p>
       </div>
     </div>
   </div>
@@ -1293,7 +1050,7 @@
           <span id="amenities-modal-price" class="price-val">₹4,499</span>
         </div>
         <button type="button" id="amenities-book-btn" class="modal-proceed-btn" onclick="bookFromAmenitiesModal()">
-          <span>Book This Room</span>
+          <span>Book / Inquire Room</span>
           <i class="fa-solid fa-arrow-right"></i>
         </button>
       </div>
@@ -1302,29 +1059,37 @@
 
   <!-- Floating Desktop Contact Dock -->
   <div class="floating-dock">
-    <a href="tel:+918123698844" class="dock-btn phone" aria-label="Call Petals Hotel">
+    <a href="tel:+918123698844" class="dock-btn phone" aria-label="Call Petals Hotel Front Desk" title="Front Desk">
       <i class="fa-solid fa-phone"></i>
-      <span class="dock-tooltip">Call Hotel</span>
+      <span class="dock-tooltip">Front Desk: +91 8123698844</span>
     </a>
-    <a href="https://wa.me/918123698844?text=Hi%20Petals%20Hotel,%20I'd%20like%20to%20book%20a%20stay." target="_blank" class="dock-btn whatsapp" aria-label="WhatsApp Petals Hotel">
+    <a href="tel:+919535028844" class="dock-btn phone alt" aria-label="Call Petals Hotel Reservations Desk" title="Reservations Desk">
+      <i class="fa-solid fa-phone-volume"></i>
+      <span class="dock-tooltip">Reservations: +91 9535028844</span>
+    </a>
+    <a href="https://wa.me/918123698844?text=Hi%20Petals%20Hotel,%20I'd%20like%20to%20inquire%20about%20booking%20a%20stay." target="_blank" class="dock-btn whatsapp" aria-label="WhatsApp Petals Hotel">
       <i class="fa-brands fa-whatsapp"></i>
-      <span class="dock-tooltip">WhatsApp Chat</span>
+      <span class="dock-tooltip">WhatsApp: +91 8123698844</span>
     </a>
   </div>
 
   <!-- Mobile Sticky Bottom Action Bar -->
   <div class="mobile-sticky-dock" id="mobile-sticky-dock">
-    <a href="https://wa.me/918123698844?text=Hi%20Petals%20Hotel,%20I'd%20like%20to%20book%20a%20stay." target="_blank" class="mob-dock-btn whatsapp">
+    <a href="https://wa.me/918123698844?text=Hi%20Petals%20Hotel,%20I'd%20like%20to%20inquire%20about%20booking%20a%20stay." target="_blank" class="mob-dock-btn whatsapp">
       <i class="fa-brands fa-whatsapp"></i>
       <span>WhatsApp</span>
     </a>
     <a href="tel:+918123698844" class="mob-dock-btn phone">
       <i class="fa-solid fa-phone"></i>
-      <span>Call</span>
+      <span>Front Desk</span>
+    </a>
+    <a href="tel:+919535028844" class="mob-dock-btn phone alt">
+      <i class="fa-solid fa-phone-volume"></i>
+      <span>Reservations</span>
     </a>
     <button class="mob-dock-btn book" onclick="openBookingModal()">
       <i class="fa-solid fa-calendar-check"></i>
-      <span>Book Stay</span>
+      <span>Inquire / Book</span>
     </button>
   </div>
 
@@ -1353,13 +1118,14 @@
           <li><a href="#location">Location & Route</a></li>
           <li><a href="#gallery">Visual Gallery</a></li>
           <li><a href="#corporate">Corporate Inquiries</a></li>
-          <li><a href="#manage-booking" onclick="openManageBookingModal(); return false;">Manage Booking</a></li>
+          <li><a href="#" onclick="openBookingModal(); return false;">Direct Reservations</a></li>
         </ul>
       </div>
 
       <div class="footer-contact">
         <h4>Contact & Reservations</h4>
-        <p><i class="fa-solid fa-phone"></i> <a href="tel:+918123698844">+91 8123698844</a></p>
+        <p><i class="fa-solid fa-phone"></i> <a href="tel:+918123698844">+91 8123698844</a> &nbsp;|&nbsp; <a href="tel:+919535028844">+91 9535028844</a></p>
+        <p><i class="fa-brands fa-whatsapp"></i> <a href="https://wa.me/918123698844?text=Hi%20Petals%20Hotel,%20I'd%20like%20to%20inquire%20about%20booking%20a%20stay." target="_blank">+91 8123698844 (WhatsApp)</a></p>
         <p><i class="fa-solid fa-envelope"></i> <a href="mailto:info@petalshotels.com">info@petalshotels.com</a></p>
         <p><i class="fa-solid fa-location-dot"></i> 3rd cross Chanakya layout, AC post, opposite to Manyata Tech Park, Bangalore 560045</p>
       </div>
