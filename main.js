@@ -23,7 +23,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initBulkBookingForm();
   initGalleryLightbox();
   initKeyboardNavigation();
-  loadConfiguredDetails();
   initVersionTracker();
 });
 
@@ -31,38 +30,12 @@ document.addEventListener('DOMContentLoaded', () => {
    1. Data State & Configuration
    ========================================================================== */
 
-// Room database mapping and default rates
+// Room database mapping
 const roomDb = {
-  single: { title: 'Single Room', price: 2499, roomTypeId: '1', rateplanId: '1', thumb: 'images/new images/49371E1E-93FC-4078-A3D1-E47DD74D4D38.png' },
-  superior: { title: 'Superior Room', price: 3499, roomTypeId: '2', rateplanId: '1', thumb: 'images/new images/7A1DDD63-3A46-4E2B-977B-D46A7ABF6BF2.png' },
-  deluxe: { title: 'Deluxe Room', price: 4499, roomTypeId: '3', rateplanId: '1', thumb: 'images/new images/6CD23204-3814-4FF8-AAC1-406CCAB18107.png' },
-  suite: { title: 'Suite Room', price: 6499, roomTypeId: '4', rateplanId: '1', thumb: 'images/new images/8D8120F5-A1E6-4B69-9FA7-C466C821E74B.png' }
-};
-
-// Current active booking state
-let activeBookingState = {
-  reservationNo: '',
-  guestName: '',
-  title: 'Mr',
-  firstName: '',
-  lastName: '',
-  email: '',
-  phone: '',
-  city: 'Bangalore',
-  country: 'India',
-  specialRequest: '',
-  roomType: 'deluxe',
-  roomTitle: 'Deluxe Room',
-  checkIn: '',
-  checkOut: '',
-  nights: 1,
-  adults: 1,
-  children: 0,
-  baseRate: 4499,
-  taxRate: 540,
-  totalPrice: 5039,
-  paymentMethod: 'UPI',
-  transactionId: ''
+  single: { title: 'Single Room', thumb: 'images/new images/49371E1E-93FC-4078-A3D1-E47DD74D4D38.png' },
+  superior: { title: 'Superior Room', thumb: 'images/new images/7A1DDD63-3A46-4E2B-977B-D46A7ABF6BF2.png' },
+  deluxe: { title: 'Deluxe Room', thumb: 'images/new images/6CD23204-3814-4FF8-AAC1-406CCAB18107.png' },
+  suite: { title: 'Suite Room', thumb: 'images/new images/8D8120F5-A1E6-4B69-9FA7-C466C821E74B.png' }
 };
 
 // Gallery data archive for interactive lightbox
@@ -174,62 +147,86 @@ function initScrollAnimations() {
 window.initScrollAnimationsFallback = initScrollAnimations;
 
 /* ==========================================================================
-   5. Booking Dates & PMS Availability Checking
+   5. Booking Dates & External Booking Engine URL Builder
    ========================================================================== */
+const LETSBOOK_BASE_URL = 'https://letsbook.me/booking/petalssuitesandhotel';
+
+let checkinFlatpickr = null;
+let checkoutFlatpickr = null;
+
 function initDateFields() {
   const checkinHero = document.getElementById('hero-checkin');
   const checkoutHero = document.getElementById('hero-checkout');
-  const checkinModal = document.getElementById('modal-checkin');
-  const checkoutModal = document.getElementById('modal-checkout');
+  const guestsHero = document.getElementById('hero-guests');
+  const roomTypeHero = document.getElementById('hero-room-type');
 
   const today = new Date();
-  const todayStr = formatDate(today);
-  
   const tomorrow = new Date(today);
   tomorrow.setDate(tomorrow.getDate() + 1);
-  const tomorrowStr = formatDate(tomorrow);
 
-  [checkinHero, checkinModal].forEach(field => {
-    if (field) {
-      field.min = todayStr;
-      field.value = todayStr;
-    }
-  });
-
-  [checkoutHero, checkoutModal].forEach(field => {
-    if (field) {
-      field.min = tomorrowStr;
-      field.value = tomorrowStr;
-    }
-  });
-
-  [checkinHero, checkinModal].forEach((checkinField, index) => {
-    const checkoutField = index === 0 ? checkoutHero : checkoutModal;
-    if (checkinField && checkoutField) {
-      checkinField.addEventListener('change', () => {
-        const selectedCheckin = new Date(checkinField.value);
-        const minCheckout = new Date(selectedCheckin);
-        minCheckout.setDate(minCheckout.getDate() + 1);
-        
-        const minCheckoutStr = formatDate(minCheckout);
-        checkoutField.min = minCheckoutStr;
-        
-        if (new Date(checkoutField.value) <= selectedCheckin) {
-          checkoutField.value = minCheckoutStr;
+  if (typeof flatpickr !== 'undefined' && checkinHero && checkoutHero) {
+    checkinFlatpickr = flatpickr(checkinHero, {
+      altInput: true,
+      altFormat: "D, j M Y",
+      dateFormat: "Y-m-d",
+      minDate: "today",
+      defaultDate: today,
+      disableMobile: true,
+      animate: true,
+      onChange: function(selectedDates, dateStr) {
+        if (selectedDates.length > 0) {
+          const nextDay = new Date(selectedDates[0]);
+          nextDay.setDate(nextDay.getDate() + 1);
+          
+          if (checkoutFlatpickr) {
+            checkoutFlatpickr.set('minDate', nextDay);
+            if (!checkoutFlatpickr.selectedDates[0] || checkoutFlatpickr.selectedDates[0] <= selectedDates[0]) {
+              checkoutFlatpickr.setDate(nextDay, true);
+            }
+          }
         }
-
-        if (index === 1) {
-          onDatesChanged();
-        }
-      });
-    }
-  });
-
-  if (checkoutModal) {
-    checkoutModal.addEventListener('change', () => {
-      onDatesChanged();
+        updateAllBookingLinks();
+      }
     });
+
+    checkoutFlatpickr = flatpickr(checkoutHero, {
+      altInput: true,
+      altFormat: "D, j M Y",
+      dateFormat: "Y-m-d",
+      minDate: tomorrow,
+      defaultDate: tomorrow,
+      disableMobile: true,
+      animate: true,
+      onChange: function() {
+        updateAllBookingLinks();
+      }
+    });
+  } else {
+    // Native fallback
+    const todayStr = formatDate(today);
+    const tomorrowStr = formatDate(tomorrow);
+    if (checkinHero) {
+      checkinHero.min = todayStr;
+      if (!checkinHero.value) checkinHero.value = todayStr;
+      checkinHero.addEventListener('change', updateAllBookingLinks);
+    }
+    if (checkoutHero) {
+      checkoutHero.min = tomorrowStr;
+      if (!checkoutHero.value) checkoutHero.value = tomorrowStr;
+      checkoutHero.addEventListener('change', updateAllBookingLinks);
+    }
   }
+
+  if (guestsHero) {
+    guestsHero.addEventListener('change', updateAllBookingLinks);
+  }
+
+  if (roomTypeHero) {
+    roomTypeHero.addEventListener('change', updateAllBookingLinks);
+  }
+
+  // Initial link sync
+  updateAllBookingLinks();
 }
 
 function formatDate(date) {
@@ -239,144 +236,70 @@ function formatDate(date) {
   return `${year}-${month}-${day}`;
 }
 
-// Fetch configured salutations from PMS API
-async function loadConfiguredDetails() {
-  try {
-    const response = await fetch('/api/config-details');
-    const result = await response.json();
-    if (result.success && result.data && result.data.salutations) {
-      const titleSelect = document.getElementById('modal-title');
-      if (titleSelect && Array.isArray(result.data.salutations)) {
-        titleSelect.innerHTML = '';
-        result.data.salutations.forEach(s => {
-          const opt = document.createElement('option');
-          opt.value = s.code || s.name || s;
-          opt.textContent = s.name || s;
-          titleSelect.appendChild(opt);
-        });
-      }
-    }
-  } catch (err) {
-    console.log('Using standard salutations list:', err.message);
-  }
-}
+// Build URL for letsbook.me booking engine with chosen parameters
+function buildBookingUrl(customParams = {}) {
+  const today = new Date();
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
 
-// Handler for when stay dates change
-window.onDatesChanged = async function() {
-  calculateTotalPrice();
-  await checkPmsAvailability();
-};
-
-// Check live availability via /api/availability
-async function checkPmsAvailability() {
-  const checkinInput = document.getElementById('modal-checkin');
-  const checkoutInput = document.getElementById('modal-checkout');
-  const availBadge = document.getElementById('modal-avail-badge');
-
-  if (!checkinInput || !checkoutInput || !availBadge) return;
-  const checkIn = checkinInput.value;
-  const checkOut = checkoutInput.value;
-  if (!checkIn || !checkOut) return;
-
-  try {
-    const res = await fetch(`/api/availability?checkin=${encodeURIComponent(checkIn)}&checkout=${encodeURIComponent(checkOut)}`);
-    const json = await res.json();
-    
-    // Only show badge when the PMS returns real, valid inventory without errors
-    const hasValidPmsData = json.success && json.data && !json.data.Errors && !json.data.error && (json.data.Room_Details || json.data.rooms || (Array.isArray(json.data) && json.data.length > 0));
-
-    if (hasValidPmsData) {
-      availBadge.style.display = 'inline-flex';
-      availBadge.className = 'pms-avail-badge available';
-      availBadge.innerHTML = `<i class="fa-solid fa-circle-check"></i> Rates & Dates Available`;
-    } else {
-      availBadge.style.display = 'none';
-    }
-  } catch (err) {
-    availBadge.style.display = 'none';
-  }
-}
-
-/* ==========================================================================
-   6. Direct Phone & WhatsApp Reservation System
-   ========================================================================== */
-const bookingModal = document.getElementById('booking-modal');
-
-window.openBookingModal = function(roomCategory = 'deluxe') {
-  window.location.hash = `booking-${roomCategory}`;
-};
-
-function openBookingModalDirect(roomCategory = 'deluxe') {
-  if (!bookingModal) return;
-
-  const roomInput = document.getElementById('modal-room');
-  const roomTitle = document.getElementById('modal-room-title');
-  const roomRate = document.getElementById('modal-room-rate');
-  const roomThumb = document.getElementById('modal-room-thumb');
-
-  const selectedRoom = roomDb[roomCategory] || roomDb.deluxe;
-  
-  if (roomInput) roomInput.value = roomCategory;
-  if (roomTitle) roomTitle.textContent = selectedRoom.title;
-  if (roomThumb) roomThumb.src = selectedRoom.thumb;
-  if (roomRate) {
-    roomRate.innerHTML = `₹${selectedRoom.price.toLocaleString('en-IN')} <span>/ night + GST</span>`;
-  }
-
-  // Sync dates from hero if available
   const heroCheckin = document.getElementById('hero-checkin')?.value;
   const heroCheckout = document.getElementById('hero-checkout')?.value;
   const heroGuests = document.getElementById('hero-guests')?.value;
-  const modalCheckin = document.getElementById('modal-checkin');
-  const modalCheckout = document.getElementById('modal-checkout');
-  const modalGuests = document.getElementById('modal-guests');
 
-  if (modalCheckin && !modalCheckin.value && heroCheckin) modalCheckin.value = heroCheckin;
-  if (modalCheckout && !modalCheckout.value && heroCheckout) modalCheckout.value = heroCheckout;
-  if (modalGuests && heroGuests) modalGuests.value = heroGuests;
+  const checkin = customParams.checkin || heroCheckin || formatDate(today);
+  const checkout = customParams.checkout || heroCheckout || formatDate(tomorrow);
+  const adults = customParams.adults || (heroGuests ? parseInt(heroGuests, 10) || 2 : 2);
+  const children = customParams.children !== undefined ? customParams.children : 0;
 
-  bookingModal.classList.add('active');
-  document.body.style.overflow = 'hidden';
+  const url = new URL(LETSBOOK_BASE_URL);
+  url.searchParams.set('checkin', checkin);
+  url.searchParams.set('checkout', checkout);
+  url.searchParams.set('adults', adults);
+  url.searchParams.set('children', children);
+
+  return url.toString();
 }
 
-window.closeBookingModal = function() {
-  history.replaceState(null, null, ' ');
-  window.dispatchEvent(new Event('hashchange'));
-};
-
-function closeBookingModalDirect() {
-  if (!bookingModal) return;
-  bookingModal.classList.remove('active');
-  document.body.style.overflow = '';
-}
-
-if (bookingModal) {
-  bookingModal.addEventListener('click', (e) => {
-    if (e.target === bookingModal) {
-      closeBookingModal();
-    }
+// Dynamically sync href on all booking buttons across the page
+function updateAllBookingLinks() {
+  const targetUrl = buildBookingUrl();
+  const selector = 'a.book-now-btn, a.mob-book-btn, a.hero-primary-btn, a.panel-submit-btn, a.room-reserve-btn, a.mob-dock-btn.book, #amenities-book-btn, .nav-link-manage';
+  document.querySelectorAll(selector).forEach(link => {
+    link.href = targetUrl;
   });
 }
 
-window.triggerHeroBooking = function() {
-  const selectedRoom = document.getElementById('hero-room-type')?.value || 'deluxe';
-  const heroCheckin = document.getElementById('hero-checkin')?.value;
-  const heroCheckout = document.getElementById('hero-checkout')?.value;
-  const heroGuests = document.getElementById('hero-guests')?.value;
+/* ==========================================================================
+   6. Booking Triggers & Redirection
+   ========================================================================== */
+window.openBookingModal = function(roomCategory, event) {
+  if (event) event.preventDefault();
+  const targetUrl = buildBookingUrl();
+  try {
+    const win = window.open(targetUrl, '_blank', 'noopener,noreferrer');
+    if (!win || win.closed || typeof win.closed === 'undefined') {
+      window.location.href = targetUrl;
+    }
+  } catch (err) {
+    window.location.href = targetUrl;
+  }
+};
 
-  const modalCheckin = document.getElementById('modal-checkin');
-  const modalCheckout = document.getElementById('modal-checkout');
-  const modalGuests = document.getElementById('modal-guests');
-
-  if (modalCheckin && heroCheckin) modalCheckin.value = heroCheckin;
-  if (modalCheckout && heroCheckout) modalCheckout.value = heroCheckout;
-  if (modalGuests && heroGuests) modalGuests.value = heroGuests;
-
-  window.location.hash = `booking-${selectedRoom}`;
+window.triggerHeroBooking = function(event) {
+  if (event) event.preventDefault();
+  const targetUrl = buildBookingUrl();
+  try {
+    const win = window.open(targetUrl, '_blank', 'noopener,noreferrer');
+    if (!win || win.closed || typeof win.closed === 'undefined') {
+      window.location.href = targetUrl;
+    }
+  } catch (err) {
+    window.location.href = targetUrl;
+  }
 };
 
 /* ==========================================================================
-   9. Interactive Amenities Modal Controller
+   7. Interactive Amenities Modal Controller
    ========================================================================== */
 const amenitiesModal = document.getElementById('amenities-modal');
 let currentInspectedRoom = 'deluxe';
@@ -388,24 +311,22 @@ window.openAmenitiesModal = function(roomCategory = 'deluxe') {
   const selectedRoom = roomDb[roomCategory] || roomDb.deluxe;
   const titleEl = document.getElementById('amenities-modal-title');
   const tagEl = document.getElementById('amenities-modal-tag');
-  const priceEl = document.getElementById('amenities-modal-price');
   const suiteSection = document.getElementById('suite-exclusive-section');
   const bookBtn = document.getElementById('amenities-book-btn');
 
   if (titleEl) titleEl.textContent = `${selectedRoom.title} Inclusions`;
-  if (priceEl) priceEl.textContent = `₹${selectedRoom.price.toLocaleString('en-IN')}`;
   
   if (roomCategory === 'suite') {
     if (tagEl) tagEl.innerHTML = '<i class="fa-solid fa-crown"></i> Signature Suite Features';
     if (suiteSection) suiteSection.style.display = 'block';
     if (bookBtn) {
-      bookBtn.innerHTML = `<span>Book Suite Room</span> <i class="fa-solid fa-arrow-right"></i>`;
+      bookBtn.innerHTML = `<span>Book Suite Online</span> <i class="fa-solid fa-arrow-right"></i>`;
     }
   } else {
     if (tagEl) tagEl.innerHTML = '<i class="fa-solid fa-sparkles"></i> Room Inclusions';
     if (suiteSection) suiteSection.style.display = 'none';
     if (bookBtn) {
-      bookBtn.innerHTML = `<span>Book ${selectedRoom.title}</span> <i class="fa-solid fa-arrow-right"></i>`;
+      bookBtn.innerHTML = `<span>Book ${selectedRoom.title} Online</span> <i class="fa-solid fa-arrow-right"></i>`;
     }
   }
 
@@ -419,9 +340,9 @@ window.closeAmenitiesModal = function() {
   document.body.style.overflow = '';
 };
 
-window.bookFromAmenitiesModal = function() {
+window.bookFromAmenitiesModal = function(event) {
   closeAmenitiesModal();
-  openBookingModal(currentInspectedRoom);
+  return openBookingModal(currentInspectedRoom, event);
 };
 
 if (amenitiesModal) {
@@ -566,10 +487,10 @@ window.submitBookingToWhatsApp = function() {
   }
 
   const whatsappMsg = `Hello Petals Suites & Hotel,\n\nI would like to inquire about reserving a room stay:\n\n` +
-    `• *Room Category:* ${selectedRoom.title} (₹${selectedRoom.price.toLocaleString('en-IN')}/night + GST)\n` +
+    `• *Room Category:* ${selectedRoom.title}\n` +
     datesInfo +
     `• *Guests / Occupancy:* ${guests}\n\n` +
-    `Please confirm room availability and best direct booking rates. Thank you!`;
+    `Please confirm room availability and tariff. Thank you!`;
 
   window.open(`https://wa.me/918123698844?text=${encodeURIComponent(whatsappMsg)}`, '_blank');
 };
@@ -649,21 +570,13 @@ function handleHashRouting() {
       document.body.style.overflow = 'hidden';
     } else {
       navOverlay.classList.remove('active');
-      if (!bookingModal || !bookingModal.classList.contains('active')) {
-        document.body.style.overflow = '';
-      }
+      document.body.style.overflow = '';
     }
   }
 
-  if (bookingModal) {
-    if (hash.startsWith('#booking-')) {
-      const roomCat = hash.split('-')[1];
-      openBookingModalDirect(roomCat);
-    } else if (hash === '#booking' || hash === '#manage-booking') {
-      openBookingModalDirect('deluxe');
-    } else {
-      closeBookingModalDirect();
-    }
+  if (hash.startsWith('#booking') || hash === '#manage-booking') {
+    history.replaceState(null, null, ' ');
+    openBookingModal();
   }
 }
 

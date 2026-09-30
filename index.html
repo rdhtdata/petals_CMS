@@ -14,6 +14,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   
+  <!-- Flatpickr Modern Calendar Styles -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css">
+  
   <!-- Custom Stylesheet -->
   <link rel="stylesheet" href="style.css">
 </head>
@@ -47,8 +50,8 @@
         <a href="#location" class="nav-link">Location</a>
         <a href="#gallery" class="nav-link">Gallery</a>
         <a href="#corporate" class="nav-link">Corporate</a>
-        <a href="#" class="nav-link nav-link-manage" onclick="openBookingModal(); return false;">
-          <i class="fa-solid fa-phone-volume"></i> Direct Booking
+        <a href="https://letsbook.me/booking/petalssuitesandhotel?checkin=2026-09-30&checkout=2026-10-01&adults=2&children=0" target="_blank" rel="noopener noreferrer" class="nav-link nav-link-manage" onclick="openBookingModal(); return false;">
+          <i class="fa-solid fa-calendar-check"></i> Book Online
         </a>
       </nav>
 
@@ -64,7 +67,7 @@
             <span>+91 9535028844</span>
           </a>
         </div>
-        <button class="book-now-btn" onclick="openBookingModal()">Book a Stay</button>
+        <a href="https://letsbook.me/booking/petalssuitesandhotel?checkin=2026-09-30&checkout=2026-10-01&adults=2&children=0" target="_blank" rel="noopener noreferrer" class="book-now-btn" onclick="openBookingModal('deluxe', event)">Book a Stay</a>
         <button class="mobile-menu-toggle" aria-label="Open Navigation Menu">
           <span class="menu-bar"></span>
           <span class="menu-bar"></span>
@@ -91,11 +94,11 @@
           <a href="#location" class="mobile-link"><span class="mob-idx">03</span> Location</a>
           <a href="#gallery" class="mobile-link"><span class="mob-idx">04</span> Gallery</a>
           <a href="#corporate" class="mobile-link"><span class="mob-idx">05</span> Corporate Inquiry</a>
-          <a href="#" class="mobile-link" onclick="openBookingModal(); return false;"><span class="mob-idx">06</span> Direct Reservation</a>
+          <a href="https://letsbook.me/booking/petalssuitesandhotel?checkin=2026-09-30&checkout=2026-10-01&adults=2&children=0" target="_blank" rel="noopener noreferrer" class="mobile-link" onclick="openBookingModal('deluxe', event)"><span class="mob-idx">06</span> Book Online</a>
         </nav>
 
         <div class="mobile-menu-footer">
-          <button class="primary-btn mob-book-btn" onclick="openBookingModal()">Reserve a Room <i class="fa-solid fa-arrow-right"></i></button>
+          <a href="https://letsbook.me/booking/petalssuitesandhotel?checkin=2026-09-30&checkout=2026-10-01&adults=2&children=0" target="_blank" rel="noopener noreferrer" class="primary-btn mob-book-btn" onclick="openBookingModal('deluxe', event)">Reserve a Room <i class="fa-solid fa-arrow-right"></i></a>
           <div class="mob-footer-actions">
             <a href="tel:+918123698844" class="mob-footer-btn call"><i class="fa-solid fa-phone"></i> +91 8123698844</a>
             <a href="tel:+919535028844" class="mob-footer-btn call alt"><i class="fa-solid fa-phone-volume"></i> +91 9535028844</a>
@@ -130,10 +133,10 @@
         </p>
 
         <div class="hero-ctas">
-          <button class="primary-btn hero-primary-btn" onclick="openBookingModal()">
+          <a href="https://letsbook.me/booking/petalssuitesandhotel?checkin=2026-09-30&checkout=2026-10-01&adults=2&children=0" target="_blank" rel="noopener noreferrer" class="primary-btn hero-primary-btn" onclick="openBookingModal('deluxe', event)">
             <span>Book Your Stay</span>
             <i class="fa-solid fa-arrow-right"></i>
-          </button>
+          </a>
           <a href="#rooms" class="secondary-btn-link hero-secondary-btn">
             <span>Explore Rooms</span>
             <i class="fa-solid fa-arrow-right-long"></i>
@@ -146,14 +149,14 @@
         <div class="panel-inner">
           <div class="booking-field">
             <span class="field-label"><i class="fa-regular fa-calendar"></i> Check-in</span>
-            <input type="date" id="hero-checkin" required aria-label="Check-in Date">
+            <input type="text" id="hero-checkin" required aria-label="Check-in Date" placeholder="Select Date" class="date-picker-input">
           </div>
 
           <div class="panel-divider"></div>
 
           <div class="booking-field">
             <span class="field-label"><i class="fa-regular fa-calendar"></i> Check-out</span>
-            <input type="date" id="hero-checkout" required aria-label="Check-out Date">
+            <input type="text" id="hero-checkout" required aria-label="Check-out Date" placeholder="Select Date" class="date-picker-input">
           </div>
 
           <div class="panel-divider"></div>
@@ -161,10 +164,10 @@
           <div class="booking-field">
             <span class="field-label"><i class="fa-solid fa-bed"></i> Room Type</span>
             <select id="hero-room-type" aria-label="Select Room Type">
-              <option value="single">Single Room (₹2,499)</option>
-              <option value="superior">Superior Room (₹3,499)</option>
-              <option value="deluxe" selected>Deluxe Room (₹4,499)</option>
-              <option value="suite">Suite Room (₹6,499)</option>
+              <option value="single">Single Room</option>
+              <option value="superior">Superior Room</option>
+              <option value="deluxe" selected>Deluxe Room</option>
+              <option value="suite">Suite Room</option>
             </select>
           </div>
 
@@ -180,10 +183,10 @@
             </select>
           </div>
 
-          <button class="panel-submit-btn" onclick="triggerHeroBooking()">
-            <span>Check Availability</span>
+          <a href="https://letsbook.me/booking/petalssuitesandhotel?checkin=2026-09-30&checkout=2026-10-01&adults=2&children=0" target="_blank" rel="noopener noreferrer" class="panel-submit-btn" onclick="triggerHeroBooking(event)">
+            <span>Check Availability & Book</span>
             <i class="fa-solid fa-arrow-right"></i>
-          </button>
+          </a>
         </div>
       </div>
     </div>
@@ -341,10 +344,6 @@
         <div class="room-card" data-room="single">
           <div class="room-image-wrap">
             <img src="images/new images/49371E1E-93FC-4078-A3D1-E47DD74D4D38.png" alt="Single Room at Petals" class="room-card-img" loading="lazy">
-            <div class="room-price-badge">
-              <span class="price-val">₹2,499</span>
-              <span class="price-period">/ night</span>
-            </div>
           </div>
           <div class="room-card-body">
             <div class="room-header-row">
@@ -364,10 +363,10 @@
                 <span>Amenities & Details</span>
                 <i class="fa-solid fa-angle-right"></i>
               </button>
-              <button class="room-reserve-btn" onclick="openBookingModal('single')">
-                <span>Book / Inquire</span>
+              <a href="https://letsbook.me/booking/petalssuitesandhotel?checkin=2026-09-30&checkout=2026-10-01&adults=2&children=0" target="_blank" rel="noopener noreferrer" class="room-reserve-btn" onclick="openBookingModal('single', event)">
+                <span>Book Online</span>
                 <i class="fa-solid fa-arrow-right"></i>
-              </button>
+              </a>
             </div>
           </div>
         </div>
@@ -376,10 +375,6 @@
         <div class="room-card" data-room="superior">
           <div class="room-image-wrap">
             <img src="images/new images/7A1DDD63-3A46-4E2B-977B-D46A7ABF6BF2.png" alt="Superior Room at Petals" class="room-card-img" loading="lazy">
-            <div class="room-price-badge">
-              <span class="price-val">₹3,499</span>
-              <span class="price-period">/ night</span>
-            </div>
           </div>
           <div class="room-card-body">
             <div class="room-header-row">
@@ -399,10 +394,10 @@
                 <span>Amenities & Details</span>
                 <i class="fa-solid fa-angle-right"></i>
               </button>
-              <button class="room-reserve-btn" onclick="openBookingModal('superior')">
-                <span>Book / Inquire</span>
+              <a href="https://letsbook.me/booking/petalssuitesandhotel?checkin=2026-09-30&checkout=2026-10-01&adults=2&children=0" target="_blank" rel="noopener noreferrer" class="room-reserve-btn" onclick="openBookingModal('superior', event)">
+                <span>Book Online</span>
                 <i class="fa-solid fa-arrow-right"></i>
-              </button>
+              </a>
             </div>
           </div>
         </div>
@@ -411,10 +406,6 @@
         <div class="room-card" data-room="deluxe">
           <div class="room-image-wrap">
             <img src="images/new images/6CD23204-3814-4FF8-AAC1-406CCAB18107.png" alt="Deluxe Room at Petals" class="room-card-img" loading="lazy">
-            <div class="room-price-badge">
-              <span class="price-val">₹4,499</span>
-              <span class="price-period">/ night</span>
-            </div>
           </div>
           <div class="room-card-body">
             <div class="room-header-row">
@@ -434,10 +425,10 @@
                 <span>Amenities & Details</span>
                 <i class="fa-solid fa-angle-right"></i>
               </button>
-              <button class="room-reserve-btn" onclick="openBookingModal('deluxe')">
-                <span>Book / Inquire</span>
+              <a href="https://letsbook.me/booking/petalssuitesandhotel?checkin=2026-09-30&checkout=2026-10-01&adults=2&children=0" target="_blank" rel="noopener noreferrer" class="room-reserve-btn" onclick="openBookingModal('deluxe', event)">
+                <span>Book Online</span>
                 <i class="fa-solid fa-arrow-right"></i>
-              </button>
+              </a>
             </div>
           </div>
         </div>
@@ -448,10 +439,6 @@
             <img src="images/new images/8D8120F5-A1E6-4B69-9FA7-C466C821E74B.png" alt="Signature Suite Room at Petals" class="room-card-img" loading="lazy">
             <div class="suite-crown-badge">
               <i class="fa-solid fa-crown"></i> SIGNATURE SUITE
-            </div>
-            <div class="room-price-badge suite-price">
-              <span class="price-val">₹6,499</span>
-              <span class="price-period">/ night</span>
             </div>
           </div>
           <div class="room-card-body">
@@ -478,10 +465,10 @@
                 <span>Explore Suite Perks</span>
                 <i class="fa-solid fa-angle-right"></i>
               </button>
-              <button class="room-reserve-btn suite-reserve" onclick="openBookingModal('suite')">
-                <span>Book / Inquire Suite</span>
+              <a href="https://letsbook.me/booking/petalssuitesandhotel?checkin=2026-09-30&checkout=2026-10-01&adults=2&children=0" target="_blank" rel="noopener noreferrer" class="room-reserve-btn suite-reserve" onclick="openBookingModal('suite', event)">
+                <span>Book Suite Online</span>
                 <i class="fa-solid fa-arrow-right"></i>
-              </button>
+              </a>
             </div>
           </div>
         </div>
@@ -798,109 +785,6 @@
     </div>
   </section>
 
-  <!-- Direct Reservation & Inquiries Modal -->
-  <div id="booking-modal" class="modal-overlay" aria-hidden="true">
-    <div class="modal-content direct-booking-modal-content">
-      <button class="modal-close-btn" onclick="closeBookingModal()" aria-label="Close Reservation Modal">&times;</button>
-      
-      <div class="modal-header">
-        <span class="modal-tag"><i class="fa-solid fa-phone-volume"></i> DIRECT RESERVATIONS</span>
-        <h3 class="modal-title">Book Your Stay with Petals</h3>
-        <p class="modal-subtitle">Contact our reservation desk directly for real-time room availability, customized corporate packages, and instant booking confirmation.</p>
-      </div>
-
-      <!-- Advisory Banner -->
-      <div class="booking-advisory-banner">
-        <div class="advisory-icon-wrap">
-          <i class="fa-solid fa-bell-concierge"></i>
-        </div>
-        <div class="advisory-text-wrap">
-          <strong>Direct Booking Notice</strong>
-          <p>Online automated booking and payment is temporarily paused. Please contact our 24/7 Front Desk directly via phone or WhatsApp to reserve your room immediately with guaranteed direct rates.</p>
-        </div>
-      </div>
-
-      <!-- Selected Room Context -->
-      <div class="selected-room-card">
-        <img id="modal-room-thumb" src="images/new images/6CD23204-3814-4FF8-AAC1-406CCAB18107.png" alt="Selected Room Thumbnail" class="room-card-thumb">
-        <div class="room-card-text">
-          <h4 id="modal-room-title">Deluxe Room</h4>
-          <p id="modal-room-rate">₹4,499 <span>/ night + GST</span></p>
-          <span class="direct-booking-badge">
-            <i class="fa-solid fa-shield-check"></i> Best Rate Guaranteed via Direct Call / WhatsApp
-          </span>
-        </div>
-        <input type="hidden" id="modal-room" value="deluxe">
-      </div>
-
-      <!-- Dual Phone Call Cards -->
-      <div class="direct-call-section">
-        <span class="section-micro-label">CALL OUR 24/7 FRONT DESK DIRECTLY:</span>
-        <div class="call-cards-grid">
-          <a href="tel:+918123698844" class="call-action-card primary-call" aria-label="Call Primary Front Desk +91 8123698844">
-            <div class="call-icon-box"><i class="fa-solid fa-phone"></i></div>
-            <div class="call-info">
-              <span class="call-label">Primary Front Desk</span>
-              <strong class="call-number">+91 8123698844</strong>
-              <span class="call-subtext"><i class="fa-solid fa-bolt"></i> Tap to Call (24/7 Desk)</span>
-            </div>
-          </a>
-
-          <a href="tel:+919535028844" class="call-action-card alt-call" aria-label="Call Alternative Desk +91 9535028844">
-            <div class="call-icon-box"><i class="fa-solid fa-phone-volume"></i></div>
-            <div class="call-info">
-              <span class="call-label">Alternative / Reservations</span>
-              <strong class="call-number">+91 9535028844</strong>
-              <span class="call-subtext"><i class="fa-solid fa-bolt"></i> Tap to Call (Instant Support)</span>
-            </div>
-          </a>
-        </div>
-      </div>
-
-      <!-- WhatsApp Booking Quick Assistance -->
-      <div class="whatsapp-direct-section">
-        <div class="whatsapp-card-inner">
-          <div class="whatsapp-header-line">
-            <div class="wa-icon-ring"><i class="fa-brands fa-whatsapp"></i></div>
-            <div class="wa-title-box">
-              <strong>Prefer WhatsApp?</strong>
-              <p>Send your stay dates for instant quotation & room confirmation</p>
-            </div>
-          </div>
-
-          <div class="quick-inquiry-row">
-            <div class="form-group mini">
-              <label for="modal-checkin"><i class="fa-regular fa-calendar"></i> Check-in</label>
-              <input type="date" id="modal-checkin" aria-label="Check-in Date">
-            </div>
-            <div class="form-group mini">
-              <label for="modal-checkout"><i class="fa-regular fa-calendar"></i> Check-out</label>
-              <input type="date" id="modal-checkout" aria-label="Check-out Date">
-            </div>
-            <div class="form-group mini">
-              <label for="modal-guests"><i class="fa-solid fa-user-group"></i> Guests</label>
-              <select id="modal-guests" aria-label="Number of Guests">
-                <option value="1">1 Guest</option>
-                <option value="2" selected>2 Guests</option>
-                <option value="3">3 Guests</option>
-                <option value="4+">4+ Guests</option>
-              </select>
-            </div>
-          </div>
-
-          <button type="button" class="whatsapp-submit-btn" onclick="submitBookingToWhatsApp()">
-            <i class="fa-brands fa-whatsapp"></i>
-            <span>Send Reservation Inquiry via WhatsApp</span>
-          </button>
-        </div>
-      </div>
-
-      <div class="modal-contact-footer">
-        <p><i class="fa-solid fa-location-dot"></i> Directly opposite Manyata Tech Park, Bangalore · 24/7 Front Desk Available</p>
-      </div>
-    </div>
-  </div>
-
   <!-- INTERACTIVE ROOM AMENITIES & DETAILS MODAL -->
   <div id="amenities-modal" class="modal-overlay" aria-hidden="true">
     <div class="modal-content amenities-modal-content">
@@ -1044,15 +928,11 @@
         </div>
       </div>
 
-      <div class="modal-bottom-summary flex-between">
-        <div class="price-summary-box">
-          <span class="price-label">Starting From</span>
-          <span id="amenities-modal-price" class="price-val">₹4,499</span>
-        </div>
-        <button type="button" id="amenities-book-btn" class="modal-proceed-btn" onclick="bookFromAmenitiesModal()">
-          <span>Book / Inquire Room</span>
+      <div class="modal-bottom-summary">
+        <a href="https://letsbook.me/booking/petalssuitesandhotel?checkin=2026-09-30&checkout=2026-10-01&adults=2&children=0" target="_blank" rel="noopener noreferrer" id="amenities-book-btn" class="modal-proceed-btn" onclick="bookFromAmenitiesModal(event)">
+          <span>Book Room Online</span>
           <i class="fa-solid fa-arrow-right"></i>
-        </button>
+        </a>
       </div>
     </div>
   </div>
@@ -1087,10 +967,10 @@
       <i class="fa-solid fa-phone-volume"></i>
       <span>Reservations</span>
     </a>
-    <button class="mob-dock-btn book" onclick="openBookingModal()">
+    <a href="https://letsbook.me/booking/petalssuitesandhotel?checkin=2026-09-30&checkout=2026-10-01&adults=2&children=0" target="_blank" rel="noopener noreferrer" class="mob-dock-btn book" onclick="openBookingModal('deluxe', event)">
       <i class="fa-solid fa-calendar-check"></i>
-      <span>Inquire / Book</span>
-    </button>
+      <span>Book Online</span>
+    </a>
   </div>
 
   <!-- Main Luxury Footer -->
@@ -1118,7 +998,7 @@
           <li><a href="#location">Location & Route</a></li>
           <li><a href="#gallery">Visual Gallery</a></li>
           <li><a href="#corporate">Corporate Inquiries</a></li>
-          <li><a href="#" onclick="openBookingModal(); return false;">Direct Reservations</a></li>
+          <li><a href="https://letsbook.me/booking/petalssuitesandhotel?checkin=2026-09-30&checkout=2026-10-01&adults=2&children=0" target="_blank" rel="noopener noreferrer" onclick="openBookingModal(); return false;">Book Online</a></li>
         </ul>
       </div>
 
@@ -1143,6 +1023,9 @@
       </div>
     </div>
   </footer>
+
+  <!-- Flatpickr Library Script -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.js"></script>
 
   <!-- Main Controller Script -->
   <script src="main.js"></script>

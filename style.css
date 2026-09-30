@@ -3303,3 +3303,147 @@ button {
     transform: none !important;
   }
 }
+
+/* --------------------------------------------------------------------------
+   25. Modern Luxury Flatpickr Calendar Styling
+   -------------------------------------------------------------------------- */
+.flatpickr-calendar {
+  background: #FFFFFF !important;
+  border-radius: 16px !important;
+  border: 1px solid rgba(188, 163, 127, 0.35) !important;
+  box-shadow: 0 18px 45px rgba(22, 19, 17, 0.18) !important;
+  font-family: var(--font-body) !important;
+  padding: 12px 14px !important;
+  width: 320px !important;
+}
+
+.flatpickr-calendar.arrowTop::before,
+.flatpickr-calendar.arrowTop::after {
+  border-bottom-color: #FFFFFF !important;
+}
+
+.flatpickr-calendar.arrowBottom::before,
+.flatpickr-calendar.arrowBottom::after {
+  border-top-color: #FFFFFF !important;
+}
+
+.flatpickr-months {
+  align-items: center !important;
+  margin-bottom: 8px !important;
+}
+
+.flatpickr-months .flatpickr-month {
+  color: var(--text-primary) !important;
+  fill: var(--text-primary) !important;
+  height: 38px !important;
+}
+
+.flatpickr-current-month {
+  font-family: var(--font-title) !important;
+  font-size: 1.15rem !important;
+  font-weight: 600 !important;
+  color: var(--text-primary) !important;
+  padding-top: 4px !important;
+}
+
+.flatpickr-current-month .cur-month {
+  font-weight: 600 !important;
+  color: var(--text-primary) !important;
+}
+
+.flatpickr-current-month input.cur-year {
+  font-weight: 600 !important;
+  color: var(--text-primary) !important;
+}
+
+.flatpickr-months .flatpickr-prev-month,
+.flatpickr-months .flatpickr-next-month {
+  color: var(--text-primary) !important;
+  fill: var(--text-primary) !important;
+  border-radius: 50% !important;
+  width: 32px !important;
+  height: 32px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: var(--transition-base) !important;
+}
+
+.flatpickr-months .flatpickr-prev-month:hover,
+.flatpickr-months .flatpickr-next-month:hover {
+  background: var(--bg-secondary) !important;
+  color: var(--accent) !important;
+  fill: var(--accent) !important;
+}
+
+span.flatpickr-weekday {
+  color: var(--text-muted) !important;
+  font-weight: 600 !important;
+  font-size: 0.78rem !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+}
+
+.flatpickr-day {
+  color: var(--text-primary) !important;
+  border-radius: 10px !important;
+  height: 38px !important;
+  line-height: 38px !important;
+  font-weight: 500 !important;
+  font-size: 0.92rem !important;
+  transition: all 0.2s ease !important;
+  border: 1px solid transparent !important;
+}
+
+.flatpickr-day.today {
+  border-color: var(--accent) !important;
+  font-weight: 700 !important;
+  color: var(--accent) !important;
+}
+
+.flatpickr-day:hover,
+.flatpickr-day:focus {
+  background: var(--bg-secondary) !important;
+  color: var(--accent) !important;
+  border-color: var(--accent-light) !important;
+}
+
+.flatpickr-day.selected,
+.flatpickr-day.startRange,
+.flatpickr-day.endRange,
+.flatpickr-day.selected.inRange,
+.flatpickr-day.startRange.inRange,
+.flatpickr-day.endRange.inRange,
+.flatpickr-day.selected:focus,
+.flatpickr-day.startRange:focus,
+.flatpickr-day.endRange:focus,
+.flatpickr-day.selected:hover,
+.flatpickr-day.startRange:hover,
+.flatpickr-day.endRange:hover {
+  background: var(--bg-dark) !important;
+  color: #FFFFFF !important;
+  border-color: var(--bg-dark) !important;
+  font-weight: 700 !important;
+  box-shadow: 0 4px 12px rgba(22, 19, 17, 0.25) !important;
+}
+
+.flatpickr-day.flatpickr-disabled,
+.flatpickr-day.flatpickr-disabled:hover {
+  color: #D1CCC4 !important;
+  cursor: not-allowed !important;
+  background: transparent !important;
+}
+
+.flatpickr-day.inRange {
+  background: #F4EFE6 !important;
+  border-color: #F4EFE6 !important;
+  color: var(--text-primary) !important;
+  box-shadow: none !important;
+}
+
+.booking-field input.flatpickr-input {
+  cursor: pointer !important;
+  font-weight: 600 !important;
+  color: var(--text-primary) !important;
+  font-size: 0.92rem !important;
+}

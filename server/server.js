@@ -20,11 +20,12 @@ app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-inline'"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "https://cdnjs.cloudflare.com", "https://cdn.jsdelivr.net"],
       styleSrc: [
         "'self'",
         "'unsafe-inline'",
         "https://cdnjs.cloudflare.com",
+        "https://cdn.jsdelivr.net",
         "https://fonts.googleapis.com"
       ],
       fontSrc: [
