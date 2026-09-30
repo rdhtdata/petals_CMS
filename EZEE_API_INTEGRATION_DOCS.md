@@ -187,19 +187,18 @@ All requests are formatted as `POST` requests to eZee official endpoints using `
 During our meeting, we need the eZee API Support team to provide / confirm the following:
 
 ### 1. Credentials
-- [ ] **Production `HotelCode`** (or confirm if it matches our property account code).
-- [ ] **Production `APIKey` / `AuthCode`**.
+- [x] **Production `HotelCode`**: `63556` (Petals Suites and Hotel)
+- [ ] **Production `APIKey` / `AuthCode`**
 - [ ] **Sandbox / Staging `HotelCode` and `APIKey`** (if staging testing is recommended prior to live rollout).
 
-### 2. Room Type & Rate Plan ID Mapping
-Please provide the internal database IDs for Petals Suites & Hotel:
+### 2. Room Type & Rate Plan ID Mapping (Discovered from Live PMS Configuration)
 
-| Room Category | Room Type ID (`Roomtype_Id`) | Rate Plan ID (`Rateplan_Id`) | Rate Type ID (`Ratetype_Id`) |
-|---|---|---|---|
-| **Single Room** | `[To be filled by eZee]` | `[To be filled by eZee]` | `[To be filled by eZee]` |
-| **Superior Room** | `[To be filled by eZee]` | `[To be filled by eZee]` | `[To be filled by eZee]` |
-| **Deluxe Room** | `[To be filled by eZee]` | `[To be filled by eZee]` | `[To be filled by eZee]` |
-| **Suite Room** | `[To be filled by eZee]` | `[To be filled by eZee]` | `[To be filled by eZee]` |
+| Room Category | Room Type UNKID (`Roomtype_Id`) | Rate Plan UNKID (`Rateplan_Id`) | Rate Plan Name | Max Occupancy |
+|---|---|---|---|---|
+| **Executive Room** | `6355600000000000001` | `6355600000000000001` | Executive Room - Room Only (EP) | 3 Guests (2 Adults, 2 Children) |
+| **Deluxe Room** | `6355600000000000002` | `6355600000000000002` | Deluxe Room - Room Only (EP) | 3 Guests (3 Adults) |
+| **Superior Room** | `6355600000000000003` | `6355600000000000003` | Superior Room - Room Only (EP) | 3 Guests (2 Adults, 2 Children) |
+| **Suite** | `6355600000000000004` | `6355600000000000004` | Suite - Room Only (EP) | 3 Guests (2 Adults) |
 
 ### 3. Source & Channel Code
 - [ ] What is the exact string or ID to pass in **`Source_Id`** for direct website bookings? (e.g. `"WEBSITE"`, `"DIRECT"`, or a specific Channel Code?).

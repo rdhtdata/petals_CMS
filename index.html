@@ -164,10 +164,10 @@
           <div class="booking-field">
             <span class="field-label"><i class="fa-solid fa-bed"></i> Room Type</span>
             <select id="hero-room-type" aria-label="Select Room Type">
-              <option value="single">Single Room</option>
-              <option value="superior">Superior Room</option>
+              <option value="executive">Executive Room</option>
               <option value="deluxe" selected>Deluxe Room</option>
-              <option value="suite">Suite Room</option>
+              <option value="superior">Superior Room</option>
+              <option value="suite">Suite</option>
             </select>
           </div>
 
@@ -340,61 +340,30 @@
       </div>
 
       <div class="rooms-grid">
-        <!-- Single Room -->
-        <div class="room-card" data-room="single">
+        <!-- Executive Room -->
+        <div class="room-card" data-room="executive">
           <div class="room-image-wrap">
-            <img src="images/new images/49371E1E-93FC-4078-A3D1-E47DD74D4D38.png" alt="Single Room at Petals" class="room-card-img" loading="lazy">
+            <img src="images/new images/49371E1E-93FC-4078-A3D1-E47DD74D4D38.png" alt="Executive Room at Petals" class="room-card-img" loading="lazy">
           </div>
           <div class="room-card-body">
             <div class="room-header-row">
-              <h3 class="room-name">Single Room</h3>
-              <span class="room-size-tag">180 sq ft</span>
+              <h3 class="room-name">Executive Room</h3>
+              <span class="room-size-tag">220 sq ft</span>
             </div>
-            <p class="room-brief">Cozy and private sanctuary tailored for solo business executives with work essentials.</p>
+            <p class="room-brief">Contemporary executive sanctuary featuring plush bedding, dedicated work essentials, and climate control.</p>
             
             <div class="room-spec-bar">
-              <span><i class="fa-solid fa-bed"></i> Single Bed</span>
-              <span><i class="fa-solid fa-user"></i> 1 Guest</span>
+              <span><i class="fa-solid fa-bed"></i> Queen Bed</span>
+              <span><i class="fa-solid fa-users"></i> Up to 3 Guests</span>
               <span><i class="fa-solid fa-wifi"></i> 100 Mbps Wi-Fi</span>
             </div>
 
             <div class="room-card-footer">
-              <button class="room-detail-btn" onclick="openAmenitiesModal('single')">
+              <button class="room-detail-btn" onclick="openAmenitiesModal('executive')">
                 <span>Amenities & Details</span>
                 <i class="fa-solid fa-angle-right"></i>
               </button>
-              <a href="https://letsbook.me/booking/petalssuitesandhotel?checkin=2026-09-30&checkout=2026-10-01&adults=2&children=0" target="_blank" rel="noopener noreferrer" class="room-reserve-btn" onclick="openBookingModal('single', event)">
-                <span>Book Online</span>
-                <i class="fa-solid fa-arrow-right"></i>
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <!-- Superior Room -->
-        <div class="room-card" data-room="superior">
-          <div class="room-image-wrap">
-            <img src="images/new images/7A1DDD63-3A46-4E2B-977B-D46A7ABF6BF2.png" alt="Superior Room at Petals" class="room-card-img" loading="lazy">
-          </div>
-          <div class="room-card-body">
-            <div class="room-header-row">
-              <h3 class="room-name">Superior Room</h3>
-              <span class="room-size-tag">250 sq ft</span>
-            </div>
-            <p class="room-brief">Spacious layout featuring plush queen bedding, dedicated executive desk, and smart TV.</p>
-            
-            <div class="room-spec-bar">
-              <span><i class="fa-solid fa-bed"></i> Queen Bed</span>
-              <span><i class="fa-solid fa-users"></i> 2 Guests</span>
-              <span><i class="fa-solid fa-laptop"></i> Work Desk</span>
-            </div>
-
-            <div class="room-card-footer">
-              <button class="room-detail-btn" onclick="openAmenitiesModal('superior')">
-                <span>Amenities & Details</span>
-                <i class="fa-solid fa-angle-right"></i>
-              </button>
-              <a href="https://letsbook.me/booking/petalssuitesandhotel?checkin=2026-09-30&checkout=2026-10-01&adults=2&children=0" target="_blank" rel="noopener noreferrer" class="room-reserve-btn" onclick="openBookingModal('superior', event)">
+              <a href="https://letsbook.me/booking/petalssuitesandhotel?checkin=2026-09-30&checkout=2026-10-01&adults=2&children=0" target="_blank" rel="noopener noreferrer" class="room-reserve-btn" onclick="openBookingModal('executive', event)">
                 <span>Book Online</span>
                 <i class="fa-solid fa-arrow-right"></i>
               </a>
@@ -416,7 +385,7 @@
             
             <div class="room-spec-bar">
               <span><i class="fa-solid fa-bed"></i> King Bed</span>
-              <span><i class="fa-solid fa-users"></i> 2 Guests</span>
+              <span><i class="fa-solid fa-users"></i> Up to 3 Guests</span>
               <span><i class="fa-solid fa-couch"></i> Lounge Seating</span>
             </div>
 
@@ -426,6 +395,37 @@
                 <i class="fa-solid fa-angle-right"></i>
               </button>
               <a href="https://letsbook.me/booking/petalssuitesandhotel?checkin=2026-09-30&checkout=2026-10-01&adults=2&children=0" target="_blank" rel="noopener noreferrer" class="room-reserve-btn" onclick="openBookingModal('deluxe', event)">
+                <span>Book Online</span>
+                <i class="fa-solid fa-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Superior Room -->
+        <div class="room-card" data-room="superior">
+          <div class="room-image-wrap">
+            <img src="images/new images/7A1DDD63-3A46-4E2B-977B-D46A7ABF6BF2.png" alt="Superior Room at Petals" class="room-card-img" loading="lazy">
+          </div>
+          <div class="room-card-body">
+            <div class="room-header-row">
+              <h3 class="room-name">Superior Room</h3>
+              <span class="room-size-tag">250 sq ft</span>
+            </div>
+            <p class="room-brief">Spacious layout featuring plush queen bedding, dedicated executive desk, and smart TV.</p>
+            
+            <div class="room-spec-bar">
+              <span><i class="fa-solid fa-bed"></i> Queen Bed</span>
+              <span><i class="fa-solid fa-users"></i> Up to 3 Guests</span>
+              <span><i class="fa-solid fa-laptop"></i> Work Desk</span>
+            </div>
+
+            <div class="room-card-footer">
+              <button class="room-detail-btn" onclick="openAmenitiesModal('superior')">
+                <span>Amenities & Details</span>
+                <i class="fa-solid fa-angle-right"></i>
+              </button>
+              <a href="https://letsbook.me/booking/petalssuitesandhotel?checkin=2026-09-30&checkout=2026-10-01&adults=2&children=0" target="_blank" rel="noopener noreferrer" class="room-reserve-btn" onclick="openBookingModal('superior', event)">
                 <span>Book Online</span>
                 <i class="fa-solid fa-arrow-right"></i>
               </a>
@@ -443,7 +443,7 @@
           </div>
           <div class="room-card-body">
             <div class="room-header-row">
-              <h3 class="room-name">Suite Room</h3>
+              <h3 class="room-name">Suite</h3>
               <span class="room-size-tag highlight-tag">480 sq ft</span>
             </div>
             <p class="room-brief">Our premier executive suite featuring a separate living room, plush bathrobes, slippers, hair dryer, garment iron & board.</p>
@@ -456,7 +456,7 @@
 
             <div class="room-spec-bar">
               <span><i class="fa-solid fa-bed"></i> King Bed</span>
-              <span><i class="fa-solid fa-users"></i> 3 Guests</span>
+              <span><i class="fa-solid fa-users"></i> Up to 3 Guests</span>
               <span><i class="fa-solid fa-gem"></i> Suite Perks</span>
             </div>
 

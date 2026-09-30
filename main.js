@@ -32,10 +32,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Room database mapping
 const roomDb = {
-  single: { title: 'Single Room', thumb: 'images/new images/49371E1E-93FC-4078-A3D1-E47DD74D4D38.png' },
-  superior: { title: 'Superior Room', thumb: 'images/new images/7A1DDD63-3A46-4E2B-977B-D46A7ABF6BF2.png' },
+  executive: { title: 'Executive Room', thumb: 'images/new images/49371E1E-93FC-4078-A3D1-E47DD74D4D38.png' },
   deluxe: { title: 'Deluxe Room', thumb: 'images/new images/6CD23204-3814-4FF8-AAC1-406CCAB18107.png' },
-  suite: { title: 'Suite Room', thumb: 'images/new images/8D8120F5-A1E6-4B69-9FA7-C466C821E74B.png' }
+  superior: { title: 'Superior Room', thumb: 'images/new images/7A1DDD63-3A46-4E2B-977B-D46A7ABF6BF2.png' },
+  suite: { title: 'Suite', thumb: 'images/new images/8D8120F5-A1E6-4B69-9FA7-C466C821E74B.png' },
+  single: { title: 'Executive Room', thumb: 'images/new images/49371E1E-93FC-4078-A3D1-E47DD74D4D38.png' }
 };
 
 // Gallery data archive for interactive lightbox
