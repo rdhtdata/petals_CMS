@@ -276,27 +276,13 @@ function updateAllBookingLinks() {
 window.openBookingModal = function(roomCategory, event) {
   if (event) event.preventDefault();
   const targetUrl = buildBookingUrl();
-  try {
-    const win = window.open(targetUrl, '_blank', 'noopener,noreferrer');
-    if (!win || win.closed || typeof win.closed === 'undefined') {
-      window.location.href = targetUrl;
-    }
-  } catch (err) {
-    window.location.href = targetUrl;
-  }
+  window.location.href = targetUrl;
 };
 
 window.triggerHeroBooking = function(event) {
   if (event) event.preventDefault();
   const targetUrl = buildBookingUrl();
-  try {
-    const win = window.open(targetUrl, '_blank', 'noopener,noreferrer');
-    if (!win || win.closed || typeof win.closed === 'undefined') {
-      window.location.href = targetUrl;
-    }
-  } catch (err) {
-    window.location.href = targetUrl;
-  }
+  window.location.href = targetUrl;
 };
 
 /* ==========================================================================
