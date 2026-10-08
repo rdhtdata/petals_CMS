@@ -22,6 +22,9 @@
 </head>
 <body>
 
+  <!-- Accessible Skip to Main Content Link -->
+  <a href="#rooms" class="skip-link">Skip to accommodations</a>
+
   <!-- Editorial Page Intro / Preloader -->
   <div id="site-preloader" class="site-preloader" aria-hidden="true">
     <div class="preloader-content">
@@ -741,19 +744,19 @@
         <div class="form-grid">
           <div class="form-group">
             <label for="bulk-name">Contact Person *</label>
-            <input type="text" id="bulk-name" placeholder="John Doe" required>
+            <input type="text" id="bulk-name" placeholder="Vikram Mehta" required>
           </div>
           <div class="form-group">
             <label for="bulk-company">Company Name</label>
-            <input type="text" id="bulk-company" placeholder="Acme Corporation">
+            <input type="text" id="bulk-company" placeholder="Cognizant / Philips / Shell">
           </div>
           <div class="form-group">
             <label for="bulk-email">Email Address *</label>
-            <input type="email" id="bulk-email" placeholder="john@company.com" required>
+            <input type="email" id="bulk-email" placeholder="vikram.mehta@enterprise.com" required>
           </div>
           <div class="form-group">
             <label for="bulk-phone">Phone Number *</label>
-            <input type="tel" id="bulk-phone" placeholder="+91 98765 43210" required>
+            <input type="tel" id="bulk-phone" placeholder="+91 98450 12345" required>
           </div>
           <div class="form-group">
             <label for="bulk-rooms">Number of Rooms Required *</label>
@@ -779,7 +782,7 @@
       <!-- Success Banner -->
       <div id="bulk-success-message" class="form-success-banner" style="display: none;">
         <i class="fa-solid fa-circle-check"></i>
-        <h3>Thank You for Your Query!</h3>
+        <h3>Corporate Inquiry Received</h3>
         <p>Our corporate relations desk has received your inquiry. We will contact you at your email and phone within the next 2 hours.</p>
       </div>
     </div>
@@ -998,6 +1001,8 @@
           <li><a href="#location">Location & Route</a></li>
           <li><a href="#gallery">Visual Gallery</a></li>
           <li><a href="#corporate">Corporate Inquiries</a></li>
+          <li><a href="javascript:void(0)" onclick="openLegalModal('privacy')">Privacy Policy</a></li>
+          <li><a href="javascript:void(0)" onclick="openLegalModal('terms')">Terms & House Rules</a></li>
           <li><a href="https://letsbook.me/booking/petalssuitesandhotel?checkin=2026-09-30&checkout=2026-10-01&adults=2&children=0" onclick="openBookingModal(); return false;">Book Online</a></li>
         </ul>
       </div>
@@ -1023,6 +1028,21 @@
       </div>
     </div>
   </footer>
+
+  <!-- Interactive Legal & Policies Modal -->
+  <div id="legal-modal" class="modal-overlay" aria-hidden="true">
+    <div class="modal-content legal-modal-content">
+      <button class="modal-close-btn" onclick="closeLegalModal()" aria-label="Close Policies Modal">&times;</button>
+      <div class="modal-header">
+        <span class="modal-tag" id="legal-modal-tag"><i class="fa-solid fa-shield-halved"></i> GUEST ADVISORY</span>
+        <h3 class="modal-title" id="legal-modal-title">Terms & House Rules</h3>
+        <p class="modal-subtitle" id="legal-modal-subtitle">Petals Suites & Hotel guest guidelines and policies.</p>
+      </div>
+      <div class="legal-body-scroll" id="legal-modal-body">
+        <!-- Injected via JavaScript controller -->
+      </div>
+    </div>
+  </div>
 
   <!-- Flatpickr Library Script -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.js"></script>

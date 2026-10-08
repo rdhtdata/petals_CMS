@@ -438,6 +438,11 @@ function initKeyboardNavigation() {
         closeAmenitiesModal();
         return;
       }
+      const legalModal = document.getElementById('legal-modal');
+      if (legalModal && legalModal.classList.contains('active')) {
+        closeLegalModal();
+        return;
+      }
     }
 
     if (e.key === 'ArrowRight') {
@@ -604,3 +609,92 @@ function initVersionTracker() {
   // Check periodically every 5 minutes
   setInterval(checkForNewVersion, 5 * 60 * 1000);
 }
+
+/* ==========================================================================
+   16. Legal & Policies Modal Controller
+   ========================================================================== */
+const legalModalEl = document.getElementById('legal-modal');
+
+const legalContent = {
+  privacy: {
+    tag: '<i class="fa-solid fa-user-shield"></i> PRIVACY POLICY',
+    title: 'Privacy Policy',
+    subtitle: 'How we collect, protect, and respect your guest information.',
+    body: `
+      <div class="legal-section-block">
+        <h4>1. Information Collection</h4>
+        <p>When you book a stay or submit an inquiry at Petals Suites & Hotel, we collect personal information including your full name, official email address, mobile number, and reservation dates solely for booking fulfillment and verification.</p>
+      </div>
+      <div class="legal-section-block">
+        <h4>2. Data Security & Storage</h4>
+        <p>Your details are processed securely and shared only with our integrated property management system (eZee Absolute PMS) for reservation processing. We do not sell, rent, or lease your personal data to third parties.</p>
+      </div>
+      <div class="legal-section-block">
+        <h4>3. Direct Communication</h4>
+        <p>We may contact you via WhatsApp or phone call prior to check-in to provide directions, confirm arrival timings, or accommodate special requests.</p>
+      </div>
+    `
+  },
+  terms: {
+    tag: '<i class="fa-solid fa-file-contract"></i> HOUSE POLICIES & TERMS',
+    title: 'Terms of Stay & House Rules',
+    subtitle: 'Guidelines for a serene, comfortable experience opposite Manyata Tech Park.',
+    body: `
+      <div class="legal-section-block">
+        <h4>1. Check-In & Check-Out Timings</h4>
+        <ul>
+          <li><strong>Standard Check-in:</strong> 12:00 PM onwards</li>
+          <li><strong>Standard Check-out:</strong> 11:00 AM</li>
+          <li>Early check-in and late check-out are subject to room availability upon request.</li>
+        </ul>
+      </div>
+      <div class="legal-section-block">
+        <h4>2. Identification Verification</h4>
+        <p>A valid government-approved photo ID (Aadhaar Card, Passport, Driver's License, or Voter ID) is mandatory for each adult guest at check-in (PAN Cards are not accepted per local municipal regulations).</p>
+      </div>
+      <div class="legal-section-block">
+        <h4>3. Peaceful Sanctuary Policy</h4>
+        <p>Petals is an executive sanctuary dedicated to quiet rest and focused work. Quiet hours are observed between 10:00 PM and 7:00 AM across all guest room corridors.</p>
+      </div>
+      <div class="legal-section-block">
+        <h4>4. Dining Policy</h4>
+        <p>Complimentary tea and coffee setups are provided in all rooms. In-room dining (room service kitchen) is not operated on-premises; external food deliveries (Swiggy, Zomato) and dining at Manyata Tech Park eateries right across the avenue are welcome.</p>
+      </div>
+    `
+  }
+};
+
+window.openLegalModal = function(type = 'terms') {
+  const modal = document.getElementById('legal-modal');
+  if (!modal) return;
+  const data = legalContent[type] || legalContent.terms;
+  
+  const tagEl = document.getElementById('legal-modal-tag');
+  const titleEl = document.getElementById('legal-modal-title');
+  const subtitleEl = document.getElementById('legal-modal-subtitle');
+  const bodyEl = document.getElementById('legal-modal-body');
+
+  if (tagEl) tagEl.innerHTML = data.tag;
+  if (titleEl) titleEl.textContent = data.title;
+  if (subtitleEl) subtitleEl.textContent = data.subtitle;
+  if (bodyEl) bodyEl.innerHTML = data.body;
+
+  modal.classList.add('active');
+  document.body.style.overflow = 'hidden';
+};
+
+window.closeLegalModal = function() {
+  const modal = document.getElementById('legal-modal');
+  if (!modal) return;
+  modal.classList.remove('active');
+  document.body.style.overflow = '';
+};
+
+if (legalModalEl) {
+  legalModalEl.addEventListener('click', (e) => {
+    if (e.target === legalModalEl) {
+      closeLegalModal();
+    }
+  });
+}
+
