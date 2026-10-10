@@ -22,6 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initDateFields();
   initBulkBookingForm();
   initGalleryLightbox();
+  initRoomPhotoSliders();
   initKeyboardNavigation();
   initVersionTracker();
 });
@@ -32,11 +33,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Room database mapping
 const roomDb = {
-  executive: { title: 'Executive Room', thumb: 'images/new images/49371E1E-93FC-4078-A3D1-E47DD74D4D38.png' },
-  deluxe: { title: 'Deluxe Room', thumb: 'images/new images/6CD23204-3814-4FF8-AAC1-406CCAB18107.png' },
-  superior: { title: 'Superior Room', thumb: 'images/new images/7A1DDD63-3A46-4E2B-977B-D46A7ABF6BF2.png' },
-  suite: { title: 'Suite', thumb: 'images/new images/8D8120F5-A1E6-4B69-9FA7-C466C821E74B.png' },
-  single: { title: 'Executive Room', thumb: 'images/new images/49371E1E-93FC-4078-A3D1-E47DD74D4D38.png' }
+  executive: { 
+    title: 'Executive Room', 
+    thumb: 'images/executive-room-1.jpg', 
+    photos: ['images/executive-room-1.jpg', 'images/executive-room-2.jpg'], 
+    bed: 'Single Bed', 
+    maxGuests: 1 
+  },
+  deluxe: { title: 'Deluxe Room', thumb: 'images/new images/6CD23204-3814-4FF8-AAC1-406CCAB18107.png', bed: 'King Bed', maxGuests: 3 },
+  superior: { title: 'Superior Room', thumb: 'images/new images/7A1DDD63-3A46-4E2B-977B-D46A7ABF6BF2.png', bed: 'Queen Bed', maxGuests: 3 },
+  suite: { title: 'Suite', thumb: 'images/new images/8D8120F5-A1E6-4B69-9FA7-C466C821E74B.png', bed: 'King Bed', maxGuests: 3 },
+  single: { 
+    title: 'Executive Room', 
+    thumb: 'images/executive-room-1.jpg', 
+    photos: ['images/executive-room-1.jpg', 'images/executive-room-2.jpg'], 
+    bed: 'Single Bed', 
+    maxGuests: 1 
+  }
 };
 
 // Gallery data archive for interactive lightbox
@@ -223,7 +236,12 @@ function initDateFields() {
   }
 
   if (roomTypeHero) {
-    roomTypeHero.addEventListener('change', updateAllBookingLinks);
+    roomTypeHero.addEventListener('change', () => {
+      if (roomTypeHero.value === 'executive' && guestsHero) {
+        guestsHero.value = '1';
+      }
+      updateAllBookingLinks();
+    });
   }
 
   // Initial link sync
@@ -249,7 +267,7 @@ function buildBookingUrl(customParams = {}) {
 
   const checkin = customParams.checkin || heroCheckin || formatDate(today);
   const checkout = customParams.checkout || heroCheckout || formatDate(tomorrow);
-  const adults = customParams.adults || (heroGuests ? parseInt(heroGuests, 10) || 2 : 2);
+  const adults = customParams.adults !== undefined ? customParams.adults : (heroGuests ? parseInt(heroGuests, 10) || 2 : 2);
   const children = customParams.children !== undefined ? customParams.children : 0;
 
   const url = new URL(LETSBOOK_BASE_URL);
@@ -271,11 +289,93 @@ function updateAllBookingLinks() {
 }
 
 /* ==========================================================================
+   5b. Room Photo Carousel Controller
+   ========================================================================== */
+let roomPhotoIndices = { executive: 0 };
+
+function initRoomPhotoSliders() {
+  const prevBtn = document.getElementById('exec-prev-btn');
+  const nextBtn = document.getElementById('exec-next-btn');
+  const dots = document.querySelectorAll('.exec-room-dot');
+
+  // Preload executive photos into browser cache
+  if (roomDb.executive && roomDb.executive.photos) {
+    roomDb.executive.photos.forEach(src => {
+      const img = new Image();
+      img.src = src;
+    });
+  }
+
+  if (prevBtn) {
+    prevBtn.addEventListener('click', (e) => {
+      window.changeRoomPhoto('executive', -1, e);
+    });
+  }
+  if (nextBtn) {
+    nextBtn.addEventListener('click', (e) => {
+      window.changeRoomPhoto('executive', 1, e);
+    });
+  }
+  dots.forEach(dot => {
+    dot.addEventListener('click', (e) => {
+      const idx = parseInt(dot.getAttribute('data-index') || '0', 10);
+      window.setRoomPhoto('executive', idx, e);
+    });
+  });
+}
+
+window.changeRoomPhoto = function(roomKey, direction, event) {
+  if (event) {
+    event.stopPropagation();
+    event.preventDefault();
+  }
+  const room = roomDb[roomKey];
+  if (!room || !room.photos) return;
+  const count = room.photos.length;
+  let newIdx = (roomPhotoIndices[roomKey] || 0) + direction;
+  if (newIdx < 0) newIdx = count - 1;
+  if (newIdx >= count) newIdx = 0;
+  window.setRoomPhoto(roomKey, newIdx, event);
+};
+
+window.setRoomPhoto = function(roomKey, index, event) {
+  if (event) {
+    event.stopPropagation();
+    event.preventDefault();
+  }
+  roomPhotoIndices[roomKey] = index;
+  
+  const room = roomDb[roomKey];
+  if (!room || !room.photos) return;
+  
+  const imgEl = document.getElementById('exec-card-img');
+  if (imgEl && room.photos[index]) {
+    imgEl.src = room.photos[index];
+    imgEl.alt = `${room.title} - View ${index + 1}`;
+  }
+
+  const dots = document.querySelectorAll('#exec-slider-wrap .room-dot');
+  dots.forEach((dot, i) => {
+    if (i === index) dot.classList.add('active');
+    else dot.classList.remove('active');
+  });
+
+  const counterEl = document.getElementById('exec-photo-idx');
+  if (counterEl) {
+    counterEl.textContent = (index + 1);
+  }
+};
+
+/* ==========================================================================
    6. Booking Triggers & Redirection
    ========================================================================== */
 window.openBookingModal = function(roomCategory, event) {
   if (event) event.preventDefault();
-  const targetUrl = buildBookingUrl();
+  const customParams = {};
+  if (roomCategory === 'executive' || roomCategory === 'single') {
+    customParams.adults = 1;
+  }
+  const targetUrl = buildBookingUrl(customParams);
   window.location.href = targetUrl;
 };
 
@@ -308,6 +408,12 @@ window.openAmenitiesModal = function(roomCategory = 'deluxe') {
     if (suiteSection) suiteSection.style.display = 'block';
     if (bookBtn) {
       bookBtn.innerHTML = `<span>Book Suite Online</span> <i class="fa-solid fa-arrow-right"></i>`;
+    }
+  } else if (roomCategory === 'executive' || roomCategory === 'single') {
+    if (tagEl) tagEl.innerHTML = '<i class="fa-solid fa-bed"></i> Single Bed · Max 1 Guest';
+    if (suiteSection) suiteSection.style.display = 'none';
+    if (bookBtn) {
+      bookBtn.innerHTML = `<span>Book Executive Room (1 Guest)</span> <i class="fa-solid fa-arrow-right"></i>`;
     }
   } else {
     if (tagEl) tagEl.innerHTML = '<i class="fa-solid fa-sparkles"></i> Room Inclusions';
@@ -484,7 +590,7 @@ window.submitBookingToWhatsApp = function() {
     `• *Guests / Occupancy:* ${guests}\n\n` +
     `Please confirm room availability and tariff. Thank you!`;
 
-  window.open(`https://wa.me/918123698844?text=${encodeURIComponent(whatsappMsg)}`, '_blank');
+  window.open(`https://wa.me/918123798844?text=${encodeURIComponent(whatsappMsg)}`, '_blank');
 };
 
 /* ==========================================================================
@@ -521,14 +627,14 @@ function initBulkBookingForm() {
         `• *Requirement Details:* ${message || 'Standard corporate inquiry'}\n\n` +
         `Please share availability and customized corporate tariff. Thank you!`;
 
-      const whatsappUrl = `https://wa.me/918123698844?text=${encodeURIComponent(corpMsg)}`;
+      const whatsappUrl = `https://wa.me/918123798844?text=${encodeURIComponent(corpMsg)}`;
 
       setTimeout(() => {
         form.style.display = 'none';
         if (successBanner) {
           successBanner.innerHTML = `
             <i class="fa-solid fa-circle-check"></i>
-            <h3>Thank You for Your Query!</h3>
+            <h3>Corporate Inquiry Received</h3>
             <p>Our corporate relations desk has received your booking inquiry. We will contact you at <strong>${escapeHTML(email || phone)}</strong> shortly.</p>
             <div style="margin-top: 18px;">
               <a href="${whatsappUrl}" target="_blank" class="primary-btn" style="background: #25D366; color: #FFFFFF; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 14px rgba(37, 211, 102, 0.35);">

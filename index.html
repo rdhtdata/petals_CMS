@@ -61,13 +61,9 @@
       <!-- Header Action CTAs -->
       <div class="header-actions">
         <div class="header-phone-group">
-          <a href="tel:+918123698844" class="call-btn-header" aria-label="Call Petals Hotel Front Desk" title="Front Desk">
+          <a href="tel:+918123798844" class="call-btn-header" aria-label="Call Petals Hotel Front Desk" title="Front Desk">
             <i class="fa-solid fa-phone"></i>
-            <span>+91 8123698844</span>
-          </a>
-          <a href="tel:+919535028844" class="call-btn-header alt-call-btn" aria-label="Call Petals Hotel Reservations Desk" title="Reservations">
-            <i class="fa-solid fa-phone-volume"></i>
-            <span>+91 9535028844</span>
+            <span>+91 8123798844</span>
           </a>
         </div>
         <a href="https://letsbook.me/booking/petalssuitesandhotel?checkin=2026-09-30&checkout=2026-10-01&adults=2&children=0" class="book-now-btn" onclick="openBookingModal('deluxe', event)">Book a Stay</a>
@@ -103,9 +99,8 @@
         <div class="mobile-menu-footer">
           <a href="https://letsbook.me/booking/petalssuitesandhotel?checkin=2026-09-30&checkout=2026-10-01&adults=2&children=0" class="primary-btn mob-book-btn" onclick="openBookingModal('deluxe', event)">Reserve a Room <i class="fa-solid fa-arrow-right"></i></a>
           <div class="mob-footer-actions">
-            <a href="tel:+918123698844" class="mob-footer-btn call"><i class="fa-solid fa-phone"></i> +91 8123698844</a>
-            <a href="tel:+919535028844" class="mob-footer-btn call alt"><i class="fa-solid fa-phone-volume"></i> +91 9535028844</a>
-            <a href="https://wa.me/918123698844?text=Hi%20Petals%20Hotel,%20I'd%20like%20to%20inquire%20about%20booking%20a%20stay." target="_blank" class="mob-footer-btn whatsapp"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
+            <a href="tel:+918123798844" class="mob-footer-btn call"><i class="fa-solid fa-phone"></i> +91 8123798844</a>
+            <a href="https://wa.me/918123798844?text=Hi%20Petals%20Hotel,%20I'd%20like%20to%20inquire%20about%20booking%20a%20stay." target="_blank" class="mob-footer-btn whatsapp"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
           </div>
         </div>
       </div>
@@ -167,7 +162,7 @@
           <div class="booking-field">
             <span class="field-label"><i class="fa-solid fa-bed"></i> Room Type</span>
             <select id="hero-room-type" aria-label="Select Room Type">
-              <option value="executive">Executive Room</option>
+              <option value="executive">Executive Room (Single Bed · 1 Guest)</option>
               <option value="deluxe" selected>Deluxe Room</option>
               <option value="superior">Superior Room</option>
               <option value="suite">Suite</option>
@@ -345,19 +340,34 @@
       <div class="rooms-grid">
         <!-- Executive Room -->
         <div class="room-card" data-room="executive">
-          <div class="room-image-wrap">
-            <img src="images/new images/49371E1E-93FC-4078-A3D1-E47DD74D4D38.png" alt="Executive Room at Petals" class="room-card-img" loading="lazy">
+          <div class="room-image-wrap" id="exec-slider-wrap">
+            <img src="images/executive-room-1.jpg" alt="Executive Room Single Bed" class="room-card-img" id="exec-card-img" loading="eager">
+            <div class="room-photo-counter">
+              <i class="fa-solid fa-camera"></i> <span id="exec-photo-idx">1</span> / 2 Photos
+            </div>
+            <div class="room-carousel-controls">
+              <button type="button" class="room-carousel-arrow prev" id="exec-prev-btn" onclick="changeRoomPhoto('executive', -1, event)" aria-label="Previous Photo">
+                <i class="fa-solid fa-chevron-left"></i>
+              </button>
+              <div class="room-carousel-dots">
+                <button type="button" class="room-dot exec-room-dot active" data-index="0" onclick="setRoomPhoto('executive', 0, event)" aria-label="Photo 1"></button>
+                <button type="button" class="room-dot exec-room-dot" data-index="1" onclick="setRoomPhoto('executive', 1, event)" aria-label="Photo 2"></button>
+              </div>
+              <button type="button" class="room-carousel-arrow next" id="exec-next-btn" onclick="changeRoomPhoto('executive', 1, event)" aria-label="Next Photo">
+                <i class="fa-solid fa-chevron-right"></i>
+              </button>
+            </div>
           </div>
           <div class="room-card-body">
             <div class="room-header-row">
               <h3 class="room-name">Executive Room</h3>
               <span class="room-size-tag">220 sq ft</span>
             </div>
-            <p class="room-brief">Contemporary executive sanctuary featuring plush bedding, dedicated work essentials, and climate control.</p>
+            <p class="room-brief">Contemporary executive sanctuary featuring single bed comfort, dedicated work essentials, and climate control.</p>
             
             <div class="room-spec-bar">
-              <span><i class="fa-solid fa-bed"></i> Queen Bed</span>
-              <span><i class="fa-solid fa-users"></i> Up to 3 Guests</span>
+              <span><i class="fa-solid fa-bed"></i> Single Bed</span>
+              <span><i class="fa-solid fa-user"></i> Max 1 Guest</span>
               <span><i class="fa-solid fa-wifi"></i> 100 Mbps Wi-Fi</span>
             </div>
 
@@ -366,7 +376,7 @@
                 <span>Amenities & Details</span>
                 <i class="fa-solid fa-angle-right"></i>
               </button>
-              <a href="https://letsbook.me/booking/petalssuitesandhotel?checkin=2026-09-30&checkout=2026-10-01&adults=2&children=0" class="room-reserve-btn" onclick="openBookingModal('executive', event)">
+              <a href="https://letsbook.me/booking/petalssuitesandhotel?checkin=2026-09-30&checkout=2026-10-01&adults=1&children=0" class="room-reserve-btn" onclick="openBookingModal('executive', event)">
                 <span>Book Online</span>
                 <i class="fa-solid fa-arrow-right"></i>
               </a>
@@ -942,33 +952,25 @@
 
   <!-- Floating Desktop Contact Dock -->
   <div class="floating-dock">
-    <a href="tel:+918123698844" class="dock-btn phone" aria-label="Call Petals Hotel Front Desk" title="Front Desk">
+    <a href="tel:+918123798844" class="dock-btn phone" aria-label="Call Petals Hotel Front Desk" title="Front Desk">
       <i class="fa-solid fa-phone"></i>
-      <span class="dock-tooltip">Front Desk: +91 8123698844</span>
+      <span class="dock-tooltip">Call: +91 8123798844</span>
     </a>
-    <a href="tel:+919535028844" class="dock-btn phone alt" aria-label="Call Petals Hotel Reservations Desk" title="Reservations Desk">
-      <i class="fa-solid fa-phone-volume"></i>
-      <span class="dock-tooltip">Reservations: +91 9535028844</span>
-    </a>
-    <a href="https://wa.me/918123698844?text=Hi%20Petals%20Hotel,%20I'd%20like%20to%20inquire%20about%20booking%20a%20stay." target="_blank" class="dock-btn whatsapp" aria-label="WhatsApp Petals Hotel">
+    <a href="https://wa.me/918123798844?text=Hi%20Petals%20Hotel,%20I'd%20like%20to%20inquire%20about%20booking%20a%20stay." target="_blank" class="dock-btn whatsapp" aria-label="WhatsApp Petals Hotel">
       <i class="fa-brands fa-whatsapp"></i>
-      <span class="dock-tooltip">WhatsApp: +91 8123698844</span>
+      <span class="dock-tooltip">WhatsApp: +91 8123798844</span>
     </a>
   </div>
 
   <!-- Mobile Sticky Bottom Action Bar -->
   <div class="mobile-sticky-dock" id="mobile-sticky-dock">
-    <a href="https://wa.me/918123698844?text=Hi%20Petals%20Hotel,%20I'd%20like%20to%20inquire%20about%20booking%20a%20stay." target="_blank" class="mob-dock-btn whatsapp">
+    <a href="https://wa.me/918123798844?text=Hi%20Petals%20Hotel,%20I'd%20like%20to%20inquire%20about%20booking%20a%20stay." target="_blank" class="mob-dock-btn whatsapp">
       <i class="fa-brands fa-whatsapp"></i>
       <span>WhatsApp</span>
     </a>
-    <a href="tel:+918123698844" class="mob-dock-btn phone">
+    <a href="tel:+918123798844" class="mob-dock-btn phone">
       <i class="fa-solid fa-phone"></i>
-      <span>Front Desk</span>
-    </a>
-    <a href="tel:+919535028844" class="mob-dock-btn phone alt">
-      <i class="fa-solid fa-phone-volume"></i>
-      <span>Reservations</span>
+      <span>Call Us</span>
     </a>
     <a href="https://letsbook.me/booking/petalssuitesandhotel?checkin=2026-09-30&checkout=2026-10-01&adults=2&children=0" class="mob-dock-btn book" onclick="openBookingModal('deluxe', event)">
       <i class="fa-solid fa-calendar-check"></i>
@@ -1009,8 +1011,8 @@
 
       <div class="footer-contact">
         <h4>Contact & Reservations</h4>
-        <p><i class="fa-solid fa-phone"></i> <a href="tel:+918123698844">+91 8123698844</a> &nbsp;|&nbsp; <a href="tel:+919535028844">+91 9535028844</a></p>
-        <p><i class="fa-brands fa-whatsapp"></i> <a href="https://wa.me/918123698844?text=Hi%20Petals%20Hotel,%20I'd%20like%20to%20inquire%20about%20booking%20a%20stay." target="_blank">+91 8123698844 (WhatsApp)</a></p>
+        <p><i class="fa-solid fa-phone"></i> <a href="tel:+918123798844">+91 8123798844</a></p>
+        <p><i class="fa-brands fa-whatsapp"></i> <a href="https://wa.me/918123798844?text=Hi%20Petals%20Hotel,%20I'd%20like%20to%20inquire%20about%20booking%20a%20stay." target="_blank">+91 8123798844 (WhatsApp)</a></p>
         <p><i class="fa-solid fa-envelope"></i> <a href="mailto:info@petalshotels.com">info@petalshotels.com</a></p>
         <p><i class="fa-solid fa-location-dot"></i> 3rd cross Chanakya layout, AC post, opposite to Manyata Tech Park, Bangalore 560045</p>
       </div>
