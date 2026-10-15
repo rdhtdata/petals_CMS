@@ -85,6 +85,22 @@
       if (e.state && e.state.articleId) {
         openArticle(e.state.articleId, false);
       } else {
+        const params = new URLSearchParams(window.location.search);
+        const slug = params.get('article') || window.location.hash.replace('#', '');
+        if (slug && findArticleById(slug)) {
+          openArticle(slug, false);
+        } else {
+          closeArticle(false);
+        }
+      }
+    });
+
+    // Support hashchange fallback
+    window.addEventListener('hashchange', () => {
+      const hashSlug = window.location.hash.replace('#', '');
+      if (hashSlug && findArticleById(hashSlug)) {
+        openArticle(hashSlug, false);
+      } else if (!hashSlug && state.activeArticleId) {
         closeArticle(false);
       }
     });
@@ -135,7 +151,7 @@
         DOM.featuredCardWrap.style.display = 'block';
         if (DOM.gridDivider) DOM.gridDivider.style.display = 'flex';
         DOM.featuredCardWrap.innerHTML = `
-          <div class="featured-blog-card" onclick="window.PetalsBlog.open('${lead.id}')">
+          <a href="blogs.html?article=${encodeURIComponent(lead.id)}" class="featured-blog-card" data-article-id="${lead.id}" aria-label="Read featured guide: ${escapeHtml(lead.title)}">
             <div class="featured-media-wrap">
               <img src="${lead.image}" alt="${escapeHtml(lead.title)}" class="featured-img" loading="eager">
               <span class="featured-badge"><i class="fa-solid fa-crown"></i> Featured Story</span>
@@ -163,7 +179,7 @@
                 </span>
               </div>
             </div>
-          </div>
+          </a>
         `;
       } else {
         DOM.featuredCardWrap.style.display = 'none';
@@ -185,7 +201,7 @@
       const gridItems = (state.currentCategory === 'all' && !state.searchQuery) ? filtered.slice(1) : filtered;
 
       DOM.cardsGrid.innerHTML = gridItems.map(article => `
-        <article class="blog-card" onclick="window.PetalsBlog.open('${article.id}')" data-id="${article.id}">
+        <a href="blogs.html?article=${encodeURIComponent(article.id)}" class="blog-card" data-article-id="${article.id}" aria-label="Read full guide: ${escapeHtml(article.title)}">
           <div class="blog-card-media">
             <img src="${article.image}" alt="${escapeHtml(article.title)}" class="blog-card-img" loading="lazy">
             <span class="blog-card-cat-badge">${escapeHtml(article.category)}</span>
@@ -207,7 +223,7 @@
               </span>
             </div>
           </div>
-        </article>
+        </a>
       `).join('');
     }
   }
@@ -223,7 +239,12 @@
 
     // Hide hub, show reader
     if (DOM.hubContainer) DOM.hubContainer.style.display = 'none';
-    if (DOM.readerContainer) DOM.readerContainer.classList.add('active');
+    if (DOM.readerContainer) {
+      DOM.readerContainer.style.display = 'block';
+      requestAnimationFrame(() => {
+        DOM.readerContainer.classList.add('active');
+      });
+    }
 
     // Populate Reader Fields
     if (DOM.articleHeroBanner) {
@@ -275,46 +296,131 @@
     if (remainingArticles.length && DOM.nextRecCard) {
       const nextArticle = remainingArticles[0];
       DOM.nextRecCard.style.display = 'flex';
-      DOM.nextRecCard.onclick = () => openArticle(nextArticle.id);
+      DOM.nextRecCard.href = `blogs.html?article=${encodeURIComponent(nextArticle.id)}`;
+      DOM.nextRecCard.setAttribute('data-article-id', nextArticle.id);
+      DOM.nextRecCard.setAttribute('aria-label', `Read next guide: ${nextArticle.title}`);
       if (DOM.nextRecTitle) DOM.nextRecTitle.textContent = nextArticle.title;
     } else if (DOM.nextRecCard) {
       DOM.nextRecCard.style.display = 'none';
+      DOM.nextRecCard.removeAttribute('data-article-id');
     }
+
+    // Update document title for SEO & UX
+    document.title = `${article.title} | Petals Suites & Hotel, Bangalore`;
 
     // Scroll to top
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
-    // Update Browser URL & History
+    // Update Browser URL & History safely
     if (updateHistory) {
-      const newUrl = `${window.location.pathname}?article=${encodeURIComponent(article.id)}`;
-      window.history.pushState({ articleId: article.id }, article.title, newUrl);
+      try {
+        const newUrl = `${window.location.pathname}?article=${encodeURIComponent(article.id)}`;
+        window.history.pushState({ articleId: article.id }, document.title, newUrl);
+      } catch (err) {
+        console.warn('History pushState restricted, falling back to hash:', err);
+        try {
+          window.location.hash = article.id;
+        } catch (_) {}
+      }
     }
   }
 
   function closeArticle(updateHistory = true) {
     state.activeArticleId = null;
 
-    if (DOM.readerContainer) DOM.readerContainer.classList.remove('active');
+    if (DOM.readerContainer) {
+      DOM.readerContainer.classList.remove('active');
+      DOM.readerContainer.style.display = 'none';
+    }
     if (DOM.hubContainer) DOM.hubContainer.style.display = 'block';
 
     if (DOM.readingProgressBar) {
       DOM.readingProgressBar.style.width = '0%';
     }
 
-    // Scroll back to where user was
+    // Restore page title
+    document.title = 'Blog & Travel Insights | Petals Suites & Hotel, Bangalore';
+
+    // Scroll back to top
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
     if (updateHistory) {
-      window.history.pushState(null, document.title, window.location.pathname);
+      try {
+        window.history.pushState(null, document.title, window.location.pathname);
+      } catch (err) {
+        try {
+          window.location.hash = '';
+        } catch (_) {}
+      }
     }
 
     renderBlogHub();
   }
 
   /* ==========================================================================
-     4. Interactive Search, Filters & Category Pills
+     4. Interactive Search, Filters, Category Pills & Delegated Events
      ========================================================================== */
   function initFilterEvents() {
+    // Delegated card click handler for Hub cards
+    const handleCardClick = (e) => {
+      const card = e.target.closest('[data-article-id]');
+      if (!card) return;
+
+      // Allow Cmd/Ctrl/Shift + Click or middle mouse button to open in a new tab naturally
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1) return;
+
+      e.preventDefault();
+      const articleId = card.getAttribute('data-article-id');
+      if (articleId) {
+        openArticle(articleId, true);
+      }
+    };
+
+    if (DOM.featuredCardWrap) {
+      DOM.featuredCardWrap.addEventListener('click', handleCardClick);
+    }
+
+    if (DOM.cardsGrid) {
+      DOM.cardsGrid.addEventListener('click', handleCardClick);
+    }
+
+    // Delegated click for Next Recommended Article
+    if (DOM.nextRecCard) {
+      DOM.nextRecCard.addEventListener('click', (e) => {
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1) return;
+        e.preventDefault();
+        const articleId = DOM.nextRecCard.getAttribute('data-article-id');
+        if (articleId) {
+          openArticle(articleId, true);
+        }
+      });
+    }
+
+    // Breadcrumb Blog link
+    const breadcrumbBlogLink = document.getElementById('reader-breadcrumb-blog-link');
+    if (breadcrumbBlogLink) {
+      breadcrumbBlogLink.addEventListener('click', (e) => {
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1) return;
+        e.preventDefault();
+        closeArticle(true);
+      });
+    }
+
+    // Back to hub button
+    if (DOM.articleBackBtn) {
+      DOM.articleBackBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        closeArticle(true);
+      });
+    }
+
+    // ESC key closes reader mode
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && state.activeArticleId) {
+        closeArticle(true);
+      }
+    });
+
     // Search input
     if (DOM.searchInput) {
       DOM.searchInput.addEventListener('input', (e) => {
@@ -354,11 +460,6 @@
         state.sortOrder = e.target.value;
         renderBlogHub();
       });
-    }
-
-    // Back to hub button
-    if (DOM.articleBackBtn) {
-      DOM.articleBackBtn.addEventListener('click', () => closeArticle(true));
     }
   }
 

@@ -20,10 +20,10 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
   <!-- Core Petals Design Tokens & Header/Footer Styles -->
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=1.0.3">
 
   <!-- Blog & Editorial Specific Stylesheet -->
-  <link rel="stylesheet" href="css/blog.css">
+  <link rel="stylesheet" href="css/blog.css?v=1.0.4">
 </head>
 <body class="blog-page">
 
@@ -224,7 +224,7 @@
         </button>
         <div class="article-breadcrumbs">
           <a href="index.html">Home</a> &nbsp;/&nbsp; 
-          <a href="javascript:void(0)" onclick="window.PetalsBlog.close()">Blog</a> &nbsp;/&nbsp; 
+          <a href="blogs.html" id="reader-breadcrumb-blog-link">Blog</a> &nbsp;/&nbsp; 
           <span id="reader-breadcrumb-title">Article</span>
         </div>
       </div>
@@ -287,7 +287,7 @@
         </div>
 
         <!-- Next Recommended Guide -->
-        <div class="article-next-recommendation" id="reader-next-rec-card">
+        <a href="blogs.html" class="article-next-recommendation" id="reader-next-rec-card" aria-label="Read next article">
           <div class="next-rec-content">
             <span class="next-rec-badge">Up Next in Petals Journal</span>
             <h4 class="next-rec-title" id="reader-next-rec-title">Next Article Title</h4>
@@ -295,10 +295,8 @@
           <span class="next-rec-arrow">
             Read Next <i class="fa-solid fa-arrow-right"></i>
           </span>
-        </div>
+        </a>
       </div>
-    </div>
-  </article>
     </div>
   </article>
 
@@ -357,7 +355,7 @@
   </footer>
 
   <!-- Scripts: Data & Controller -->
-  <script src="js/blogs-data.js"></script>
-  <script src="js/blog.js"></script>
+  <script src="js/blogs-data.js?v=1.0.3"></script>
+  <script src="js/blog.js?v=1.0.3"></script>
 </body>
 </html>
