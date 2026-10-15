@@ -52,6 +52,7 @@
         <a href="#experience" class="nav-link">Experience</a>
         <a href="#location" class="nav-link">Location</a>
         <a href="#gallery" class="nav-link">Gallery</a>
+        <a href="blogs.html" class="nav-link">Blog</a>
         <a href="#corporate" class="nav-link">Corporate</a>
         <a href="https://letsbook.me/booking/petalssuitesandhotel?checkin=2026-09-30&checkout=2026-10-01&adults=2&children=0" class="nav-link nav-link-manage" onclick="openBookingModal(); return false;">
           <i class="fa-solid fa-calendar-check"></i> Book Online
@@ -92,8 +93,9 @@
           <a href="#experience" class="mobile-link"><span class="mob-idx">02</span> Experience</a>
           <a href="#location" class="mobile-link"><span class="mob-idx">03</span> Location</a>
           <a href="#gallery" class="mobile-link"><span class="mob-idx">04</span> Gallery</a>
-          <a href="#corporate" class="mobile-link"><span class="mob-idx">05</span> Corporate Inquiry</a>
-          <a href="https://letsbook.me/booking/petalssuitesandhotel?checkin=2026-09-30&checkout=2026-10-01&adults=2&children=0" class="mobile-link" onclick="openBookingModal('deluxe', event)"><span class="mob-idx">06</span> Book Online</a>
+          <a href="blogs.html" class="mobile-link"><span class="mob-idx">05</span> Stories & Blog</a>
+          <a href="#corporate" class="mobile-link"><span class="mob-idx">06</span> Corporate Inquiry</a>
+          <a href="https://letsbook.me/booking/petalssuitesandhotel?checkin=2026-09-30&checkout=2026-10-01&adults=2&children=0" class="mobile-link" onclick="openBookingModal('deluxe', event)"><span class="mob-idx">07</span> Book Online</a>
         </nav>
 
         <div class="mobile-menu-footer">
@@ -341,6 +343,7 @@
         <!-- Executive Room -->
         <div class="room-card" data-room="executive">
           <div class="room-image-wrap" id="exec-slider-wrap">
+            <div class="room-card-ambient-bg" id="exec-ambient-bg" style="display: none;"></div>
             <img src="images/executive-room-1.jpg" alt="Executive Room Single Bed" class="room-card-img" id="exec-card-img" loading="eager">
             <div class="room-photo-counter">
               <i class="fa-solid fa-camera"></i> <span id="exec-photo-idx">1</span> / 2 Photos
@@ -1002,6 +1005,7 @@
           <li><a href="#experience">The Experience</a></li>
           <li><a href="#location">Location & Route</a></li>
           <li><a href="#gallery">Visual Gallery</a></li>
+          <li><a href="blogs.html">Blog & Guides</a></li>
           <li><a href="#corporate">Corporate Inquiries</a></li>
           <li><a href="javascript:void(0)" onclick="openLegalModal('privacy')">Privacy Policy</a></li>
           <li><a href="javascript:void(0)" onclick="openLegalModal('terms')">Terms & House Rules</a></li>

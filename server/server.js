@@ -122,9 +122,37 @@ const serveIndexHtml = (req, res) => {
   });
 };
 
+// Helper to serve cache-busted blogs.html
+const serveBlogsHtml = (req, res) => {
+  const blogsPath = path.join(rootDir, 'blogs.html');
+  fs.readFile(blogsPath, 'utf8', (err, html) => {
+    if (err) {
+      return res.status(500).send('Error loading blogs page');
+    }
+
+    const dynamicVersion = `${pkg.version || '1.0.0'}-${Date.now()}`;
+    let versionedHtml = html
+      .replace(/href="style\.css(\?[^"]*)?"/g, `href="style.css?v=${dynamicVersion}"`)
+      .replace(/href="css\/blog\.css(\?[^"]*)?"/g, `href="css/blog.css?v=${dynamicVersion}"`)
+      .replace(/src="js\/blogs-data\.js(\?[^"]*)?"/g, `src="js/blogs-data.js?v=${dynamicVersion}"`)
+      .replace(/src="js\/blog\.js(\?[^"]*)?"/g, `src="js/blog.js?v=${dynamicVersion}"`);
+
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+    res.setHeader('ETag', `"${dynamicVersion}"`);
+    res.type('html').send(versionedHtml);
+  });
+};
+
 // Root routes with dynamic cache-busting
 app.get('/', serveIndexHtml);
 app.get('/index.html', serveIndexHtml);
+
+// Blog routes
+app.get('/blogs', serveBlogsHtml);
+app.get('/blog', serveBlogsHtml);
+app.get('/blogs.html', serveBlogsHtml);
 
 // Serve Static Frontend Assets with zero-cache for active dev
 app.use(express.static(rootDir, {
@@ -139,10 +167,13 @@ app.use(express.static(rootDir, {
   }
 }));
 
-// SPA fallback to index.html
+// Fallback routing
 app.get('*', (req, res) => {
   if (req.path.startsWith('/api')) {
     return res.status(404).json({ error: 'API route not found' });
+  }
+  if (req.path.startsWith('/blog') || req.path.startsWith('/blogs')) {
+    return serveBlogsHtml(req, res);
   }
   serveIndexHtml(req, res);
 });

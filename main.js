@@ -349,9 +349,26 @@ window.setRoomPhoto = function(roomKey, index, event) {
   if (!room || !room.photos) return;
   
   const imgEl = document.getElementById('exec-card-img');
+  const ambientEl = document.getElementById('exec-ambient-bg');
+
   if (imgEl && room.photos[index]) {
     imgEl.src = room.photos[index];
-    imgEl.alt = `${room.title} - View ${index + 1}`;
+    imgEl.alt = index === 0 ? 'Executive Room - Single Bed Sanctuary' : 'Executive Room - Modern En-suite Bathroom';
+
+    if (index === 1) {
+      // Photo 2 is portrait: use contain mode + ambient blur so the full bathroom is visible
+      imgEl.classList.add('contained-mode');
+      if (ambientEl) {
+        ambientEl.style.backgroundImage = `url('${room.photos[index]}')`;
+        ambientEl.style.display = 'block';
+      }
+    } else {
+      // Photo 1 is landscape: full cover
+      imgEl.classList.remove('contained-mode');
+      if (ambientEl) {
+        ambientEl.style.display = 'none';
+      }
+    }
   }
 
   const dots = document.querySelectorAll('#exec-slider-wrap .room-dot');

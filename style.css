@@ -405,7 +405,7 @@ button {
   height: var(--header-height);
   z-index: 1000;
   transition: var(--transition-base);
-  background-color: transparent;
+  background: linear-gradient(180deg, rgba(18, 15, 13, 0.88) 0%, rgba(18, 15, 13, 0.52) 65%, rgba(18, 15, 13, 0) 100%);
 }
 
 .main-header.scrolled {
@@ -1480,15 +1480,40 @@ button {
   border-radius: 4px;
 }
 
+.room-card-ambient-bg {
+  position: absolute;
+  top: -15%;
+  left: -15%;
+  width: 130%;
+  height: 130%;
+  background-size: cover;
+  background-position: center 35%;
+  filter: blur(20px) brightness(0.48) saturate(1.2);
+  z-index: 1;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
 .room-card-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.9s var(--ease-luxury);
+  transition: transform 0.9s var(--ease-luxury), opacity 0.25s ease;
+  position: relative;
+  z-index: 2;
+}
+
+.room-card-img.contained-mode {
+  object-fit: contain;
+  filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.45));
 }
 
 .room-card:hover .room-card-img {
   transform: scale(1.05);
+}
+
+.room-card:hover .room-card-img.contained-mode {
+  transform: scale(1.02);
 }
 
 .room-price-badge {

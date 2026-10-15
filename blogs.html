@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog & Travel Insights | Petals Suites & Hotel, Bangalore</title>
+  <meta name="description" content="Read curated business travel guides, luxury stay insights, and accommodation tips for North Bangalore, opposite Manyata Tech Park.">
+  <link rel="canonical" href="https://petalssuites.com/blogs">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/jpeg" href="images/brand icon.jpeg">
+  <link rel="apple-touch-icon" href="images/brand icon.jpeg">
+
+  <!-- Google Fonts: Marcellus & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome 6.5.1 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <!-- Core Petals Design Tokens & Header/Footer Styles -->
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Blog & Editorial Specific Stylesheet -->
+  <link rel="stylesheet" href="css/blog.css">
+</head>
+<body class="blog-page">
+
+  <!-- Reading Progress Bar (Appears in article reading mode) -->
+  <div class="reading-progress-container" aria-hidden="true">
+    <div class="reading-progress-bar" id="reading-progress-bar"></div>
+  </div>
+
+  <!-- Header / Navigation Bar -->
+  <header class="main-header" id="header">
+    <div class="header-container">
+      <a href="index.html#home" class="brand-logo" aria-label="Petals Suites & Hotel">
+        <img src="images/brand icon.jpeg" alt="Petals Brand Logo" class="logo-img">
+        <div class="brand-text">
+          <span class="brand-name">PETALS</span>
+          <span class="brand-sub">Suites & Hotel</span>
+        </div>
+      </a>
+
+      <!-- Desktop Nav Menu -->
+      <nav class="nav-menu" aria-label="Main Navigation">
+        <a href="index.html#rooms" class="nav-link">Rooms</a>
+        <a href="index.html#experience" class="nav-link">Experience</a>
+        <a href="index.html#location" class="nav-link">Location</a>
+        <a href="index.html#gallery" class="nav-link">Gallery</a>
+        <a href="blogs.html" class="nav-link active" style="color: var(--accent); font-weight: 600;">Blog</a>
+        <a href="index.html#corporate" class="nav-link">Corporate</a>
+        <a href="https://letsbook.me/booking/petalssuitesandhotel?checkin=2026-10-15&checkout=2026-10-16&adults=2&children=0" class="nav-link nav-link-manage" target="_blank" rel="noopener">
+          <i class="fa-solid fa-calendar-check"></i> Book Online
+        </a>
+      </nav>
+
+      <!-- Header Action CTAs -->
+      <div class="header-actions">
+        <div class="header-phone-group">
+          <a href="tel:+918123798844" class="call-btn-header" aria-label="Call Petals Hotel Front Desk" title="Front Desk">
+            <i class="fa-solid fa-phone"></i>
+            <span>+91 8123798844</span>
+          </a>
+        </div>
+        <a href="https://letsbook.me/booking/petalssuitesandhotel?checkin=2026-10-15&checkout=2026-10-16&adults=2&children=0" class="book-now-btn" target="_blank" rel="noopener">Book a Stay</a>
+        <button class="mobile-menu-toggle" aria-label="Open Navigation Menu">
+          <span class="menu-bar"></span>
+          <span class="menu-bar"></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Luxury Fullscreen Mobile Navigation Overlay -->
+    <div class="mobile-nav-overlay" id="mobile-menu-overlay" aria-hidden="true">
+      <div class="mobile-nav-content">
+        <div class="mobile-nav-top">
+          <div class="mobile-brand">
+            <img src="images/brand icon.jpeg" alt="Petals Logo" class="mobile-logo-img">
+            <span>PETALS</span>
+          </div>
+          <button class="mobile-menu-close" aria-label="Close Navigation Menu">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+
+        <nav class="mobile-menu-links">
+          <a href="index.html#rooms" class="mobile-link"><span class="mob-idx">01</span> Rooms & Suites</a>
+          <a href="index.html#experience" class="mobile-link"><span class="mob-idx">02</span> Experience</a>
+          <a href="index.html#location" class="mobile-link"><span class="mob-idx">03</span> Location</a>
+          <a href="index.html#gallery" class="mobile-link"><span class="mob-idx">04</span> Gallery</a>
+          <a href="blogs.html" class="mobile-link" style="color: var(--accent);"><span class="mob-idx">05</span> Stories & Blog</a>
+          <a href="index.html#corporate" class="mobile-link"><span class="mob-idx">06</span> Corporate Inquiry</a>
+          <a href="https://letsbook.me/booking/petalssuitesandhotel?checkin=2026-10-15&checkout=2026-10-16&adults=2&children=0" class="mobile-link" target="_blank" rel="noopener"><span class="mob-idx">07</span> Book Online</a>
+        </nav>
+
+        <div class="mobile-menu-footer">
+          <a href="https://wa.me/918123798844?text=Hi%20Petals%20Hotel,%20I'd%20like%20to%20inquire%20about%20booking%20a%20stay." target="_blank" class="primary-btn mob-whatsapp-btn">
+            <i class="fa-brands fa-whatsapp"></i> Chat on WhatsApp
+          </a>
+          <a href="tel:+918123798844" class="call-btn-header" style="margin-top: 12px; justify-content: center;">
+            <i class="fa-solid fa-phone"></i> +91 8123798844
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========================================================================
+       MAIN BLOG HUB VIEW (Editorial Masthead, Filter Bar, Grid)
+       ======================================================================== -->
+  <main id="blog-hub-container">
+    <!-- Editorial Masthead -->
+    <section class="blog-hero">
+      <div class="container">
+        <div class="blog-hero-content">
+          <span class="blog-hero-tag">PETALS SUITES & HOTEL · EDITORIAL JOURNAL</span>
+          <h1 class="blog-hero-title">Bangalore Travel, Stays & Insights</h1>
+          <p class="blog-hero-subtitle">
+            Curated guides on executive stays, Manyata Tech Park corporate hospitality, and comfortable city living.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Unified Editorial Filter Bar -->
+    <section class="blog-controls-section">
+      <div class="container blog-controls-inner">
+        <!-- Category Tabs -->
+        <div class="blog-categories-bar" role="tablist" aria-label="Filter articles by category">
+          <button class="blog-cat-pill active" data-category="all" role="tab" aria-selected="true">All Guides</button>
+          <button class="blog-cat-pill" data-category="Business Travel" role="tab" aria-selected="false">Business Travel</button>
+          <button class="blog-cat-pill" data-category="Luxury Stays" role="tab" aria-selected="false">Luxury Stays</button>
+          <button class="blog-cat-pill" data-category="Corporate Guide" role="tab" aria-selected="false">Corporate Guide</button>
+          <button class="blog-cat-pill" data-category="Work & Comfort" role="tab" aria-selected="false">Work & Comfort</button>
+        </div>
+
+        <!-- Search & Sort Row -->
+        <div class="blog-search-sort-row">
+          <div class="blog-search-box">
+            <i class="fa-solid fa-magnifying-glass blog-search-icon"></i>
+            <input type="text" id="blog-search-input" class="blog-search-input" placeholder="Search guides, Manyata tips, amenities..." aria-label="Search articles">
+            <button type="button" id="blog-search-clear" class="blog-search-clear" aria-label="Clear search">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+
+          <div class="blog-sort-group">
+            <span class="blog-results-counter" id="blog-results-counter">4 articles</span>
+            <select id="blog-sort-select" class="blog-sort-select" aria-label="Sort articles">
+              <option value="latest">Sort: Latest First</option>
+              <option value="oldest">Sort: Oldest First</option>
+              <option value="readtime">Sort: Quick Read</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Editorial Feed Section -->
+    <section class="blog-feed-section">
+      <div class="container">
+        <!-- Lead Featured Story -->
+        <div id="featured-blog-wrap" class="featured-blog-wrap">
+          <!-- Rendered dynamically by blog.js -->
+        </div>
+
+        <!-- Section Label Divider -->
+        <div class="blog-section-divider" id="grid-section-divider">
+          <span class="divider-label">All Published Guides</span>
+        </div>
+
+        <!-- Viewing-Friendly Editorial Cards Grid -->
+        <div class="blog-cards-grid" id="blog-cards-grid">
+          <!-- Rendered dynamically by blog.js -->
+        </div>
+
+        <!-- Empty State Fallback -->
+        <div class="blog-empty-state" id="blog-empty-state">
+          <div class="empty-state-icon"><i class="fa-solid fa-compass"></i></div>
+          <h4>No matching guides found</h4>
+          <p>We couldn't find any articles matching your search query. Try a different keyword or view all categories.</p>
+          <button type="button" class="primary-btn empty-reset-btn" onclick="window.PetalsBlog.resetFilters()">
+            <span>Reset Search & View All</span>
+            <i class="fa-solid fa-arrow-rotate-left"></i>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Corporate Bulk Stay Banner -->
+    <section class="blog-corporate-cta">
+      <div class="container blog-corporate-box">
+        <div class="blog-corporate-info">
+          <span class="corporate-eyebrow">CORPORATE & BUSINESS HOSPITALITY</span>
+          <h3>Planning Corporate Stays at Manyata?</h3>
+          <p>
+            Petals Suites & Hotel provides custom corporate group rates, enterprise billing, and flexible long-stay packages directly opposite Manyata Tech Park.
+          </p>
+        </div>
+        <div class="blog-corporate-actions">
+          <a href="index.html#corporate" class="primary-btn">
+            Corporate Inquiry <i class="fa-solid fa-arrow-right"></i>
+          </a>
+          <a href="https://wa.me/918123798844?text=Hello%20Petals%20Suites,%20I'd%20like%20to%20inquire%20about%20corporate%20group%20bookings." target="_blank" class="secondary-btn-gold">
+            <i class="fa-brands fa-whatsapp"></i> Chat on WhatsApp
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ========================================================================
+       FULL ARTICLE READER VIEW (Dedicated Immersive Editorial Reading Mode)
+       ======================================================================== -->
+  <article class="article-reader-container" id="article-reader-container" aria-label="Article Details">
+    <div class="container">
+      <!-- Back Navigation & Breadcrumb -->
+      <div class="article-top-bar">
+        <button type="button" class="article-back-btn" id="article-back-btn">
+          <i class="fa-solid fa-arrow-left"></i>
+          <span>Back to All Guides</span>
+        </button>
+        <div class="article-breadcrumbs">
+          <a href="index.html">Home</a> &nbsp;/&nbsp; 
+          <a href="javascript:void(0)" onclick="window.PetalsBlog.close()">Blog</a> &nbsp;/&nbsp; 
+          <span id="reader-breadcrumb-title">Article</span>
+        </div>
+      </div>
+
+      <!-- Article Header: Category, Title, Meta -->
+      <header class="article-header-meta">
+        <div class="article-badge-row">
+          <span class="article-topic-pill" id="reader-topic-pill">Business Travel</span>
+          <span class="article-read-badge"><i class="fa-regular fa-clock"></i> <span id="reader-read-time">5 min read</span></span>
+        </div>
+        <h1 class="article-main-title" id="reader-title">Article Title</h1>
+        
+        <div class="article-author-info-bar">
+          <div class="article-author-profile">
+            <div class="author-avatar-badge"><i class="fa-solid fa-hotel"></i></div>
+            <div class="author-text-info">
+              <strong id="reader-author-name">Petals Editorial Desk</strong>
+              <span id="reader-author-role">Executive Hospitality Team</span>
+            </div>
+          </div>
+          <div class="article-pub-date">
+            <i class="fa-regular fa-calendar"></i>
+            <span id="reader-date">October 15, 2026</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Full-Width Editorial Hero Banner -->
+      <div class="article-hero-banner-wrap">
+        <img id="reader-hero-img" src="" alt="Article Banner" class="article-hero-img" loading="eager">
+      </div>
+
+      <!-- Focused Reading Column (Max-width 720px for optimal reading) -->
+      <div class="article-reading-column">
+        <!-- Rich Content Body -->
+        <div class="article-rich-body" id="reader-rich-body">
+          <!-- Rendered dynamically from BLOGS_DATA -->
+        </div>
+
+        <!-- Article Footer: Tags & Share -->
+        <div class="article-footer-box">
+          <div class="article-tags-wrap" id="reader-tags-wrap">
+            <!-- Tag pills rendered dynamically -->
+          </div>
+          <div class="article-social-share-group">
+            <span class="share-label">Share Guide:</span>
+            <button type="button" class="share-btn" onclick="window.PetalsBlog.share('whatsapp')" aria-label="Share on WhatsApp" title="Share on WhatsApp">
+              <i class="fa-brands fa-whatsapp"></i>
+            </button>
+            <button type="button" class="share-btn" onclick="window.PetalsBlog.share('linkedin')" aria-label="Share on LinkedIn" title="Share on LinkedIn">
+              <i class="fa-brands fa-linkedin-in"></i>
+            </button>
+            <button type="button" class="share-btn" onclick="window.PetalsBlog.share('twitter')" aria-label="Share on X" title="Share on X">
+              <i class="fa-brands fa-x-twitter"></i>
+            </button>
+            <button type="button" class="share-btn" onclick="window.PetalsBlog.share('copy')" aria-label="Copy Link" title="Copy Link to Clipboard">
+              <i class="fa-solid fa-link"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Next Recommended Guide -->
+        <div class="article-next-recommendation" id="reader-next-rec-card">
+          <div class="next-rec-content">
+            <span class="next-rec-badge">Up Next in Petals Journal</span>
+            <h4 class="next-rec-title" id="reader-next-rec-title">Next Article Title</h4>
+          </div>
+          <span class="next-rec-arrow">
+            Read Next <i class="fa-solid fa-arrow-right"></i>
+          </span>
+        </div>
+      </div>
+    </div>
+  </article>
+    </div>
+  </article>
+
+  <!-- ========================================================================
+       FOOTER
+       ======================================================================== -->
+  <footer class="main-footer">
+    <div class="container footer-grid">
+      <div class="footer-info">
+        <a href="index.html#home" class="brand-logo footer-logo">
+          <img src="images/brand icon.jpeg" alt="Petals Logo" class="logo-img">
+          <div class="brand-text">
+            <span class="brand-name">PETALS</span>
+            <span class="brand-sub text-white">Suites & Hotel</span>
+          </div>
+        </a>
+        <p class="footer-tagline">Stay close. Stay beautifully.</p>
+        <p class="footer-about-text">
+          A modern executive hotel designed to provide peaceful, high-end hospitality directly opposite Bangalore's premier business park.
+        </p>
+      </div>
+
+      <div class="footer-links">
+        <h4>Explore</h4>
+        <ul>
+          <li><a href="index.html#rooms">Rooms & Suites</a></li>
+          <li><a href="index.html#experience">The Experience</a></li>
+          <li><a href="index.html#location">Location & Route</a></li>
+          <li><a href="index.html#gallery">Visual Gallery</a></li>
+          <li><a href="blogs.html" style="color: var(--accent); font-weight: 600;">Blog & Guides</a></li>
+          <li><a href="index.html#corporate">Corporate Inquiries</a></li>
+          <li><a href="https://letsbook.me/booking/petalssuitesandhotel?checkin=2026-10-15&checkout=2026-10-16&adults=2&children=0" target="_blank" rel="noopener">Book Online</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-contact">
+        <h4>Contact & Reservations</h4>
+        <p><i class="fa-solid fa-phone"></i> <a href="tel:+918123798844">+91 8123798844</a></p>
+        <p><i class="fa-brands fa-whatsapp"></i> <a href="https://wa.me/918123798844?text=Hi%20Petals%20Hotel,%20I'd%20like%20to%20inquire%20about%20booking%20a%20stay." target="_blank">+91 8123798844 (WhatsApp)</a></p>
+        <p><i class="fa-solid fa-envelope"></i> <a href="mailto:info@petalshotels.com">info@petalshotels.com</a></p>
+        <p><i class="fa-solid fa-location-dot"></i> 3rd cross Chanakya layout, AC post, opposite to Manyata Tech Park, Bangalore 560045</p>
+      </div>
+    </div>
+
+    <div class="footer-watermark">
+      <span class="watermark-text">BANGALORE</span>
+    </div>
+    
+    <div class="footer-bottom">
+      <div class="container footer-bottom-inner">
+        <p>&copy; 2026 Petals Suites & Hotel. All Rights Reserved.</p>
+        <p class="footer-designed-by">Website designed by <a href="https://octagramai.com" target="_blank" rel="noopener noreferrer">Octagram</a></p>
+        <p class="footer-sub-note">Directly opposite Manyata Tech Park, Bangalore</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts: Data & Controller -->
+  <script src="js/blogs-data.js"></script>
+  <script src="js/blog.js"></script>
+</body>
+</html>
