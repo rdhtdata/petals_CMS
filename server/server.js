@@ -57,9 +57,9 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 }));
 
-// Request Body Parsers (25MB limit to accommodate rich media uploads)
-app.use(express.json({ limit: '25mb' }));
-app.use(express.urlencoded({ extended: true, limit: '25mb' }));
+// Request Body Parsers (25MB limit with inflate:false mitigation against stream crash CVE)
+app.use(express.json({ limit: '25mb', inflate: false }));
+app.use(express.urlencoded({ extended: true, limit: '25mb', inflate: false }));
 
 // Block access to sensitive files and directories
 app.use((req, res, next) => {
