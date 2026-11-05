@@ -399,19 +399,19 @@
       const roleColor = l.user_role === 'admin' ? '#38bdf8' : '#c084fc';
       const isDeleted = l.action === 'delete';
       const titleHtml = (!isDeleted && l.blog_id)
-        ? `<a href="#editor/${escapeHtml(l.blog_id)}" style="color: var(--text-primary); font-weight: 600; text-decoration: none;" class="table-link-hover">${escapeHtml(l.blog_title)}</a>`
-        : `<strong style="color: var(--text-muted);">${escapeHtml(l.blog_title)}</strong>`;
+        ? `<a href="#editor/${escapeHtml(l.blog_id)}" class="activity-article-link" title="${escapeHtml(l.blog_title)}">${escapeHtml(l.blog_title)}</a>`
+        : `<span class="activity-article-deleted" title="${escapeHtml(l.blog_title)}">${escapeHtml(l.blog_title)}</span>`;
 
       return `
         <tr>
-          <td class="tabular-nums" style="font-size: 11.5px; color: var(--text-secondary);">
-            <div style="font-weight: 500; color: var(--text-primary);">${new Date(l.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</div>
-            <span>${formatDate(l.created_at)}</span>
+          <td class="tabular-nums th-timestamp-cell">
+            <div class="activity-time-text">${new Date(l.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</div>
+            <span class="activity-date-text">${formatDate(l.created_at)}</span>
           </td>
           <td>
             <div class="table-title-cell">
               <strong>${escapeHtml(l.user_name)}</strong>
-              <span style="display: flex; align-items: center; gap: 4px;">
+              <span class="activity-user-handle">
                 <span>@${escapeHtml(l.username)}</span>
                 <span style="font-size: 10px; color: ${roleColor}; font-weight: 500;">(${roleName})</span>
               </span>
@@ -423,11 +423,11 @@
               ${escapeHtml(l.action_label || l.action)}
             </span>
           </td>
-          <td>
+          <td class="td-article-cell">
             ${titleHtml}
           </td>
-          <td style="color: var(--text-secondary); font-size: 12px;">
-            ${escapeHtml(l.details || 'No details provided')}
+          <td class="td-summary-cell">
+            <div class="activity-summary-text">${escapeHtml(l.details || 'No details provided')}</div>
           </td>
         </tr>
       `;
@@ -1553,12 +1553,21 @@
         }
 
         if (listEl && step.assertions) {
-          listEl.innerHTML = step.assertions.map(a => `
-            <li class="e2e-assertion-item ${a.passed ? 'passed' : 'failed'}">
-              <i class="fa-solid ${a.passed ? 'fa-check' : 'fa-xmark'}"></i>
-              <span>${escapeHtml(a.name)}${a.value !== undefined ? ` (<strong>${a.value}</strong>)` : ''}</span>
-            </li>
-          `).join('');
+          listEl.innerHTML = step.assertions.map(a => {
+            let valHtml = '';
+            if (a.value !== undefined) {
+              const valStr = String(a.value);
+              valHtml = ` <code class="e2e-assertion-val" title="${escapeHtml(valStr)}">${escapeHtml(valStr)}</code>`;
+            }
+            return `
+              <li class="e2e-assertion-item ${a.passed ? 'passed' : 'failed'}">
+                <i class="fa-solid ${a.passed ? 'fa-check' : 'fa-xmark'}"></i>
+                <div class="e2e-assertion-text">
+                  <span class="e2e-assertion-name">${escapeHtml(a.name)}</span>${valHtml}
+                </div>
+              </li>
+            `;
+          }).join('');
         }
       });
     }

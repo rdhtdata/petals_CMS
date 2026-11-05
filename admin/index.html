@@ -309,7 +309,7 @@
                 <div class="launchpad-card">
                   <span class="launchpad-card-title"><i class="fa-solid fa-photo-film"></i> Media Vault</span>
                   <p class="form-hint mb-2">High-resolution property photography and suite assets.</p>
-                  <div style="display: flex; gap: 8px;">
+                  <div class="launchpad-buttons-row">
                     <a href="#media" class="btn btn-outline btn-xs"><i class="fa-solid fa-images"></i> Browse Vault</a>
                     <label class="btn btn-secondary btn-xs file-select-label">
                       <i class="fa-solid fa-arrow-up-from-bracket"></i> Upload Photo
@@ -357,14 +357,14 @@
             </div>
             <div class="panel-body p-0">
               <div class="table-responsive">
-                <table class="cms-table" style="font-size: 12.5px;">
+                <table class="cms-table activity-table">
                   <thead>
                     <tr>
-                      <th style="width: 175px;">Timestamp</th>
-                      <th style="width: 190px;">Editor / Author</th>
-                      <th style="width: 135px;">Action</th>
-                      <th>Article</th>
-                      <th>Change Summary</th>
+                      <th class="th-timestamp">Timestamp</th>
+                      <th class="th-author">Editor / Author</th>
+                      <th class="th-action">Action</th>
+                      <th class="th-article">Article</th>
+                      <th class="th-summary">Change Summary</th>
                     </tr>
                   </thead>
                   <tbody id="activity-logs-tbody">
@@ -503,7 +503,7 @@
                         <button type="button" class="btn-link-sm" id="editor-slug-unlock" title="Edit URL slug manually"><i class="fa-solid fa-pen-to-square"></i></button>
                       </label>
                       <div class="slug-input-wrap">
-                        <span class="slug-prefix">petalshotels.com/blogs.html?article=</span>
+                        <span class="slug-prefix" title="petalshotels.com/blogs.html?article=">blogs.html?article=</span>
                         <input type="text" id="editor-slug" class="slug-input" placeholder="auto-generated-from-title" readonly>
                       </div>
                     </div>

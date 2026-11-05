@@ -838,11 +838,13 @@ button, input, select, textarea {
   background: linear-gradient(135deg, #1b1713 0%, #14120f 100%);
   border: 1px solid var(--border-hairline);
   border-radius: var(--radius-md);
-  padding: 26px 28px;
+  padding: 24px 28px;
   margin-bottom: 24px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
   position: relative;
   overflow: hidden;
 }
@@ -856,6 +858,11 @@ button, input, select, textarea {
   height: 100%;
   background: radial-gradient(circle at 100% 50%, rgba(197, 168, 128, 0.08), transparent 70%);
   pointer-events: none;
+}
+
+.masthead-info {
+  min-width: 0;
+  flex: 1 1 280px;
 }
 
 .masthead-info h1 {
@@ -875,8 +882,10 @@ button, input, select, textarea {
 .masthead-actions {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 12px;
   z-index: 2;
+  flex-shrink: 0;
 }
 
 /* Horizontal Tabular Metrics Ribbon */
@@ -891,12 +900,13 @@ button, input, select, textarea {
 }
 
 .ribbon-cell {
-  padding: 18px 20px 16px;
+  padding: 16px 16px 14px;
   border-right: 1px solid var(--border-subtle);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   min-height: 96px;
+  min-width: 0;
   box-sizing: border-box;
   transition: var(--transition);
 }
@@ -912,7 +922,7 @@ button, input, select, textarea {
 .ribbon-label {
   font-size: 10.5px;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.9px;
   color: var(--text-muted);
   font-weight: 600;
   line-height: 1.2;
@@ -1036,6 +1046,13 @@ button, input, select, textarea {
   color: var(--accent-gold);
 }
 
+.launchpad-buttons-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
 .quick-draft-box {
   display: flex;
   gap: 8px;
@@ -1118,6 +1135,10 @@ button, input, select, textarea {
   display: block;
 }
 
+.table-title-cell {
+  max-width: 320px;
+}
+
 .table-title-cell strong {
   display: block;
   color: var(--text-primary);
@@ -1125,6 +1146,9 @@ button, input, select, textarea {
   font-weight: 500;
   margin: 0 0 3px 0;
   line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .table-title-cell span {
@@ -1133,6 +1157,9 @@ button, input, select, textarea {
   font-family: var(--font-mono);
   display: block;
   line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* Quiet Luxury Status Indicators (No candy pills) */
@@ -1182,10 +1209,100 @@ button, input, select, textarea {
   align-items: center;
   justify-content: flex-end;
   line-height: 1;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .table-actions .btn {
   font-size: 11.5px;
+}
+
+/* Activity Ledger Fixed Table Layout & Cells */
+.activity-table {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.activity-table .th-timestamp {
+  width: 140px;
+}
+
+.activity-table .th-author {
+  width: 160px;
+}
+
+.activity-table .th-action {
+  width: 110px;
+}
+
+.activity-table .th-article {
+  width: 210px;
+}
+
+.activity-table .th-summary {
+  width: auto;
+}
+
+.activity-article-link {
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: middle;
+  color: var(--accent-gold);
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+}
+
+.activity-article-link:hover {
+  text-decoration: underline;
+  color: var(--accent-gold-hover);
+}
+
+.activity-article-deleted {
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: middle;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  text-decoration: line-through;
+}
+
+.activity-time-text {
+  font-weight: 500;
+  color: var(--text-primary);
+  font-size: 11.5px;
+  line-height: 1.2;
+}
+
+.activity-date-text {
+  font-size: 10.5px;
+  color: var(--text-muted);
+  line-height: 1.2;
+  display: block;
+  margin-top: 2px;
+}
+
+.activity-user-handle {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.activity-summary-text {
+  overflow-wrap: break-word;
+  word-break: break-word;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--text-secondary);
 }
 
 /* Filter Toolbar */
@@ -1308,11 +1425,6 @@ button, input, select, textarea {
   align-items: center;
   justify-content: center;
 }
-  border: none;
-  color: var(--text-muted);
-  cursor: pointer;
-  padding: 2px;
-}
 
 /* ==========================================================================
    7. THE ARTICLE STUDIO (Editor View)
@@ -1325,6 +1437,8 @@ button, input, select, textarea {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
   margin-bottom: 22px;
   position: sticky;
   top: var(--topbar-height);
@@ -1335,7 +1449,9 @@ button, input, select, textarea {
 .editor-header-left {
   display: flex;
   align-items: center;
-  gap: 14px;
+  flex-wrap: wrap;
+  gap: 12px;
+  min-width: 0;
 }
 
 .editor-status-pill,
@@ -1378,6 +1494,7 @@ button, input, select, textarea {
 .editor-header-actions {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 8px;
 }
 
@@ -1503,23 +1620,26 @@ button, input, select, textarea {
   overflow: hidden;
   height: 40px;
   box-sizing: border-box;
+  width: 100%;
 }
 
 .slug-prefix {
   font-size: 11px;
   font-family: var(--font-mono);
   color: var(--text-muted);
-  padding-left: 12px;
+  padding: 0 8px 0 12px;
   white-space: nowrap;
   line-height: 1;
+  flex-shrink: 0;
 }
 
 .slug-input-wrap .slug-input,
 .slug-input-wrap input {
   flex: 1;
+  min-width: 0;
   border: none;
   background: transparent;
-  padding: 0 12px;
+  padding: 0 12px 0 4px;
   height: 100%;
   font-size: 12px;
   font-family: var(--font-mono);
@@ -1804,6 +1924,15 @@ button, input, select, textarea {
   font-size: 11px;
   color: #bdc1c6;
   margin-bottom: 3px;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.serp-cite > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
 }
 
 .serp-favicon {
@@ -2047,6 +2176,7 @@ button, input, select, textarea {
   align-items: center;
   gap: 6px;
   flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .modal-close-btn {
@@ -2293,12 +2423,18 @@ button, input, select, textarea {
 /* ==========================================================================
    11. RESPONSIVE MEDIA QUERIES
    ========================================================================== */
-@media (max-width: 1120px) {
+@media (max-width: 1340px) {
   .metrics-ribbon {
     grid-template-columns: repeat(3, 1fr);
   }
-  .ribbon-cell:nth-child(3) {
+  .ribbon-cell {
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .ribbon-cell:nth-child(3n) {
     border-right: none;
+  }
+  .ribbon-cell:nth-last-child(-n+3) {
+    border-bottom: none;
   }
 }
 
@@ -2339,8 +2475,17 @@ button, input, select, textarea {
   .metrics-ribbon {
     grid-template-columns: repeat(2, 1fr);
   }
-  .ribbon-cell:nth-child(2) {
+  .ribbon-cell:nth-child(3n) {
+    border-right: 1px solid var(--border-subtle);
+  }
+  .ribbon-cell:nth-child(2n) {
     border-right: none;
+  }
+  .ribbon-cell:nth-last-child(-n+3) {
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .ribbon-cell:nth-last-child(-n+2) {
+    border-bottom: none;
   }
   .form-row-2 {
     grid-template-columns: 1fr;
@@ -2363,6 +2508,22 @@ button, input, select, textarea {
   }
 }
 
+@media (max-width: 480px) {
+  .login-card {
+    padding: 30px 20px 24px;
+  }
+  .metrics-ribbon {
+    grid-template-columns: 1fr;
+  }
+  .ribbon-cell {
+    border-right: none !important;
+    border-bottom: 1px solid var(--border-subtle) !important;
+  }
+  .ribbon-cell:last-child {
+    border-bottom: none !important;
+  }
+}
+
 /* ==========================================================================
    DEVELOPER E2E TEST SUITE STYLES
    ========================================================================== */
@@ -2380,6 +2541,8 @@ button, input, select, textarea {
   padding: 14px 16px;
   transition: var(--transition);
   position: relative;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .e2e-step-card.status-passed {
@@ -2434,6 +2597,14 @@ button, input, select, textarea {
   color: var(--text-secondary);
   margin-bottom: 4px;
   line-height: 1.35;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.e2e-assertion-item i {
+  flex-shrink: 0;
+  margin-top: 2px;
 }
 
 .e2e-assertion-item.passed i {
@@ -2442,6 +2613,28 @@ button, input, select, textarea {
 
 .e2e-assertion-item.failed i {
   color: var(--status-danger);
+}
+
+.e2e-assertion-text {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.e2e-assertion-val {
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: bottom;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 1px 5px;
+  border-radius: var(--radius-xs);
+  color: var(--accent-gold);
 }
 
 .e2e-terminal-container {
@@ -2476,6 +2669,7 @@ button, input, select, textarea {
   gap: 10px;
   margin-bottom: 2px;
   word-break: break-word;
+  min-width: 0;
 }
 
 .e2e-log-time {
@@ -2516,6 +2710,45 @@ button, input, select, textarea {
 .e2e-log-msg {
   color: #e7e5e4;
   flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* ==========================================================================
+   BADGES & ATELIER TAGS
+   ========================================================================== */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1;
+  padding: 4px 8px;
+  border-radius: var(--radius-xs);
+  vertical-align: middle;
+}
+
+.badge-published {
+  background: var(--status-live-dim);
+  color: var(--status-live);
+  border: 1px solid rgba(104, 185, 132, 0.3);
+}
+
+.badge-draft {
+  background: var(--status-draft-dim);
+  color: var(--status-draft);
+  border: 1px solid rgba(212, 163, 115, 0.3);
+}
+
+.badge-cat {
+  background: var(--accent-gold-dim);
+  color: var(--accent-gold);
+  border: 1px solid var(--border-hairline);
+  font-family: var(--font-mono);
+  font-size: 10.5px;
 }
 
 /* Editorial Activity Log Badges */
