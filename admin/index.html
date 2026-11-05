@@ -296,12 +296,21 @@
               </div>
               <div class="panel-body">
                 <!-- Quick Draft Composer -->
-                <div class="launchpad-card">
-                  <span class="launchpad-card-title"><i class="fa-solid fa-feather-pointed"></i> Quick Draft Scratchpad</span>
-                  <p class="form-hint mb-2">Begin drafting a new article title directly into the editor.</p>
-                  <form id="quick-draft-form" class="quick-draft-box">
-                    <input type="text" id="quick-draft-title" placeholder="Enter headline and begin..." required>
-                    <button type="submit" class="btn btn-primary btn-xs">Draft</button>
+                <div class="launchpad-card quick-draft-card">
+                  <div class="launchpad-card-header">
+                    <span class="launchpad-card-title"><i class="fa-solid fa-feather-pointed"></i> Quick Draft Scratchpad</span>
+                    <span class="scratchpad-badge">Studio</span>
+                  </div>
+                  <p class="form-hint mb-2">Begin drafting a new article headline directly into the editor.</p>
+                  <form id="quick-draft-form" class="quick-draft-form">
+                    <div class="quick-draft-input-wrap">
+                      <i class="fa-solid fa-pen-nib quick-draft-icon"></i>
+                      <input type="text" id="quick-draft-title" class="quick-draft-input" placeholder="Enter headline and begin..." autocomplete="off" required>
+                      <button type="submit" class="btn btn-primary btn-xs quick-draft-btn" title="Launch into Article Studio">
+                        <span>Draft</span>
+                        <i class="fa-solid fa-arrow-right" style="font-size: 9.5px;"></i>
+                      </button>
+                    </div>
                   </form>
                 </div>
 

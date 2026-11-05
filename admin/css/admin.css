@@ -1053,13 +1053,112 @@ button, input, select, textarea {
   gap: 8px;
 }
 
+/* Editorial Launchpad Quick Draft Scratchpad */
+.quick-draft-card {
+  transition: var(--transition);
+}
+
+.quick-draft-card:hover {
+  border-color: rgba(197, 168, 128, 0.3);
+}
+
+.launchpad-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.launchpad-card-header .launchpad-card-title {
+  margin-bottom: 0;
+}
+
+.scratchpad-badge {
+  font-size: 9.5px;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--accent-gold);
+  background: var(--accent-gold-dim);
+  border: 1px solid var(--border-hairline);
+  padding: 1px 6px;
+  border-radius: var(--radius-xs);
+  line-height: 1.2;
+}
+
+.quick-draft-form {
+  width: 100%;
+}
+
+.quick-draft-input-wrap {
+  display: flex;
+  align-items: center;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-sm);
+  padding: 3px 4px 3px 10px;
+  gap: 8px;
+  width: 100%;
+  box-sizing: border-box;
+  transition: var(--transition);
+}
+
+.quick-draft-input-wrap:focus-within {
+  border-color: var(--accent-gold);
+  box-shadow: 0 0 0 2px var(--accent-gold-dim);
+}
+
+.quick-draft-icon {
+  color: var(--accent-gold);
+  font-size: 11px;
+  flex-shrink: 0;
+  opacity: 0.85;
+}
+
+.quick-draft-input {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text-primary);
+  font-size: 12px;
+  padding: 5px 0;
+  line-height: 1.4;
+  box-sizing: border-box;
+}
+
+.quick-draft-input::placeholder {
+  color: var(--text-muted);
+  font-size: 11.5px;
+}
+
+.quick-draft-btn {
+  flex-shrink: 0;
+  white-space: nowrap;
+  height: 28px;
+  padding: 0 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: var(--radius-xs);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+
+/* Backward-compatibility fallback */
 .quick-draft-box {
   display: flex;
   gap: 8px;
+  width: 100%;
 }
 
 .quick-draft-box input {
   flex: 1;
+  min-width: 0;
   background: var(--bg-surface);
   border: 1px solid var(--border-hairline);
   border-radius: var(--radius-xs);
@@ -1067,10 +1166,6 @@ button, input, select, textarea {
   font-size: 12px;
   color: var(--text-primary);
   outline: none;
-}
-
-.quick-draft-box input:focus {
-  border-color: var(--accent-gold);
 }
 
 /* ==========================================================================
