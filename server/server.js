@@ -129,6 +129,19 @@ app.use('/api/blogs', blogsModule.router);
 app.use('/api/categories', (req, res) => res.redirect('/api/blogs/categories/all'));
 app.use('/api/admin', adminRoutes);
 
+// Crawler & Search Engine Disallowance (Internal System Protection)
+app.use((req, res, next) => {
+  res.setHeader('X-Robots-Tag', 'noindex, nofollow, noarchive, nosnippet');
+  next();
+});
+
+// Explicit robots.txt & robot.txt endpoints
+app.get(['/robots.txt', '/robot.txt'], (req, res) => {
+  res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+  res.setHeader('Cache-Control', 'public, max-age=86400');
+  res.send('# Petals Internal Management & CMS - Crawler Directives\nUser-agent: *\nDisallow: /\n');
+});
+
 // Dynamic XML Sitemap for SEO
 app.get('/sitemap.xml', (req, res) => {
   try {
