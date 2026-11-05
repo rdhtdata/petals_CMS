@@ -3,6 +3,9 @@
  * Hosts Website Frontend, eZee PMS Backend API Gateway & Petals CMS
  */
 
+// Tune libuv worker threadpool to minimize OS process/thread overhead on Hostinger (default is 4)
+process.env.UV_THREADPOOL_SIZE = process.env.UV_THREADPOOL_SIZE || '2';
+
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
@@ -169,10 +172,33 @@ const pkg = require('../package.json');
 const rootDir = path.join(__dirname, '..');
 const adminDir = path.join(rootDir, 'admin');
 
+// In-memory HTML template cache (prevents continuous disk reads and threadpool pressure)
+const templateCache = {
+  index: { content: null, mtime: 0 },
+  blogs: { content: null, mtime: 0 },
+  admin: { content: null, mtime: 0 }
+};
+
+const getCachedHtml = (filePath, cacheKey, callback) => {
+  fs.stat(filePath, (statErr, stats) => {
+    if (statErr) return callback(statErr);
+    const mtime = stats.mtimeMs;
+    const entry = templateCache[cacheKey];
+    if (entry && entry.content && entry.mtime === mtime) {
+      return callback(null, entry.content);
+    }
+    fs.readFile(filePath, 'utf8', (readErr, html) => {
+      if (readErr) return callback(readErr);
+      templateCache[cacheKey] = { content: html, mtime };
+      callback(null, html);
+    });
+  });
+};
+
 // Helper to serve cache-busted index.html
 const serveIndexHtml = (req, res) => {
   const indexPath = path.join(rootDir, 'index.html');
-  fs.readFile(indexPath, 'utf8', (err, html) => {
+  getCachedHtml(indexPath, 'index', (err, html) => {
     if (err) {
       return res.status(500).send('Error loading page');
     }
@@ -197,7 +223,7 @@ const serveIndexHtml = (req, res) => {
 // Helper to serve cache-busted blogs.html
 const serveBlogsHtml = (req, res) => {
   const blogsPath = path.join(rootDir, 'blogs.html');
-  fs.readFile(blogsPath, 'utf8', (err, html) => {
+  getCachedHtml(blogsPath, 'blogs', (err, html) => {
     if (err) {
       return res.status(500).send('Error loading blogs page');
     }
@@ -220,7 +246,7 @@ const serveBlogsHtml = (req, res) => {
 // Helper to serve cache-busted admin index.html
 const serveAdminHtml = (req, res) => {
   const adminIndexPath = path.join(adminDir, 'index.html');
-  fs.readFile(adminIndexPath, 'utf8', (err, html) => {
+  getCachedHtml(adminIndexPath, 'admin', (err, html) => {
     if (err) {
       return res.status(500).send('Error loading admin dashboard');
     }
@@ -323,25 +349,79 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Start Server with fallback port handling
+// Start Server with strict production port enforcement and graceful shutdown
+let activeServer = null;
+let retryCount = 0;
+const MAX_PORT_RETRIES = 3;
+
 const startServer = (port) => {
-  const server = app.listen(port, () => {
+  const isProduction = process.env.NODE_ENV === 'production' || !!process.env.PORT;
+  const targetPort = Number(port);
+
+  const server = app.listen(targetPort, () => {
+    activeServer = server;
+    retryCount = 0;
     console.log('====================================================');
-    console.log(`🌸 Petals Suites & Hotel Server running on port ${port}`);
-    console.log(`🌐 Public Website: http://localhost:${port}`);
-    console.log(`🔑 Petals CMS Dashboard: http://localhost:${port}/admin`);
+    console.log(`🌸 Petals Suites & Hotel Server running on port ${targetPort}`);
+    console.log(`🌐 Public Website: http://localhost:${targetPort}`);
+    console.log(`🔑 Petals CMS Dashboard: http://localhost:${targetPort}/admin`);
     console.log(`⚡ eZee PMS Gateway & Petals Blog API ready`);
     console.log('====================================================');
   });
 
   server.on('error', (err) => {
     if (err.code === 'EADDRINUSE') {
-      console.log(`⚠️ Port ${port} is in use, attempting port ${Number(port) + 1}...`);
-      startServer(Number(port) + 1);
+      if (isProduction) {
+        if (retryCount < MAX_PORT_RETRIES) {
+          retryCount++;
+          console.warn(`⚠️ [Production] Port ${targetPort} is currently busy. Waiting 1.5s for previous instance to release (attempt ${retryCount}/${MAX_PORT_RETRIES})...`);
+          setTimeout(() => {
+            startServer(targetPort);
+          }, 1500);
+          return;
+        }
+        console.error(`🚨 [Production Fatal] Port ${targetPort} is in use after ${MAX_PORT_RETRIES} retries. Exiting cleanly to prevent orphaned instance duplication.`);
+        process.exit(1);
+      } else {
+        console.log(`⚠️ [Dev] Port ${targetPort} is in use, attempting port ${targetPort + 1}...`);
+        startServer(targetPort + 1);
+      }
     } else {
       console.error('Server failed to start:', err);
+      process.exit(1);
     }
   });
 };
+
+// Graceful process termination handlers (SIGTERM / SIGINT)
+const gracefulShutdown = (signal) => {
+  console.log(`\n[Process] Received ${signal}. Initiating graceful shutdown...`);
+  if (activeServer) {
+    activeServer.close(() => {
+      console.log('[Process] HTTP server closed.');
+      try {
+        const { closeDatabase } = require('./db');
+        if (typeof closeDatabase === 'function') {
+          closeDatabase();
+        }
+      } catch (dbErr) {
+        console.error('[Process] Error closing database during shutdown:', dbErr.message);
+      }
+      console.log('[Process] Graceful shutdown complete. Exiting.');
+      process.exit(0);
+    });
+
+    // Force exit if connections do not drain within 4 seconds
+    setTimeout(() => {
+      console.error('[Process] Forced shutdown: connections did not drain in time.');
+      process.exit(1);
+    }, 4000).unref();
+  } else {
+    process.exit(0);
+  }
+};
+
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));
 
 startServer(Number(PORT));

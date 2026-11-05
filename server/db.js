@@ -9,9 +9,9 @@ const path = require('path');
 const crypto = require('crypto');
 const { stripHtml, sanitizeHtml } = require('./utils/sanitize');
 
-// Data file paths
-const DATA_DIR = path.join(__dirname, 'data');
-const DB_FILE = path.join(DATA_DIR, 'petals_cms.db');
+// Data file paths (configurable via CMS_DATA_DIR / CMS_DB_FILE for persistent storage across versioned deployments)
+const DATA_DIR = process.env.CMS_DATA_DIR ? path.resolve(process.env.CMS_DATA_DIR) : path.join(__dirname, 'data');
+const DB_FILE = process.env.CMS_DB_FILE ? path.resolve(process.env.CMS_DB_FILE) : path.join(DATA_DIR, 'petals_cms.db');
 const JSON_BACKUP_FILE = path.join(DATA_DIR, 'petals_cms_backup.json');
 
 if (!fs.existsSync(DATA_DIR)) {
@@ -50,6 +50,8 @@ try {
   // Enable WAL mode for high concurrency
   db.exec('PRAGMA journal_mode = WAL;');
   db.exec('PRAGMA foreign_keys = ON;');
+  db.exec('PRAGMA busy_timeout = 5000;');
+  db.exec('PRAGMA synchronous = NORMAL;');
   useSqlite = true;
   console.log('[CMS Database] Initialized embedded SQLite database with WAL mode:', DB_FILE);
 } catch (err) {
@@ -1311,9 +1313,22 @@ const DB = {
   }
 };
 
+function closeDatabase() {
+  if (useSqlite && db) {
+    try {
+      db.exec('PRAGMA wal_checkpoint(PASSIVE);');
+      db.close();
+      console.log('[CMS Database] SQLite database connection closed cleanly.');
+    } catch (err) {
+      console.error('[CMS Database] Error closing SQLite database:', err.message);
+    }
+  }
+}
+
 module.exports = {
   DB,
   verifyPassword,
   hashPassword,
-  generateToken
+  generateToken,
+  closeDatabase
 };
