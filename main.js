@@ -25,6 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initRoomPhotoSliders();
   initKeyboardNavigation();
   initVersionTracker();
+  initRecentBlogs();
 });
 
 /* ==========================================================================
@@ -819,5 +820,77 @@ if (legalModalEl) {
       closeLegalModal();
     }
   });
+}
+
+/* ==========================================================================
+   Recent Blogs Controller (Dynamically updates top 3 latest from API / BLOGS_DATA)
+   ========================================================================== */
+function initRecentBlogs() {
+  const container = document.getElementById('home-recent-blogs-grid');
+  if (!container) return;
+
+  function renderRecent(blogsList) {
+    if (!blogsList || !blogsList.length) return;
+    const sorted = [...blogsList].sort((a, b) => new Date(b.date) - new Date(a.date));
+    const recent3 = sorted.slice(0, 3);
+
+    container.innerHTML = recent3.map(blog => {
+      const articleUrl = `blogs.html?article=${encodeURIComponent(blog.id)}`;
+      const safeTitle = escapeHTML(blog.title);
+      const safeCategory = escapeHTML(blog.category);
+      const safeDate = escapeHTML(blog.displayDate || blog.date);
+      const safeReadTime = escapeHTML(blog.readTime || '5 min read');
+      const safeExcerpt = escapeHTML(blog.excerpt);
+      const safeImg = escapeHTML(blog.image || blog.featured_image || 'images/brand icon.jpeg');
+
+      return `
+        <article class="home-blog-card">
+          <a href="${articleUrl}" class="home-blog-card-media" aria-label="Read ${safeTitle}">
+            <img src="${safeImg}" alt="${safeTitle}" class="home-blog-img" loading="lazy">
+            <span class="home-blog-cat-badge">${safeCategory}</span>
+          </a>
+          <div class="home-blog-card-body">
+            <div class="home-blog-meta">
+              <span><i class="fa-regular fa-calendar"></i> ${safeDate}</span>
+              <span class="meta-dot">•</span>
+              <span><i class="fa-regular fa-clock"></i> ${safeReadTime}</span>
+            </div>
+            <h3 class="home-blog-title">
+              <a href="${articleUrl}">${safeTitle}</a>
+            </h3>
+            <p class="home-blog-excerpt">${safeExcerpt}</p>
+            <div class="home-blog-footer">
+              <a href="${articleUrl}" class="home-blog-read-btn">
+                <span>Read Story</span>
+                <i class="fa-solid fa-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+        </article>
+      `;
+    }).join('');
+  }
+
+  // 1. Initial immediate render from cache/fallback
+  const initialBlogs = (typeof window !== 'undefined' && Array.isArray(window.BLOGS_DATA) && window.BLOGS_DATA.length > 0)
+    ? [...window.BLOGS_DATA]
+    : ((typeof BLOGS_DATA !== 'undefined' && Array.isArray(BLOGS_DATA)) ? [...BLOGS_DATA] : []);
+
+  if (initialBlogs.length) {
+    renderRecent(initialBlogs);
+  }
+
+  // 2. Dynamic live update from CMS API
+  fetch('/api/blogs?limit=3', { cache: 'no-cache' })
+    .then(res => res.json())
+    .then(json => {
+      if (json && json.success && Array.isArray(json.data) && json.data.length > 0) {
+        window.BLOGS_DATA = json.data;
+        renderRecent(json.data);
+      }
+    })
+    .catch(err => {
+      // Graceful fallback to static data
+    });
 }
 

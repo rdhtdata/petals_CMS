@@ -52,7 +52,7 @@
         <a href="#experience" class="nav-link">Experience</a>
         <a href="#location" class="nav-link">Location</a>
         <a href="#gallery" class="nav-link">Gallery</a>
-        <a href="blogs.html" class="nav-link">Blog</a>
+        <a href="#blog" class="nav-link">Blog</a>
         <a href="#corporate" class="nav-link">Corporate</a>
         <a href="https://letsbook.me/booking/petalssuitesandhotel?checkin=2026-09-30&checkout=2026-10-01&adults=2&children=0" class="nav-link nav-link-manage" onclick="openBookingModal(); return false;">
           <i class="fa-solid fa-calendar-check"></i> Book Online
@@ -93,7 +93,7 @@
           <a href="#experience" class="mobile-link"><span class="mob-idx">02</span> Experience</a>
           <a href="#location" class="mobile-link"><span class="mob-idx">03</span> Location</a>
           <a href="#gallery" class="mobile-link"><span class="mob-idx">04</span> Gallery</a>
-          <a href="blogs.html" class="mobile-link"><span class="mob-idx">05</span> Stories & Blog</a>
+          <a href="#blog" class="mobile-link"><span class="mob-idx">05</span> Stories & Blog</a>
           <a href="#corporate" class="mobile-link"><span class="mob-idx">06</span> Corporate Inquiry</a>
           <a href="https://letsbook.me/booking/petalssuitesandhotel?checkin=2026-09-30&checkout=2026-10-01&adults=2&children=0" class="mobile-link" onclick="openBookingModal('deluxe', event)"><span class="mob-idx">07</span> Book Online</a>
         </nav>
@@ -744,6 +744,103 @@
     </div>
   </section>
 
+  <!-- Editorial Journal / Latest Stories Section -->
+  <section id="blog" class="home-blog-section scroll-reveal">
+    <div class="container">
+      <div class="section-header-editorial text-center">
+        <span class="section-tag">EDITORIAL JOURNAL & STORIES</span>
+        <h2 class="section-title">Insights from the Sanctuary</h2>
+        <p class="section-subtitle">
+          Curated guides on executive business travel, quiet city stays, and corporate hospitality directly opposite Manyata Tech Park.
+        </p>
+      </div>
+
+      <!-- 3 Dynamic Recent Blog Cards Grid (Automatically updated via BLOGS_DATA) -->
+      <div class="home-blog-grid" id="home-recent-blogs-grid">
+        <!-- Pre-rendered for instant indexing & progressive hydration -->
+        <article class="home-blog-card">
+          <a href="blogs.html?article=comfortable-business-stay-bangalore-manyata" class="home-blog-card-media" aria-label="Read A Comfortable Business Stay in Bangalore: Petals Suites & Hotel">
+            <img src="images/blogs/blog-1-business-stay-bangalore.png" alt="A Comfortable Business Stay in Bangalore: Petals Suites & Hotel" class="home-blog-img" loading="lazy">
+            <span class="home-blog-cat-badge">Business Travel</span>
+          </a>
+          <div class="home-blog-card-body">
+            <div class="home-blog-meta">
+              <span><i class="fa-regular fa-calendar"></i> October 15, 2026</span>
+              <span class="meta-dot">•</span>
+              <span><i class="fa-regular fa-clock"></i> 5 min read</span>
+            </div>
+            <h3 class="home-blog-title">
+              <a href="blogs.html?article=comfortable-business-stay-bangalore-manyata">A Comfortable Business Stay in Bangalore: Petals Suites & Hotel</a>
+            </h3>
+            <p class="home-blog-excerpt">Why location, quiet sanctuaries, dedicated workspaces, and a 2-minute walk to Manyata Tech Park make Petals Suites the preferred address for corporate executives.</p>
+            <div class="home-blog-footer">
+              <a href="blogs.html?article=comfortable-business-stay-bangalore-manyata" class="home-blog-read-btn">
+                <span>Read Story</span>
+                <i class="fa-solid fa-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <article class="home-blog-card">
+          <a href="blogs.html?article=luxury-hotel-bangalore-comfortable-city-stay" class="home-blog-card-media" aria-label="Read Finding a Luxury Hotel in Bangalore for a Comfortable City Stay">
+            <img src="images/blogs/blog-2-luxury-hotel-city-stay.png" alt="Finding a Luxury Hotel in Bangalore for a Comfortable City Stay" class="home-blog-img" loading="lazy">
+            <span class="home-blog-cat-badge">Luxury Stays</span>
+          </a>
+          <div class="home-blog-card-body">
+            <div class="home-blog-meta">
+              <span><i class="fa-regular fa-calendar"></i> October 14, 2026</span>
+              <span class="meta-dot">•</span>
+              <span><i class="fa-regular fa-clock"></i> 6 min read</span>
+            </div>
+            <h3 class="home-blog-title">
+              <a href="blogs.html?article=luxury-hotel-bangalore-comfortable-city-stay">Finding a Luxury Hotel in Bangalore for a Comfortable City Stay</a>
+            </h3>
+            <p class="home-blog-excerpt">Discover what defines a refined city stay: architectural interiors, quiet corridors, blackout sleep environments, and understated luxury opposite Manyata Tech Park.</p>
+            <div class="home-blog-footer">
+              <a href="blogs.html?article=luxury-hotel-bangalore-comfortable-city-stay" class="home-blog-read-btn">
+                <span>Read Story</span>
+                <i class="fa-solid fa-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <article class="home-blog-card">
+          <a href="blogs.html?article=best-hotel-business-stay-bangalore-corporate-guide" class="home-blog-card-media" aria-label="Read Best Hotel for Business Stay in Bangalore: A Guide for Corporate Travellers">
+            <img src="images/blogs/blog-3-corporate-travellers-guide.png" alt="Best Hotel for Business Stay in Bangalore: A Guide for Corporate Travellers" class="home-blog-img" loading="lazy">
+            <span class="home-blog-cat-badge">Corporate Guide</span>
+          </a>
+          <div class="home-blog-card-body">
+            <div class="home-blog-meta">
+              <span><i class="fa-regular fa-calendar"></i> October 12, 2026</span>
+              <span class="meta-dot">•</span>
+              <span><i class="fa-regular fa-clock"></i> 7 min read</span>
+            </div>
+            <h3 class="home-blog-title">
+              <a href="blogs.html?article=best-hotel-business-stay-bangalore-corporate-guide">Best Hotel for Business Stay in Bangalore: A Guide for Corporate Travellers</a>
+            </h3>
+            <p class="home-blog-excerpt">A strategic guide for corporate visitors to Bangalore: how to eliminate traffic stress, evaluate hotel amenities, and organize seamless employee and team stays.</p>
+            <div class="home-blog-footer">
+              <a href="blogs.html?article=best-hotel-business-stay-bangalore-corporate-guide" class="home-blog-read-btn">
+                <span>Read Story</span>
+                <i class="fa-solid fa-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <!-- Section CTA: View All Blogs -->
+      <div class="home-blog-cta-wrap text-center">
+        <a href="blogs.html" class="primary-btn">
+          <span>Explore All Stories & Guides</span>
+          <i class="fa-solid fa-arrow-right"></i>
+        </a>
+      </div>
+    </div>
+  </section>
+
   <!-- Corporate / Bulk Booking Section -->
   <section id="corporate" class="corporate-section scroll-reveal">
     <div class="container max-w-800">
@@ -1005,7 +1102,8 @@
           <li><a href="#experience">The Experience</a></li>
           <li><a href="#location">Location & Route</a></li>
           <li><a href="#gallery">Visual Gallery</a></li>
-          <li><a href="blogs.html">Blog & Guides</a></li>
+          <li><a href="#blog">Blog & Stories</a></li>
+          <li><a href="blogs.html">All Published Guides</a></li>
           <li><a href="#corporate">Corporate Inquiries</a></li>
           <li><a href="javascript:void(0)" onclick="openLegalModal('privacy')">Privacy Policy</a></li>
           <li><a href="javascript:void(0)" onclick="openLegalModal('terms')">Terms & House Rules</a></li>
@@ -1053,7 +1151,10 @@
   <!-- Flatpickr Library Script -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.js"></script>
 
+  <!-- Central Blog Data Source (Shared with blogs.html) -->
+  <script src="js/blogs-data.js?v=1.0.4"></script>
+
   <!-- Main Controller Script -->
-  <script src="main.js"></script>
+  <script src="main.js?v=1.0.4"></script>
 </body>
 </html>

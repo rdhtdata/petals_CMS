@@ -58,9 +58,84 @@
   };
 
   /* ==========================================================================
-     1. Initialization
+     1. Initialization & Dynamic Live API Fetching
      ========================================================================== */
-  document.addEventListener('DOMContentLoaded', () => {
+  async function loadLiveArticles() {
+    try {
+      const res = await fetch('/api/blogs?limit=100', { cache: 'no-cache' });
+      if (res.ok) {
+        const json = await res.json();
+        if (json.success && Array.isArray(json.data) && json.data.length > 0) {
+          state.articles = json.data;
+          window.BLOGS_DATA = json.data;
+          syncCategoryPills();
+
+          // If on hub, refresh grid
+          if (!state.activeArticleId) {
+            renderBlogHub();
+          } else {
+            // Update active article in reader view if content changed
+            const active = findArticleById(state.activeArticleId);
+            if (active) openArticle(active.id, false);
+          }
+        }
+      }
+    } catch (err) {
+      console.warn('[Petals Blog] Operating with cached articles fallback:', err);
+    }
+  }
+
+  async function ensureArticleLoaded(slug) {
+    let article = findArticleById(slug);
+    if (article) return article;
+
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      const isPreview = urlParams.get('preview') === 'true';
+      const token = urlParams.get('token') || '';
+      const previewParam = isPreview ? `?preview=true&token=${encodeURIComponent(token)}` : '';
+
+      const res = await fetch(`/api/blogs/${encodeURIComponent(slug)}${previewParam}`);
+      if (res.ok) {
+        const json = await res.json();
+        if (json.success && json.data) {
+          state.articles.push(json.data);
+          return json.data;
+        }
+      }
+    } catch (err) {
+      console.warn('[Petals Blog] Could not fetch single article:', err);
+    }
+    return null;
+  }
+
+  function syncCategoryPills() {
+    const bar = document.querySelector('.blog-categories-bar');
+    if (!bar) return;
+
+    const existingPills = Array.from(bar.querySelectorAll('.blog-cat-pill')).map(p => (p.getAttribute('data-category') || '').toLowerCase());
+    const uniqueCategories = [...new Set(state.articles.map(a => a.category).filter(Boolean))];
+
+    uniqueCategories.forEach(cat => {
+      if (!existingPills.includes(cat.toLowerCase())) {
+        const btn = document.createElement('button');
+        btn.className = 'blog-cat-pill';
+        btn.setAttribute('data-category', cat);
+        btn.setAttribute('role', 'tab');
+        btn.setAttribute('aria-selected', 'false');
+        btn.textContent = cat;
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.blog-cat-pill').forEach(p => p.classList.remove('active'));
+          btn.classList.add('active');
+          state.currentCategory = cat;
+          renderBlogHub();
+        });
+        bar.appendChild(btn);
+      }
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', async () => {
     if (!state.articles.length) {
       state.articles = getArticles();
     }
@@ -74,21 +149,32 @@
     const urlParams = new URLSearchParams(window.location.search);
     const articleSlug = urlParams.get('article') || window.location.hash.replace('#', '');
 
-    if (articleSlug && findArticleById(articleSlug)) {
-      openArticle(articleSlug, false);
+    if (articleSlug) {
+      const article = await ensureArticleLoaded(articleSlug);
+      if (article) {
+        openArticle(article.id, false);
+      } else {
+        renderBlogHub();
+      }
     } else {
       renderBlogHub();
     }
 
+    // Always fetch live published blogs from CMS in background
+    loadLiveArticles();
+
     // Listen for browser back / forward navigation
-    window.addEventListener('popstate', (e) => {
+    window.addEventListener('popstate', async (e) => {
       if (e.state && e.state.articleId) {
-        openArticle(e.state.articleId, false);
+        const article = await ensureArticleLoaded(e.state.articleId);
+        if (article) openArticle(article.id, false);
       } else {
         const params = new URLSearchParams(window.location.search);
         const slug = params.get('article') || window.location.hash.replace('#', '');
-        if (slug && findArticleById(slug)) {
-          openArticle(slug, false);
+        if (slug) {
+          const article = await ensureArticleLoaded(slug);
+          if (article) openArticle(article.id, false);
+          else closeArticle(false);
         } else {
           closeArticle(false);
         }
@@ -96,10 +182,11 @@
     });
 
     // Support hashchange fallback
-    window.addEventListener('hashchange', () => {
+    window.addEventListener('hashchange', async () => {
       const hashSlug = window.location.hash.replace('#', '');
-      if (hashSlug && findArticleById(hashSlug)) {
-        openArticle(hashSlug, false);
+      if (hashSlug) {
+        const article = await ensureArticleLoaded(hashSlug);
+        if (article) openArticle(article.id, false);
       } else if (!hashSlug && state.activeArticleId) {
         closeArticle(false);
       }
@@ -305,8 +392,19 @@
       DOM.nextRecCard.removeAttribute('data-article-id');
     }
 
-    // Update document title for SEO & UX
-    document.title = `${article.title} | Petals Suites & Hotel, Bangalore`;
+    // Update document title & SEO Meta for SEO & UX
+    const seoTitle = article.seo_title || article.title;
+    document.title = `${seoTitle} | Petals Suites & Hotel, Bangalore`;
+
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc && (article.seo_description || article.excerpt)) {
+      metaDesc.setAttribute('content', article.seo_description || article.excerpt);
+    }
+
+    const canonicalEl = document.querySelector('link[rel="canonical"]');
+    if (canonicalEl) {
+      canonicalEl.setAttribute('href', article.canonical_url || `https://petalshotels.com/blogs.html?article=${encodeURIComponent(article.id)}`);
+    }
 
     // Scroll to top
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -338,8 +436,16 @@
       DOM.readingProgressBar.style.width = '0%';
     }
 
-    // Restore page title
+    // Restore page title & meta
     document.title = 'Blog & Travel Insights | Petals Suites & Hotel, Bangalore';
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) {
+      metaDesc.setAttribute('content', 'Read curated business travel guides, luxury stay insights, and accommodation tips for North Bangalore, opposite Manyata Tech Park.');
+    }
+    const canonicalEl = document.querySelector('link[rel="canonical"]');
+    if (canonicalEl) {
+      canonicalEl.setAttribute('href', 'https://petalshotels.com/blogs');
+    }
 
     // Scroll back to top
     window.scrollTo({ top: 0, behavior: 'smooth' });

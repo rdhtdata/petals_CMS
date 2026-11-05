@@ -1,0 +1,1398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Petals CMS | Content Management Dashboard</title>
+  <meta name="description" content="Dedicated administrative content management system for Petals Suites & Hotel.">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/jpeg" href="/images/brand icon.jpeg">
+
+  <!-- Google Fonts: Marcellus & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome 6.5.1 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <!-- Admin Theme Stylesheet -->
+  <link rel="stylesheet" href="/admin/css/admin.css?v=1.0.2">
+</head>
+<body class="cms-body">
+
+  <!-- ========================================================================
+       1. LOGIN OVERLAY (Rendered when unauthenticated)
+       ======================================================================== -->
+  <div id="login-overlay" class="login-overlay">
+    <div class="login-card">
+      <div class="login-header">
+        <div class="login-logo-wrap">
+          <img src="/images/brand icon.jpeg" alt="Petals Logo" class="login-logo-img">
+        </div>
+        <h2 class="login-brand-title">PETALS</h2>
+        <span class="login-brand-tag">SUITES & HOTEL · CMS</span>
+        <p class="login-subtitle">Sign in to manage blog articles, media & SEO</p>
+      </div>
+
+      <form id="login-form" class="login-form">
+        <div class="form-group">
+          <label class="form-label" for="login-username">
+            <span class="label-with-icon"><i class="fa-solid fa-user"></i> Username or Email</span>
+          </label>
+          <input type="text" id="login-username" class="form-input" placeholder="admin or email" required autocomplete="username">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="login-password">
+            <span class="label-with-icon"><i class="fa-solid fa-lock"></i> Password</span>
+          </label>
+          <div class="password-input-wrap">
+            <input type="password" id="login-password" class="form-input" placeholder="••••••••••••" required autocomplete="current-password">
+            <button type="button" class="pwd-toggle-btn" id="login-pwd-toggle" aria-label="Toggle password visibility">
+              <i class="fa-regular fa-eye"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="login-row">
+          <label class="remember-label">
+            <input type="checkbox" id="login-remember" checked>
+            <span>Keep me signed in</span>
+          </label>
+        </div>
+
+        <button type="submit" id="login-submit-btn" class="btn btn-primary btn-block">
+          <span class="btn-text">Sign In to Dashboard</span>
+          <i class="fa-solid fa-arrow-right"></i>
+        </button>
+
+        <div id="login-error-msg" class="login-error" style="display: none;"></div>
+
+        <div class="login-footer-hint">
+          <i class="fa-solid fa-shield-halved"></i>
+          <span>Secure Petals Hospitality Admin Portal</span>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       2. MAIN APPLICATION CONTAINER (When authenticated)
+       ======================================================================== -->
+  <div id="app-container" class="app-layout" style="display: none;">
+
+    <!-- Left Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <a href="#dashboard" class="sidebar-brand">
+          <img src="/images/brand icon.jpeg" alt="Petals Logo" class="sidebar-logo">
+          <div class="brand-info">
+            <span class="brand-title">PETALS</span>
+            <span class="brand-badge">CMS v1.0</span>
+          </div>
+        </a>
+        <button class="sidebar-close-btn" id="sidebar-close-btn" aria-label="Close Sidebar">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section-label">CONTENT</div>
+        <a href="#dashboard" class="nav-item active" data-view="dashboard">
+          <i class="fa-solid fa-chart-pie"></i>
+          <span>Overview</span>
+        </a>
+        <a href="#blogs" class="nav-item" data-view="blogs">
+          <i class="fa-solid fa-newspaper"></i>
+          <span>Articles</span>
+          <span class="nav-counter" id="nav-blogs-counter">0</span>
+        </a>
+        <a href="#editor" class="nav-item" data-view="editor" id="nav-new-article">
+          <i class="fa-solid fa-feather-pointed"></i>
+          <span>Write Article</span>
+        </a>
+        <a href="#categories" class="nav-item" data-view="categories">
+          <i class="fa-solid fa-tags"></i>
+          <span>Categories</span>
+        </a>
+        <a href="#media" class="nav-item" data-view="media">
+          <i class="fa-solid fa-photo-film"></i>
+          <span>Media Library</span>
+        </a>
+
+        <div class="nav-section-label admin-only-section">ADMINISTRATION</div>
+        <a href="#users" class="nav-item admin-only-section" data-view="users">
+          <i class="fa-solid fa-users-gear"></i>
+          <span>Team Accounts</span>
+        </a>
+
+        <div class="nav-section-label dev-only-section">DEVELOPER TOOLS</div>
+        <a href="#dev-console" class="nav-item dev-only-section" data-view="dev-console">
+          <i class="fa-solid fa-code"></i>
+          <span>System & Dev Tools</span>
+        </a>
+
+        <div class="nav-section-label">ACCOUNT</div>
+        <a href="#profile" class="nav-item" data-view="profile">
+          <i class="fa-solid fa-user-shield"></i>
+          <span>My Profile</span>
+        </a>
+
+        <div class="nav-section-label">LIVE SITE</div>
+        <a href="/blogs.html" target="_blank" rel="noopener" class="nav-item external-link">
+          <i class="fa-solid fa-arrow-up-right-from-square"></i>
+          <span>View Public Blogs</span>
+        </a>
+        <a href="/sitemap.xml" target="_blank" rel="noopener" class="nav-item external-link">
+          <i class="fa-solid fa-sitemap"></i>
+          <span>XML Sitemap</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-pill">
+          <div class="user-avatar" id="sidebar-avatar">A</div>
+          <div class="user-meta">
+            <strong id="sidebar-user-name">Admin User</strong>
+            <span id="sidebar-user-role">Administrator</span>
+          </div>
+          <button id="sidebar-logout-btn" class="logout-icon-btn" title="Sign Out" aria-label="Sign Out">
+            <i class="fa-solid fa-right-from-bracket"></i>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="main-wrapper">
+      <!-- Top Bar -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="mobile-toggle" id="mobile-sidebar-toggle" aria-label="Toggle Menu">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+          <div class="breadcrumb" id="breadcrumb">
+            <span class="crumb-root">Petals CMS</span>
+            <i class="fa-solid fa-chevron-right crumb-sep"></i>
+            <span class="crumb-current" id="crumb-current">Dashboard</span>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <a href="#editor" class="btn btn-gold btn-sm" id="topbar-new-article-btn">
+            <i class="fa-solid fa-plus"></i>
+            <span>New Article</span>
+          </a>
+          <a href="/blogs.html" target="_blank" rel="noopener" class="btn btn-outline btn-sm topbar-preview-site">
+            <i class="fa-solid fa-globe"></i>
+            <span>Live Site</span>
+          </a>
+        </div>
+      </header>
+
+      <!-- View Containers -->
+      <main class="content-body">
+
+        <!-- ================================================================
+             VIEW 1: DASHBOARD OVERVIEW (Editorial Masthead & Publishing Ledger)
+             ================================================================ -->
+        <section id="view-dashboard" class="cms-view active">
+          <!-- Editorial Masthead -->
+          <div class="editorial-masthead">
+            <div class="masthead-info">
+              <h1>Editorial Journal & Publications</h1>
+              <p>Manage curated guides, executive insights, and Manyata hospitality stories.</p>
+            </div>
+            <div class="masthead-actions">
+              <a href="#editor" class="btn btn-primary">
+                <i class="fa-solid fa-plus"></i> Write Story
+              </a>
+              <a href="/blogs.html" target="_blank" rel="noopener" class="btn btn-outline">
+                <i class="fa-solid fa-arrow-up-right-from-square"></i> Visit Journal
+              </a>
+            </div>
+          </div>
+
+          <!-- Tabular Metrics Ribbon -->
+          <div class="metrics-ribbon">
+            <div class="ribbon-cell">
+              <span class="ribbon-label">Journal Entries</span>
+              <span class="ribbon-value tabular-nums" id="stat-total-blogs">0</span>
+              <span class="ribbon-sub">Total catalog</span>
+            </div>
+
+            <div class="ribbon-cell">
+              <span class="ribbon-label">Live on Website</span>
+              <span class="ribbon-value tabular-nums" id="stat-published-blogs">0</span>
+              <span class="ribbon-sub live-indicator"><span class="live-dot"></span> Live</span>
+            </div>
+
+            <div class="ribbon-cell">
+              <span class="ribbon-label">In Preparation</span>
+              <span class="ribbon-value tabular-nums" id="stat-draft-blogs">0</span>
+              <span class="ribbon-sub">Drafts</span>
+            </div>
+
+            <div class="ribbon-cell">
+              <span class="ribbon-label">Total Impressions</span>
+              <span class="ribbon-value tabular-nums" id="stat-total-views">0</span>
+              <span class="ribbon-sub">Reader visits</span>
+            </div>
+
+            <div class="ribbon-cell">
+              <span class="ribbon-label">Taxonomy Pillars</span>
+              <span class="ribbon-value tabular-nums" id="stat-total-categories">0</span>
+              <span class="ribbon-sub">Active categories</span>
+            </div>
+
+            <div class="ribbon-cell">
+              <span class="ribbon-label">Media Vault</span>
+              <span class="ribbon-value tabular-nums" id="stat-total-media">0</span>
+              <span class="ribbon-sub">Assets stored</span>
+            </div>
+          </div>
+
+          <!-- Dashboard Asymmetric Split -->
+          <div class="dashboard-ledger-split">
+            <!-- Left: Recent Articles Ledger -->
+            <div class="panel">
+              <div class="panel-header">
+                <div>
+                  <h3 class="panel-title">Active Journal Entries</h3>
+                  <span class="panel-subtitle">Recently modified editorial stories and travel guides</span>
+                </div>
+                <a href="#blogs" class="btn btn-outline btn-xs">All Articles</a>
+              </div>
+              <div class="panel-body p-0">
+                <div class="table-responsive">
+                  <table class="cms-table" id="dashboard-recent-table">
+                    <thead>
+                      <tr>
+                        <th>Guide</th>
+                        <th>Category</th>
+                        <th>Status</th>
+                        <th>Updated</th>
+                        <th class="text-right">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody id="dashboard-recent-tbody">
+                      <tr>
+                        <td colspan="5" class="text-center py-4">Loading articles...</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right: Editorial Launchpad -->
+            <div class="panel">
+              <div class="panel-header">
+                <h3 class="panel-title">Editorial Launchpad</h3>
+              </div>
+              <div class="panel-body">
+                <!-- Quick Draft Composer -->
+                <div class="launchpad-card">
+                  <span class="launchpad-card-title"><i class="fa-solid fa-feather-pointed"></i> Quick Draft Scratchpad</span>
+                  <p class="form-hint mb-2">Begin drafting a new article title directly into the editor.</p>
+                  <form id="quick-draft-form" class="quick-draft-box">
+                    <input type="text" id="quick-draft-title" placeholder="Enter headline and begin..." required>
+                    <button type="submit" class="btn btn-primary btn-xs">Draft</button>
+                  </form>
+                </div>
+
+                <!-- Media Vault Quick Access -->
+                <div class="launchpad-card">
+                  <span class="launchpad-card-title"><i class="fa-solid fa-photo-film"></i> Media Vault</span>
+                  <p class="form-hint mb-2">High-resolution property photography and suite assets.</p>
+                  <div style="display: flex; gap: 8px;">
+                    <a href="#media" class="btn btn-outline btn-xs"><i class="fa-solid fa-images"></i> Browse Vault</a>
+                    <label class="btn btn-secondary btn-xs file-select-label">
+                      <i class="fa-solid fa-arrow-up-from-bracket"></i> Upload Photo
+                      <input type="file" id="launchpad-quick-upload" accept="image/jpeg,image/png,image/webp" style="display: none;">
+                    </label>
+                  </div>
+                </div>
+
+                <!-- Live Endpoints -->
+                <div class="launchpad-card">
+                  <span class="launchpad-card-title"><i class="fa-solid fa-link"></i> Live Endpoints</span>
+                  <div style="display: flex; flex-direction: column; gap: 6px; font-size: 11.5px;">
+                    <a href="/blogs.html" target="_blank" rel="noopener" style="color: var(--accent-gold); display: flex; align-items: center; justify-content: space-between;">
+                      <span>Public Journal (blogs.html)</span>
+                      <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                    </a>
+                    <a href="/sitemap.xml" target="_blank" rel="noopener" style="color: var(--accent-gold); display: flex; align-items: center; justify-content: space-between;">
+                      <span>XML Sitemap (sitemap.xml)</span>
+                      <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Editorial Activity & Revision Audit Ledger (Last 30 Changes) -->
+          <div class="panel mt-4">
+            <div class="panel-header" style="flex-wrap: wrap; gap: 10px;">
+              <div>
+                <h3 class="panel-title" style="display: flex; align-items: center; gap: 8px;">
+                  <i class="fa-solid fa-clock-rotate-left" style="color: var(--accent-gold);"></i>
+                  <span>Editorial Activity & Revision Audit Ledger</span>
+                </h3>
+                <span class="panel-subtitle">Rolling historical record of the last 30 editorial creations, updates, and deletions (excluding developer changes)</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span class="badge" style="background: var(--bg-surface); border: 1px solid var(--border-hairline); font-size: 11px;">
+                  <span id="activity-log-count">0</span> / 30 recorded
+                </span>
+                <button type="button" class="btn btn-outline btn-xs" id="refresh-activity-log-btn" title="Refresh Activity Trail">
+                  <i class="fa-solid fa-arrows-rotate"></i> Refresh
+                </button>
+              </div>
+            </div>
+            <div class="panel-body p-0">
+              <div class="table-responsive">
+                <table class="cms-table" style="font-size: 12.5px;">
+                  <thead>
+                    <tr>
+                      <th style="width: 175px;">Timestamp</th>
+                      <th style="width: 190px;">Editor / Author</th>
+                      <th style="width: 135px;">Action</th>
+                      <th>Article</th>
+                      <th>Change Summary</th>
+                    </tr>
+                  </thead>
+                  <tbody id="activity-logs-tbody">
+                    <tr>
+                      <td colspan="5" class="text-center py-4 text-muted">Loading editorial activity log...</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================================================================
+             VIEW 2: BLOG ARTICLES LISTING
+             ================================================================ -->
+        <section id="view-blogs" class="cms-view">
+          <div class="view-header">
+            <div>
+              <h1 class="view-title">Blog Articles</h1>
+              <p class="view-subtitle">Manage, edit, duplicate, and publish website guides and insights</p>
+            </div>
+            <div class="view-actions">
+              <a href="#editor" class="btn btn-primary">
+                <i class="fa-solid fa-plus"></i> Write Article
+              </a>
+            </div>
+          </div>
+
+          <!-- Filter & Search Toolbar -->
+          <div class="toolbar-card">
+            <div class="toolbar-tabs" id="blogs-status-tabs">
+              <button class="status-tab active" data-status="all">All <span class="tab-count" id="tab-count-all">0</span></button>
+              <button class="status-tab" data-status="published">Published <span class="tab-count" id="tab-count-pub">0</span></button>
+              <button class="status-tab" data-status="draft">Drafts <span class="tab-count" id="tab-count-draft">0</span></button>
+            </div>
+
+            <div class="toolbar-filters">
+              <div class="search-input-wrap">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="blogs-search-input" placeholder="Search by title, author, or keyword...">
+                <button class="clear-search-btn" id="blogs-clear-search" style="display: none;"><i class="fa-solid fa-xmark"></i></button>
+              </div>
+
+              <select id="blogs-category-filter" class="form-select">
+                <option value="all">All Categories</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Articles Table Panel -->
+          <div class="panel mt-4">
+            <div class="panel-body p-0">
+              <div class="table-responsive">
+                <table class="cms-table" id="blogs-list-table">
+                  <thead>
+                    <tr>
+                      <th style="width: 70px;">Media</th>
+                      <th>Title & URL Slug</th>
+                      <th>Category</th>
+                      <th>Author</th>
+                      <th>Status</th>
+                      <th>Views</th>
+                      <th>Date</th>
+                      <th class="text-right" style="width: 180px;">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="blogs-list-tbody">
+                    <!-- Populated dynamically -->
+                  </tbody>
+                </table>
+              </div>
+
+              <div id="blogs-empty-state" class="empty-state" style="display: none;">
+                <div class="empty-icon"><i class="fa-solid fa-feather"></i></div>
+                <h3>No articles found</h3>
+                <p>Try adjusting your search query or filter, or create a brand new article.</p>
+                <a href="#editor" class="btn btn-primary btn-sm mt-3"><i class="fa-solid fa-plus"></i> Write First Article</a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================================================================
+             VIEW 3: BLOG ARTICLE EDITOR (CREATE / EDIT)
+             ================================================================ -->
+        <section id="view-editor" class="cms-view">
+          <form id="article-form" onsubmit="return false;">
+            <input type="hidden" id="editor-article-id" value="">
+            
+            <!-- Sticky Action Header -->
+            <div class="editor-header">
+              <div class="editor-header-left">
+                <a href="#blogs" class="btn btn-outline btn-sm">
+                  <i class="fa-solid fa-arrow-left"></i> Back to Articles
+                </a>
+                <div class="editor-status-pill editor-status-indicator" id="editor-status-indicator">
+                  <span class="status-dot"></span>
+                  <span class="status-text">Draft</span>
+                </div>
+                <span class="editor-save-state" id="editor-save-state">Unsaved changes</span>
+              </div>
+
+              <div class="editor-header-actions">
+                <button type="button" class="btn btn-outline btn-danger" id="editor-delete-btn" style="display: none;" title="Permanently delete this story">
+                  <i class="fa-solid fa-trash"></i> Delete Story
+                </button>
+                <button type="button" class="btn btn-outline" id="editor-preview-btn">
+                  <i class="fa-solid fa-eye"></i> Preview
+                </button>
+                <button type="button" class="btn btn-secondary" id="editor-save-draft-btn">
+                  <i class="fa-regular fa-floppy-disk"></i> Save Draft
+                </button>
+                <button type="button" class="btn btn-primary" id="editor-publish-btn">
+                  <i class="fa-solid fa-paper-plane"></i> Publish Now
+                </button>
+              </div>
+            </div>
+
+            <!-- Two-Column Editor Layout -->
+            <div class="editor-layout">
+              <!-- Left Column: Content & Body -->
+              <div class="editor-main-col">
+                <div class="editor-card">
+                  <!-- Title -->
+                  <div class="form-group mb-4">
+                    <label class="form-label" for="editor-title">Article Title <span class="req">*</span></label>
+                    <input type="text" id="editor-title" class="form-input form-input-lg editor-title-input" placeholder="Enter article title..." required>
+                  </div>
+
+                  <!-- Slug & Category Row -->
+                  <div class="form-row-2">
+                    <div class="form-group">
+                      <label class="form-label" for="editor-slug">
+                        URL Slug
+                        <button type="button" class="btn-link-sm" id="editor-slug-unlock" title="Edit URL slug manually"><i class="fa-solid fa-pen-to-square"></i></button>
+                      </label>
+                      <div class="slug-input-wrap">
+                        <span class="slug-prefix">petalshotels.com/blogs.html?article=</span>
+                        <input type="text" id="editor-slug" class="slug-input" placeholder="auto-generated-from-title" readonly>
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label" for="editor-category">
+                        Category <span class="req">*</span>
+                        <button type="button" class="btn-link-sm" id="editor-quick-add-cat">+ Add New</button>
+                      </label>
+                      <select id="editor-category" class="form-select" required>
+                        <!-- Populated dynamically -->
+                      </select>
+                    </div>
+                  </div>
+
+                  <!-- Excerpt -->
+                  <div class="form-group mt-3">
+                    <label class="form-label" for="editor-excerpt">
+                      Short Excerpt / Summary <span class="req">*</span>
+                      <span class="char-counter" id="excerpt-char-count">0 / 250</span>
+                    </label>
+                    <textarea id="editor-excerpt" class="form-textarea" rows="2" maxlength="300" placeholder="A compelling 1-2 sentence overview of the article shown on cards and social shares..."></textarea>
+                  </div>
+
+                  <!-- Rich Text Editor -->
+                  <div class="form-group mt-4">
+                    <div class="editor-label-bar">
+                      <label class="form-label">Main Article Body <span class="req">*</span></label>
+                      <div class="editor-stats">
+                        <span id="editor-word-count">0 words</span>
+                        <span>•</span>
+                        <span id="editor-calc-readtime">1 min read</span>
+                      </div>
+                    </div>
+
+                    <!-- WYSIWYG Toolbar -->
+                    <div class="wysiwyg-toolbar" id="wysiwyg-toolbar">
+                      <div class="btn-group">
+                        <button type="button" class="t-btn" data-cmd="formatBlock" data-val="p" title="Paragraph">P</button>
+                        <button type="button" class="t-btn" data-cmd="formatBlock" data-val="h2" title="Heading 2">H2</button>
+                        <button type="button" class="t-btn" data-cmd="formatBlock" data-val="h3" title="Heading 3">H3</button>
+                        <button type="button" class="t-btn" data-cmd="formatBlock" data-val="h4" title="Heading 4">H4</button>
+                      </div>
+
+                      <div class="btn-group">
+                        <button type="button" class="t-btn" data-cmd="bold" title="Bold (Ctrl+B)"><i class="fa-solid fa-bold"></i></button>
+                        <button type="button" class="t-btn" data-cmd="italic" title="Italic (Ctrl+I)"><i class="fa-solid fa-italic"></i></button>
+                        <button type="button" class="t-btn" data-cmd="underline" title="Underline"><i class="fa-solid fa-underline"></i></button>
+                        <button type="button" class="t-btn" data-cmd="strikeThrough" title="Strikethrough"><i class="fa-solid fa-strikethrough"></i></button>
+                      </div>
+
+                      <div class="btn-group">
+                        <button type="button" class="t-btn" data-cmd="insertUnorderedList" title="Bullet List"><i class="fa-solid fa-list-ul"></i></button>
+                        <button type="button" class="t-btn" data-cmd="insertOrderedList" title="Numbered List"><i class="fa-solid fa-list-ol"></i></button>
+                        <button type="button" class="t-btn" data-cmd="formatBlock" data-val="blockquote" title="Quote Block"><i class="fa-solid fa-quote-left"></i></button>
+                      </div>
+
+                      <div class="btn-group">
+                        <button type="button" class="t-btn" id="toolbar-link-btn" title="Insert Link"><i class="fa-solid fa-link"></i></button>
+                        <button type="button" class="t-btn" id="toolbar-image-btn" title="Insert Image from Media Library"><i class="fa-solid fa-image"></i></button>
+                        <button type="button" class="t-btn" data-cmd="insertHorizontalRule" title="Divider Line"><i class="fa-solid fa-minus"></i></button>
+                      </div>
+
+                      <div class="btn-group">
+                        <button type="button" class="t-btn" data-cmd="undo" title="Undo"><i class="fa-solid fa-rotate-left"></i></button>
+                        <button type="button" class="t-btn" data-cmd="redo" title="Redo"><i class="fa-solid fa-rotate-right"></i></button>
+                        <button type="button" class="t-btn" id="toolbar-source-btn" title="Toggle HTML Source"><i class="fa-solid fa-code"></i></button>
+                      </div>
+                    </div>
+
+                    <!-- WYSIWYG Content Editable Area -->
+                    <div id="editor-body-rich" class="wysiwyg-content" contenteditable="true" spellcheck="true" placeholder="Start writing your hospitality story or guide here..."></div>
+                    
+                    <!-- Raw HTML Code Mode (Hidden by default) -->
+                    <textarea id="editor-body-raw" class="raw-html-textarea" style="display: none;"></textarea>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Right Column: Featured Image, Author, SEO -->
+              <div class="editor-side-col">
+
+                <!-- Panel 1: Featured Image -->
+                <div class="panel">
+                  <div class="panel-header">
+                    <h3 class="panel-title"><i class="fa-regular fa-image"></i> Featured Image</h3>
+                  </div>
+                  <div class="panel-body">
+                    <div class="featured-image-box" id="featured-image-box">
+                      <div class="img-preview-container" id="featured-img-preview-wrap" style="display: none;">
+                        <img id="featured-img-preview" src="" alt="Featured Image Preview">
+                        <button type="button" class="remove-img-btn" id="remove-featured-img-btn" title="Remove Image">
+                          <i class="fa-solid fa-trash"></i>
+                        </button>
+                      </div>
+                      <div class="upload-dropzone" id="featured-upload-dropzone">
+                        <i class="fa-solid fa-cloud-arrow-up drop-icon"></i>
+                        <p class="drop-text">Drag & drop image here or</p>
+                        <div class="drop-actions">
+                          <label class="btn btn-outline btn-xs file-select-label">
+                            <span>Browse File</span>
+                            <input type="file" id="featured-file-input" accept="image/jpeg,image/png,image/webp,image/svg+xml" style="display: none;">
+                          </label>
+                          <button type="button" class="btn btn-secondary btn-xs" id="featured-select-media-btn">From Library</button>
+                        </div>
+                        <span class="drop-hint">JPG, PNG, WebP up to 10MB</span>
+                      </div>
+                    </div>
+
+                    <input type="hidden" id="editor-featured-image-url" value="">
+
+                    <div class="form-group mt-3">
+                      <label class="form-label" for="editor-featured-alt">Image Alt Text (SEO)</label>
+                      <input type="text" id="editor-featured-alt" class="form-input form-input-sm" placeholder="Image description (alt text)...">
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Panel 2: Publishing & Author Meta -->
+                <div class="panel mt-4">
+                  <div class="panel-header">
+                    <h3 class="panel-title"><i class="fa-solid fa-user-pen"></i> Editorial & Publishing</h3>
+                  </div>
+                  <div class="panel-body">
+                    <div class="form-group">
+                      <label class="form-label" for="editor-status-select">Status</label>
+                      <select id="editor-status-select" class="form-select">
+                        <option value="draft">Draft (Private, not visible to visitors)</option>
+                        <option value="published">Published (Live on petalshotels.com)</option>
+                      </select>
+                    </div>
+
+                    <div class="form-group mt-3">
+                      <label class="form-label" for="editor-pub-date">Publication Date</label>
+                      <input type="date" id="editor-pub-date" class="form-input">
+                    </div>
+
+                    <div class="form-group mt-3">
+                      <label class="form-label" for="editor-author">Author Name</label>
+                      <input type="text" id="editor-author" class="form-input" value="Petals Hospitality Editorial">
+                    </div>
+
+                    <div class="form-group mt-3">
+                      <label class="form-label" for="editor-author-role">Author Role / Desk</label>
+                      <input type="text" id="editor-author-role" class="form-input" value="Corporate Stays Desk">
+                    </div>
+
+                    <div class="form-group mt-3">
+                      <label class="form-label">Tags & Topics</label>
+                      <div class="tags-input-container" id="tags-container">
+                        <!-- Tag chips rendered here -->
+                        <input type="text" id="tag-text-input" placeholder="Add tag and press Enter...">
+                      </div>
+                      <span class="form-hint">Press Enter or comma to add tag</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Panel 3: SEO Optimization & SERP Preview -->
+                <div class="panel mt-4">
+                  <div class="panel-header">
+                    <h3 class="panel-title"><i class="fa-solid fa-chart-line"></i> SEO Management</h3>
+                  </div>
+                  <div class="panel-body">
+                    <div class="form-group">
+                      <label class="form-label" for="editor-seo-title">
+                        SEO Meta Title
+                        <span class="char-counter" id="seo-title-count">0 / 60</span>
+                      </label>
+                      <input type="text" id="editor-seo-title" class="form-input" placeholder="Primary Google Title (50-60 chars)">
+                    </div>
+
+                    <div class="form-group mt-3">
+                      <label class="form-label" for="editor-seo-desc">
+                        SEO Meta Description
+                        <span class="char-counter" id="seo-desc-count">0 / 160</span>
+                      </label>
+                      <textarea id="editor-seo-desc" class="form-textarea" rows="3" placeholder="Google snippet description (130-160 chars)"></textarea>
+                    </div>
+
+                    <div class="form-group mt-3">
+                      <label class="form-label" for="editor-seo-keywords">Focus Keywords</label>
+                      <input type="text" id="editor-seo-keywords" class="form-input" placeholder="Keywords separated by commas...">
+                    </div>
+
+                    <!-- Google SERP Live Simulation -->
+                    <div class="serp-preview-box mt-3">
+                      <div class="serp-header">
+                        <i class="fa-brands fa-google"></i>
+                        <span>Google Search Snippet Preview</span>
+                      </div>
+                      <div class="serp-card">
+                        <div class="serp-cite">
+                          <img src="/images/brand icon.jpeg" alt="" class="serp-favicon">
+                          <span>petalshotels.com › blogs › <span id="serp-slug-preview">article-slug</span></span>
+                        </div>
+                        <h4 class="serp-title" id="serp-title-preview">Article Title | Petals Suites & Hotel, Bangalore</h4>
+                        <p class="serp-desc" id="serp-desc-preview">Article excerpt will appear here as the Google snippet...</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </form>
+        </section>
+
+        <!-- ================================================================
+             VIEW 4: CATEGORY MANAGEMENT
+             ================================================================ -->
+        <section id="view-categories" class="cms-view">
+          <div class="view-header">
+            <div>
+              <h1 class="view-title">Category Management</h1>
+              <p class="view-subtitle">Organize content pillars and filter structures for the website</p>
+            </div>
+          </div>
+
+          <div class="category-manager-grid">
+            <!-- Left: Add New Category Form -->
+            <div class="panel">
+              <div class="panel-header">
+                <h3 class="panel-title" id="cat-form-title">Add New Category</h3>
+              </div>
+              <div class="panel-body">
+                <form id="category-form">
+                  <input type="hidden" id="cat-id" value="">
+                  
+                  <div class="form-group">
+                    <label class="form-label" for="cat-name">Category Name <span class="req">*</span></label>
+                    <input type="text" id="cat-name" class="form-input" placeholder="Category name..." required>
+                  </div>
+
+                  <div class="form-group mt-3">
+                    <label class="form-label" for="cat-slug">URL Slug</label>
+                    <input type="text" id="cat-slug" class="form-input" placeholder="auto-generated-if-empty">
+                  </div>
+
+                  <div class="form-group mt-3">
+                    <label class="form-label" for="cat-desc">Description</label>
+                    <textarea id="cat-desc" class="form-textarea" rows="3" placeholder="Brief explanation of this topic pillar..."></textarea>
+                  </div>
+
+                  <div class="form-group mt-3">
+                    <label class="form-label" for="cat-order">Display Order</label>
+                    <input type="number" id="cat-order" class="form-input" value="0" min="0">
+                  </div>
+
+                  <div class="form-actions mt-4">
+                    <button type="submit" class="btn btn-primary" id="cat-submit-btn">Save Category</button>
+                    <button type="button" class="btn btn-outline" id="cat-cancel-edit-btn" style="display: none;">Cancel</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+            <!-- Right: Categories List Table -->
+            <div class="panel">
+              <div class="panel-header">
+                <h3 class="panel-title">Existing Categories</h3>
+              </div>
+              <div class="panel-body p-0">
+                <div class="table-responsive">
+                  <table class="cms-table">
+                    <thead>
+                      <tr>
+                        <th>Category</th>
+                        <th>Slug</th>
+                        <th>Articles</th>
+                        <th>Order</th>
+                        <th class="text-right">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody id="categories-table-tbody">
+                      <!-- Populated dynamically -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================================================================
+             VIEW 5: MEDIA LIBRARY
+             ================================================================ -->
+        <section id="view-media" class="cms-view">
+          <div class="view-header">
+            <div>
+              <h1 class="view-title">Media Library</h1>
+              <p class="view-subtitle">Upload, organize, reuse, and manage photography for articles</p>
+            </div>
+            <div class="view-actions">
+              <label class="btn btn-primary file-select-label">
+                <i class="fa-solid fa-cloud-arrow-up"></i>
+                <span>Upload New Images</span>
+                <input type="file" id="media-bulk-file-input" accept="image/jpeg,image/png,image/webp,image/svg+xml" multiple style="display: none;">
+              </label>
+            </div>
+          </div>
+
+          <!-- Drag and drop zone -->
+          <div class="media-dropzone" id="media-page-dropzone">
+            <i class="fa-solid fa-images dropzone-big-icon"></i>
+            <h3>Drag & Drop Photography Here</h3>
+            <p>Supports high-resolution JPG, PNG, and WebP up to 10MB per file</p>
+          </div>
+
+          <!-- Media Filter & Grid -->
+          <div class="panel mt-4">
+            <div class="panel-header">
+              <div class="search-input-wrap" style="max-width: 300px;">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="media-search-input" placeholder="Search by filename...">
+              </div>
+              <span class="text-muted" id="media-count-badge">0 items</span>
+            </div>
+            <div class="panel-body">
+              <div class="media-grid" id="media-library-grid">
+                <!-- Media cards populated dynamically -->
+              </div>
+              <div id="media-empty-state" class="empty-state" style="display: none;">
+                <div class="empty-icon"><i class="fa-regular fa-image"></i></div>
+                <h3>No images uploaded yet</h3>
+                <p>Drag photos into the upload zone above or click Upload New Images.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================================================================
+             VIEW 6: TEAM & USER MANAGEMENT (Admins only)
+             ================================================================ -->
+        <section id="view-users" class="cms-view admin-only-section">
+          <div class="view-header">
+            <div>
+              <h1 class="view-title">Team Accounts & Permissions</h1>
+              <p class="view-subtitle">Manage marketing staff access and administrator permissions</p>
+            </div>
+            <div class="view-actions">
+              <button type="button" class="btn btn-primary" id="open-add-user-modal">
+                <i class="fa-solid fa-user-plus"></i> Add Team Member
+              </button>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-body p-0">
+              <div class="table-responsive">
+                <table class="cms-table">
+                  <thead>
+                    <tr>
+                      <th>User</th>
+                      <th>Email</th>
+                      <th>Role</th>
+                      <th>Status</th>
+                      <th>Created</th>
+                      <th class="text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="users-table-tbody">
+                    <!-- Populated dynamically -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================================================================
+             VIEW 7: MY PROFILE & SECURITY
+             ================================================================ -->
+        <section id="view-profile" class="cms-view">
+          <div class="view-header">
+            <div>
+              <h1 class="view-title">My Profile & Security</h1>
+              <p class="view-subtitle">Manage your account credentials and personal details</p>
+            </div>
+          </div>
+
+          <div class="profile-grid">
+            <div class="panel">
+              <div class="panel-header">
+                <h3 class="panel-title">Account Information</h3>
+              </div>
+              <div class="panel-body">
+                <form id="profile-info-form">
+                  <div class="form-group">
+                    <label class="form-label" for="profile-name">Full Name</label>
+                    <input type="text" id="profile-name" class="form-input" required>
+                  </div>
+                  <div class="form-group mt-3">
+                    <label class="form-label" for="profile-email">Email Address</label>
+                    <input type="email" id="profile-email" class="form-input" required>
+                  </div>
+                  <div class="form-group mt-3">
+                    <label class="form-label">Username</label>
+                    <input type="text" id="profile-username" class="form-input" readonly disabled>
+                  </div>
+                  <div class="form-group mt-3">
+                    <label class="form-label">Role</label>
+                    <input type="text" id="profile-role" class="form-input" readonly disabled>
+                  </div>
+                  <button type="submit" class="btn btn-primary mt-4">Save Profile</button>
+                </form>
+              </div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-header">
+                <h3 class="panel-title">Change Password</h3>
+              </div>
+              <div class="panel-body">
+                <form id="change-pwd-form">
+                  <div class="form-group">
+                    <label class="form-label" for="current-pwd">Current Password</label>
+                    <input type="password" id="current-pwd" class="form-input" required autocomplete="current-password">
+                  </div>
+                  <div class="form-group mt-3">
+                    <label class="form-label" for="new-pwd">New Password (Min 8 characters)</label>
+                    <input type="password" id="new-pwd" class="form-input" minlength="8" required autocomplete="new-password">
+                  </div>
+                  <div class="form-group mt-3">
+                    <label class="form-label" for="confirm-new-pwd">Confirm New Password</label>
+                    <input type="password" id="confirm-new-pwd" class="form-input" minlength="8" required autocomplete="new-password">
+                  </div>
+                  <button type="submit" class="btn btn-secondary mt-4">Update Password</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================================================================
+             VIEW 8: DEVELOPER CONSOLE & SYSTEM TOOLS (DEV ONLY)
+             ================================================================ -->
+        <section id="view-dev-console" class="cms-view dev-only-section">
+          <div class="view-header">
+            <div>
+              <h1 class="view-title">Developer Console & Diagnostics</h1>
+              <p class="view-subtitle">System architecture diagnostics, memory telemetry, cache flushing, and API testing</p>
+            </div>
+            <div class="view-actions">
+              <button type="button" class="btn btn-outline btn-sm" id="dev-refresh-stats-btn">
+                <i class="fa-solid fa-arrows-rotate"></i> Refresh Telemetry
+              </button>
+              <button type="button" class="btn btn-danger btn-sm" id="dev-flush-cache-btn">
+                <i class="fa-solid fa-bolt"></i> Purge Caches
+              </button>
+            </div>
+          </div>
+
+          <!-- Telemetry Grid -->
+          <div class="profile-grid">
+            <!-- Engine & Runtime Telemetry -->
+            <div class="panel">
+              <div class="panel-header">
+                <h3 class="panel-title"><i class="fa-solid fa-server" style="color: var(--accent-gold); margin-right: 6px;"></i> Node.js & Server Engine</h3>
+              </div>
+              <div class="panel-body">
+                <table class="cms-table" style="font-size: 12.5px;">
+                  <tbody>
+                    <tr>
+                      <td style="color: var(--text-muted); width: 140px;">Runtime Version</td>
+                      <td class="tabular-nums" id="dev-node-ver">Loading...</td>
+                    </tr>
+                    <tr>
+                      <td style="color: var(--text-muted);">OS / Platform</td>
+                      <td id="dev-platform">Loading...</td>
+                    </tr>
+                    <tr>
+                      <td style="color: var(--text-muted);">Process Uptime</td>
+                      <td class="tabular-nums" id="dev-uptime">Loading...</td>
+                    </tr>
+                    <tr>
+                      <td style="color: var(--text-muted);">Process PID</td>
+                      <td class="tabular-nums" id="dev-pid">Loading...</td>
+                    </tr>
+                    <tr>
+                      <td style="color: var(--text-muted);">Heap Allocation</td>
+                      <td class="tabular-nums" id="dev-memory">Loading...</td>
+                    </tr>
+                    <tr>
+                      <td style="color: var(--text-muted);">Environment</td>
+                      <td><span class="badge badge-published" id="dev-env">development</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Database & Storage Subsystem -->
+            <div class="panel">
+              <div class="panel-header">
+                <h3 class="panel-title"><i class="fa-solid fa-database" style="color: var(--accent-gold); margin-right: 6px;"></i> SQLite Engine & Storage</h3>
+              </div>
+              <div class="panel-body">
+                <table class="cms-table" style="font-size: 12.5px;">
+                  <tbody>
+                    <tr>
+                      <td style="color: var(--text-muted); width: 140px;">Driver</td>
+                      <td id="dev-db-driver">node:sqlite (Embedded)</td>
+                    </tr>
+                    <tr>
+                      <td style="color: var(--text-muted);">Concurrency Mode</td>
+                      <td><span class="badge badge-published">WAL (Write-Ahead Logging)</span></td>
+                    </tr>
+                    <tr>
+                      <td style="color: var(--text-muted);">Storage File Size</td>
+                      <td class="tabular-nums" id="dev-db-size">Loading...</td>
+                    </tr>
+                    <tr>
+                      <td style="color: var(--text-muted);">Journal Cache State</td>
+                      <td id="dev-db-journal">Clean / Synced</td>
+                    </tr>
+                    <tr>
+                      <td style="color: var(--text-muted);">Fallback Backup</td>
+                      <td>Auto-synced JSON mirror</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- API Diagnostic & Testing Playground -->
+          <div class="panel mt-4">
+            <div class="panel-header">
+              <div>
+                <h3 class="panel-title"><i class="fa-solid fa-vial-circle-check" style="color: var(--accent-gold); margin-right: 6px;"></i> End-to-End Diagnostic Testing Suite</h3>
+                <span class="panel-subtitle">Execute sub-system tests against APIs, database queries, and PMS endpoints</span>
+              </div>
+            </div>
+            <div class="panel-body">
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-bottom: 20px;">
+                <button type="button" class="btn btn-outline dev-test-btn" data-target="blogs" style="justify-content: flex-start;">
+                  <i class="fa-solid fa-newspaper" style="color: var(--accent-gold);"></i> Test Public Blogs API
+                </button>
+                <button type="button" class="btn btn-outline dev-test-btn" data-target="sitemap" style="justify-content: flex-start;">
+                  <i class="fa-solid fa-sitemap" style="color: var(--accent-gold);"></i> Test Sitemap Generator
+                </button>
+                <button type="button" class="btn btn-outline dev-test-btn" data-target="database" style="justify-content: flex-start;">
+                  <i class="fa-solid fa-database" style="color: var(--accent-gold);"></i> Test DB Query Latency
+                </button>
+                <button type="button" class="btn btn-outline dev-test-btn" data-target="pms" style="justify-content: flex-start;">
+                  <i class="fa-solid fa-hotel" style="color: var(--accent-gold);"></i> Test eZee PMS Route
+                </button>
+              </div>
+
+              <div class="code-terminal-box" style="background: var(--bg-surface); border: 1px solid var(--border-hairline); border-radius: var(--radius-sm); padding: 14px 18px; font-family: monospace; font-size: 12px; color: var(--text-secondary); min-height: 90px;">
+                <div style="color: var(--accent-gold); margin-bottom: 6px; font-weight: 600;">[Diagnostic Output Console]</div>
+                <div id="dev-console-output">Click any test button above to run real-time diagnostic probes...</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Automated E2E Story Lifecycle Test Runner & Diagnostics Suite -->
+          <div class="panel mt-4">
+            <div class="panel-header" style="flex-wrap: wrap; gap: 12px;">
+              <div>
+                <h3 class="panel-title" style="display: flex; align-items: center; gap: 8px;">
+                  <i class="fa-solid fa-microchip" style="color: var(--accent-gold);"></i>
+                  <span>Automated Story Lifecycle E2E Test Suite</span>
+                </h3>
+                <span class="panel-subtitle">
+                  Autonomous probe: creates synthetic draft &bull; isolates quota &bull; publishes to homepage #1 & sitemap &bull; modifies content &bull; deletes story &bull; audits restoration & logs
+                </span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <span class="badge" id="e2e-overall-status-badge" style="background: var(--bg-hover); color: var(--text-muted); border: 1px solid var(--border-hairline);">
+                  <i class="fa-solid fa-circle-notch"></i> Ready to Run
+                </span>
+                <button type="button" class="btn btn-primary" id="dev-run-e2e-btn">
+                  <i class="fa-solid fa-play"></i> Run Full Lifecycle Test
+                </button>
+              </div>
+            </div>
+            <div class="panel-body">
+              <!-- Live 6-Phase Execution Cards Grid -->
+              <div class="e2e-steps-grid" id="e2e-steps-container">
+                <div class="e2e-step-card" id="e2e-card-step-1">
+                  <div class="e2e-step-header">
+                    <span class="e2e-step-title"><i class="fa-solid fa-database"></i> 1. Baseline Snapshot</span>
+                    <span class="e2e-step-time" id="e2e-time-step-1">--</span>
+                  </div>
+                  <p style="font-size: 11.5px; color: var(--text-secondary); margin: 0 0 6px 0;">DB connectivity & published/drafts counts</p>
+                  <ul class="e2e-assertion-list" id="e2e-assertions-step-1">
+                    <li class="e2e-assertion-item"><i class="fa-regular fa-circle"></i> Waiting to execute...</li>
+                  </ul>
+                </div>
+
+                <div class="e2e-step-card" id="e2e-card-step-2">
+                  <div class="e2e-step-header">
+                    <span class="e2e-step-title"><i class="fa-solid fa-file-pen"></i> 2. Draft Creation</span>
+                    <span class="e2e-step-time" id="e2e-time-step-2">--</span>
+                  </div>
+                  <p style="font-size: 11.5px; color: var(--text-secondary); margin: 0 0 6px 0;">Draft quota isolation & non-leak check</p>
+                  <ul class="e2e-assertion-list" id="e2e-assertions-step-2">
+                    <li class="e2e-assertion-item"><i class="fa-regular fa-circle"></i> Waiting to execute...</li>
+                  </ul>
+                </div>
+
+                <div class="e2e-step-card" id="e2e-card-step-3">
+                  <div class="e2e-step-header">
+                    <span class="e2e-step-title"><i class="fa-solid fa-paper-plane"></i> 3. Publishing & Sitemap</span>
+                    <span class="e2e-step-time" id="e2e-time-step-3">--</span>
+                  </div>
+                  <p style="font-size: 11.5px; color: var(--text-secondary); margin: 0 0 6px 0;">Homepage card #1 & dynamic sitemap inclusion</p>
+                  <ul class="e2e-assertion-list" id="e2e-assertions-step-3">
+                    <li class="e2e-assertion-item"><i class="fa-regular fa-circle"></i> Waiting to execute...</li>
+                  </ul>
+                </div>
+
+                <div class="e2e-step-card" id="e2e-card-step-4">
+                  <div class="e2e-step-header">
+                    <span class="e2e-step-title"><i class="fa-solid fa-pen-nib"></i> 4. Live Modification</span>
+                    <span class="e2e-step-time" id="e2e-time-step-4">--</span>
+                  </div>
+                  <p style="font-size: 11.5px; color: var(--text-secondary); margin: 0 0 6px 0;">Zero-cache content & metadata propagation</p>
+                  <ul class="e2e-assertion-list" id="e2e-assertions-step-4">
+                    <li class="e2e-assertion-item"><i class="fa-regular fa-circle"></i> Waiting to execute...</li>
+                  </ul>
+                </div>
+
+                <div class="e2e-step-card" id="e2e-card-step-5">
+                  <div class="e2e-step-header">
+                    <span class="e2e-step-title"><i class="fa-solid fa-trash-can"></i> 5. Deletion & Pruning</span>
+                    <span class="e2e-step-time" id="e2e-time-step-5">--</span>
+                  </div>
+                  <p style="font-size: 11.5px; color: var(--text-secondary); margin: 0 0 6px 0;">Removal from DB, public feeds & sitemap</p>
+                  <ul class="e2e-assertion-list" id="e2e-assertions-step-5">
+                    <li class="e2e-assertion-item"><i class="fa-regular fa-circle"></i> Waiting to execute...</li>
+                  </ul>
+                </div>
+
+                <div class="e2e-step-card" id="e2e-card-step-6">
+                  <div class="e2e-step-header">
+                    <span class="e2e-step-title"><i class="fa-solid fa-shield-halved"></i> 6. Baseline Restored</span>
+                    <span class="e2e-step-time" id="e2e-time-step-6">--</span>
+                  </div>
+                  <p style="font-size: 11.5px; color: var(--text-secondary); margin: 0 0 6px 0;">Final consistency & zero lingering artifacts</p>
+                  <ul class="e2e-assertion-list" id="e2e-assertions-step-6">
+                    <li class="e2e-assertion-item"><i class="fa-regular fa-circle"></i> Waiting to execute...</li>
+                  </ul>
+                </div>
+              </div>
+
+              <!-- Live Execution Logs Terminal -->
+              <div class="e2e-terminal-container mt-3">
+                <div class="e2e-terminal-header">
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <i class="fa-solid fa-terminal" style="color: var(--accent-gold);"></i>
+                    <span>Real-Time Diagnostic Execution Log</span>
+                    <span id="e2e-current-run-id" style="color: var(--text-primary); font-weight: 600;">(No run active)</span>
+                  </div>
+                  <div style="display: flex; gap: 6px;">
+                    <button type="button" class="btn btn-outline btn-xs" id="copy-e2e-log-btn" title="Copy raw test logs to clipboard">
+                      <i class="fa-regular fa-copy"></i> Copy Log
+                    </button>
+                    <button type="button" class="btn btn-outline btn-xs" id="download-e2e-log-btn" title="Download test report as JSON file">
+                      <i class="fa-solid fa-download"></i> Download JSON
+                    </button>
+                  </div>
+                </div>
+                <div class="e2e-terminal-body" id="e2e-terminal-log-output">
+                  <div class="e2e-log-line">
+                    <span class="e2e-log-time">--:--:--</span>
+                    <span class="e2e-log-tag info">STANDBY</span>
+                    <span class="e2e-log-msg">Press "Run Full Lifecycle Test" to initiate the autonomous Story Lifecycle E2E diagnostic probe.</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Historical Test Runs Ledger -->
+              <div class="mt-4 pt-3" style="border-top: 1px solid var(--border-hairline);">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                  <div>
+                    <h4 style="font-size: 13px; font-weight: 600; color: var(--text-primary); margin: 0;">Historical Test Runs</h4>
+                    <span style="font-size: 11.5px; color: var(--text-secondary);">Audit record of recent E2E test runs stored in database</span>
+                  </div>
+                  <button type="button" class="btn btn-outline btn-xs" id="dev-clear-test-logs-btn" style="color: var(--text-muted);">
+                    <i class="fa-solid fa-broom"></i> Clear History
+                  </button>
+                </div>
+                <div class="table-responsive">
+                  <table class="cms-table" style="font-size: 12px;">
+                    <thead>
+                      <tr>
+                        <th>Run ID</th>
+                        <th>Status</th>
+                        <th>Summary</th>
+                        <th>Duration</th>
+                        <th>Date & Time</th>
+                        <th class="text-right">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody id="e2e-history-table-tbody">
+                      <tr>
+                        <td colspan="6" class="text-center py-3 text-muted">Loading test run history...</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       MODALS & OVERLAYS
+       ======================================================================== -->
+
+  <!-- Modal 1: Live Article Website Preview Modal -->
+  <div class="cms-modal-overlay" id="preview-modal" style="display: none;">
+    <div class="cms-modal preview-modal-card">
+      <div class="preview-modal-header">
+        <div class="preview-brand-tag">
+          <img src="/images/brand icon.jpeg" alt="" class="modal-brand-icon">
+          <span>Petals Live Website Article Preview</span>
+        </div>
+        <div class="preview-modal-actions">
+          <span class="preview-pill" id="modal-preview-status-pill">Draft Preview</span>
+          <button type="button" class="modal-close-btn" id="close-preview-modal-btn" aria-label="Close Preview">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="preview-modal-scrollable">
+        <!-- Exact Petals reader view simulation -->
+        <article class="reader-simulation-wrap">
+          <div class="sim-hero">
+            <span class="sim-topic" id="sim-topic-badge">BUSINESS TRAVEL</span>
+            <h1 class="sim-title" id="sim-title-text">Article Title Preview</h1>
+            <div class="sim-meta">
+              <span id="sim-author-name">Petals Hospitality Editorial</span>
+              <span>•</span>
+              <span id="sim-date-text">November 5, 2026</span>
+              <span>•</span>
+              <span id="sim-readtime-text">5 min read</span>
+            </div>
+          </div>
+
+          <div class="sim-banner-wrap" id="sim-banner-wrap">
+            <img src="" alt="" id="sim-banner-img" class="sim-banner-img">
+          </div>
+
+          <div class="sim-body" id="sim-body-content">
+            <!-- Article body rendered here -->
+          </div>
+
+          <div class="sim-tags-wrap" id="sim-tags-container">
+            <!-- Tags rendered here -->
+          </div>
+        </article>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 2: Media Selector Modal (When inserting image into editor) -->
+  <div class="cms-modal-overlay" id="media-picker-modal" style="display: none;">
+    <div class="cms-modal modal-md">
+      <div class="panel-header">
+        <h3 class="panel-title"><i class="fa-solid fa-photo-film"></i> Select Image from Media Library</h3>
+        <button type="button" class="modal-close-btn" id="close-media-picker-btn"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="panel-body">
+        <div class="media-picker-grid" id="media-picker-grid">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 3: Add/Edit User Modal -->
+  <div class="cms-modal-overlay" id="user-modal" style="display: none;">
+    <div class="cms-modal modal-sm">
+      <div class="panel-header">
+        <h3 class="panel-title" id="user-modal-title">Add Team Member</h3>
+        <button type="button" class="modal-close-btn" id="close-user-modal-btn"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="panel-body">
+        <form id="user-create-form">
+          <input type="hidden" id="manage-user-id" value="">
+          <div class="form-group">
+            <label class="form-label" for="manage-user-fullname">Full Name <span class="req">*</span></label>
+            <input type="text" id="manage-user-fullname" class="form-input" placeholder="Full name" required>
+          </div>
+          <div class="form-group mt-3">
+            <label class="form-label" for="manage-user-username">Username <span class="req">*</span></label>
+            <input type="text" id="manage-user-username" class="form-input" placeholder="username" required>
+          </div>
+          <div class="form-group mt-3">
+            <label class="form-label" for="manage-user-email">Email <span class="req">*</span></label>
+            <input type="email" id="manage-user-email" class="form-input" placeholder="name@petalshotels.com" required>
+          </div>
+          <div class="form-group mt-3" id="manage-pwd-group">
+            <label class="form-label" for="manage-user-password">Password <span class="req">*</span></label>
+            <input type="password" id="manage-user-password" class="form-input" minlength="8" placeholder="••••••••••••">
+          </div>
+          <div class="form-group mt-3">
+            <label class="form-label" for="manage-user-role">Permission Role</label>
+            <select id="manage-user-role" class="form-select">
+              <option value="marketing">Marketing (Content & Live Site access only)</option>
+              <option value="admin">Administrator (Content & Team Accounts management)</option>
+              <option value="dev">Developer (Full superuser access with Dev Tools & Settings)</option>
+            </select>
+          </div>
+          <div class="form-actions mt-4">
+            <button type="submit" class="btn btn-primary btn-block">Save Team Account</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 4: Draft Limit Exceeded Prompt Modal -->
+  <div class="cms-modal-overlay" id="draft-limit-modal" style="display: none;">
+    <div class="cms-modal modal-md">
+      <div class="panel-header">
+        <h3 class="panel-title" style="color: var(--status-draft); display: flex; align-items: center; gap: 8px;">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+          <span>Draft Limit Reached (5/5)</span>
+        </h3>
+        <button type="button" class="modal-close-btn" id="close-draft-limit-btn" aria-label="Close dialog">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="panel-body">
+        <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 18px;">
+          To ensure database efficiency and maintain publishing discipline, Petals CMS allows a maximum of <strong>5 active drafts</strong> at a time. Please delete an outdated draft or publish one to proceed with creating a new article.
+        </p>
+
+        <h4 style="font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted); margin-bottom: 10px;">
+          Current Active Drafts (Select one to edit or delete):
+        </h4>
+
+        <div id="draft-limit-list" class="draft-limit-list">
+          <!-- Dynamically populated draft items with title, date, and delete/open buttons -->
+        </div>
+
+        <div class="form-actions mt-4" style="justify-content: flex-end;">
+          <a href="#blogs" class="btn btn-outline btn-sm" id="draft-limit-view-all-btn">View All Articles</a>
+          <button type="button" class="btn btn-secondary btn-sm" id="draft-limit-close-action-btn">Dismiss</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 5: Delete Article Confirmation Modal -->
+  <div class="cms-modal-overlay" id="delete-confirm-modal" style="display: none;">
+    <div class="cms-modal modal-sm">
+      <div class="panel-header">
+        <h3 class="panel-title" style="color: var(--status-danger); display: flex; align-items: center; gap: 8px;">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+          <span>Delete Story</span>
+        </h3>
+        <button type="button" class="modal-close-btn" id="close-delete-modal-btn" aria-label="Cancel deletion">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="panel-body">
+        <p style="font-size: 13.5px; color: var(--text-primary); line-height: 1.5; margin-bottom: 12px;">
+          Are you sure you want to permanently delete:
+        </p>
+        <blockquote style="margin: 0 0 16px 0; padding: 10px 14px; background: var(--bg-surface); border-left: 3px solid var(--status-danger); border-radius: var(--radius-xs); font-style: normal;">
+          <strong id="delete-modal-article-title" style="color: var(--text-primary); font-size: 13.5px; display: block; word-break: break-word;">Article Title</strong>
+        </blockquote>
+        <p style="font-size: 12px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 20px;">
+          This action <strong>cannot be undone</strong>. The story will be immediately removed from the CMS database, the live <code style="font-size: 11px; color: var(--accent-gold);">petalshotels.com</code> journal, the homepage story spotlight, and the search engine sitemap.
+        </p>
+
+        <div class="form-actions" style="justify-content: flex-end; gap: 10px;">
+          <button type="button" class="btn btn-secondary btn-sm" id="cancel-delete-modal-btn">Cancel</button>
+          <button type="button" class="btn btn-danger btn-sm" id="confirm-delete-action-btn">
+            <i class="fa-solid fa-trash"></i> Permanently Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- Admin Controller Script -->
+  <script src="/admin/js/admin.js?v=1.0.6"></script>
+</body>
+</html>
