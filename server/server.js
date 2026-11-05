@@ -16,6 +16,12 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Enable reverse proxy trust for Hostinger, Cloudflare, and Nginx (accurate req.ip & secure cookies)
+app.set('trust proxy', 1);
+
+// Prevent technology footprint disclosure
+app.disable('x-powered-by');
+
 // Security HTTP Headers with Helmet
 app.use(helmet({
   contentSecurityPolicy: {
@@ -49,9 +55,28 @@ app.use(helmet({
   crossOriginResourcePolicy: { policy: "cross-origin" }
 }));
 
-// CORS Configuration (supports subdomains like admin.petalshotels.com)
+// Hardened CORS Origin Whitelist (blocks untrusted third-party sites from credentialed forgery)
+const allowedOrigins = [
+  'https://petalshotels.com',
+  'https://www.petalshotels.com',
+  'https://admin.petalshotels.com',
+  process.env.APP_URL,
+  process.env.CMS_FRONTEND_URL
+].filter(Boolean);
+
 app.use(cors({
-  origin: true,
+  origin: (origin, callback) => {
+    // Allow requests without Origin (same-origin browser navigation, curl, mobile apps)
+    if (!origin) return callback(null, true);
+    // Allow local development on localhost or 127.0.0.1 on any port
+    if (/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)) {
+      return callback(null, true);
+    }
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error('Cross-origin request blocked by Petals CORS policy'));
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
@@ -61,13 +86,20 @@ app.use(cors({
 app.use(express.json({ limit: '25mb', inflate: false }));
 app.use(express.urlencoded({ extended: true, limit: '25mb', inflate: false }));
 
-// Block access to sensitive files and directories
+// Block access to sensitive files, source code, and configuration
 app.use((req, res, next) => {
-  const normalizedPath = decodeURIComponent(req.path).toLowerCase();
+  let normalizedPath = '';
+  try {
+    normalizedPath = decodeURIComponent(req.path).toLowerCase();
+  } catch (_) {
+    return res.status(400).json({ error: 'Malformed request URI' });
+  }
+
   const blockedPatterns = [
     /^\/server(\/|$)/,
     /^\/node_modules(\/|$)/,
     /^\/\..*/, // Any dotfile like .env, .git, .gitignore
+    /^\/package(-lock)?\.json$/i,
     /\.(env|lock|md|log|yml|yaml|config|sh|bak|dist|db|sqlite)$/i
   ];
 
@@ -255,6 +287,27 @@ app.get('*', (req, res) => {
     return serveBlogsHtml(req, res);
   }
   serveIndexHtml(req, res);
+});
+
+// Centralized Security Error Handler
+app.use((err, req, res, next) => {
+  // CORS rejection
+  if (err && err.message && err.message.includes('CORS policy')) {
+    return res.status(403).json({ success: false, error: 'Access denied: origin not allowed by Petals CORS policy' });
+  }
+
+  // Body parser / JSON syntax error
+  if (err && (err.type === 'entity.parse.failed' || err instanceof SyntaxError)) {
+    return res.status(400).json({ success: false, error: 'Malformed JSON payload' });
+  }
+
+  console.error('[Unhandled Server Exception]', err);
+
+  const isProduction = process.env.NODE_ENV === 'production';
+  res.status(err.status || 500).json({
+    success: false,
+    error: isProduction ? 'An unexpected server error occurred' : (err.message || 'Server error')
+  });
 });
 
 // Start Server with fallback port handling

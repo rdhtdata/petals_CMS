@@ -10,6 +10,7 @@ const path = require('path');
 const rateLimit = require('express-rate-limit');
 const { DB, verifyPassword, hashPassword } = require('../db');
 const { requireAuth, requireRole } = require('../middleware/auth');
+const { stripHtml, sanitizeHtml, sanitizeSvg, sanitizeFilename } = require('../utils/sanitize');
 
 // Brute-force protection for login endpoint (15 attempts / 15 minutes)
 const loginLimiter = rateLimit({
@@ -22,6 +23,45 @@ const loginLimiter = rateLimit({
     error: 'Too many login attempts from this IP. Please wait 15 minutes before trying again.'
   }
 });
+
+// Rate limiter for password changes (10 attempts / 15 minutes)
+const passwordChangeLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    error: 'Too many password modification attempts. Please wait 15 minutes.'
+  }
+});
+
+// Rate limiter for media uploads (50 uploads / 15 minutes)
+const mediaUploadLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 50,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    error: 'Upload limit reached for this session. Please wait a few minutes before uploading more images.'
+  }
+});
+
+// Rate limiter for E2E tests (5 runs / 5 minutes)
+const devTestLimiter = rateLimit({
+  windowMs: 5 * 60 * 1000,
+  max: 5,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    error: 'E2E diagnostics rate limit reached. Please wait 5 minutes before executing another test run.'
+  }
+});
+
+// Concurrency lock for E2E runner
+let isE2eTestRunning = false;
 
 /* ==========================================================================
    1. Authentication & Session Endpoints
@@ -125,7 +165,7 @@ router.put('/auth/profile', requireAuth, (req, res) => {
 /**
  * POST /api/admin/auth/change-password
  */
-router.post('/auth/change-password', requireAuth, (req, res) => {
+router.post('/auth/change-password', requireAuth, passwordChangeLimiter, (req, res) => {
   try {
     const { currentPassword, newPassword } = req.body;
 
@@ -133,7 +173,7 @@ router.post('/auth/change-password', requireAuth, (req, res) => {
       return res.status(400).json({ success: false, error: 'Current and new password are required' });
     }
 
-    if (newPassword.length < 8) {
+    if (typeof newPassword !== 'string' || newPassword.length < 8) {
       return res.status(400).json({ success: false, error: 'New password must be at least 8 characters long' });
     }
 
@@ -144,7 +184,11 @@ router.post('/auth/change-password', requireAuth, (req, res) => {
     }
 
     DB.updateUser(req.user.id, { password: newPassword });
-    res.json({ success: true, message: 'Password updated successfully' });
+
+    // Invalidate all other active sessions for this user except the current token
+    DB.deleteSessionsByUserId(req.user.id, req.token);
+
+    res.json({ success: true, message: 'Password updated successfully. Other active sessions revoked.' });
   } catch (err) {
     res.status(500).json({ success: false, error: 'Failed to change password' });
   }
@@ -492,9 +536,9 @@ router.get('/media', requireAuth, (req, res) => {
 
 /**
  * POST /api/admin/media/upload
- * Supports Base64 encoded JSON upload (works on any host without native multipart modules)
+ * Supports Base64 encoded JSON upload with SVG sanitization and path traversal prevention
  */
-router.post('/media/upload', requireAuth, (req, res) => {
+router.post('/media/upload', requireAuth, mediaUploadLimiter, (req, res) => {
   try {
     const { base64Data, filename, altText } = req.body;
 
@@ -525,6 +569,15 @@ router.post('/media/upload', requireAuth, (req, res) => {
       return res.status(400).json({ success: false, error: 'Image size exceeds maximum 10MB limit' });
     }
 
+    // Hardened SVG Inspection (prevents Stored SVG XSS)
+    if (mimeType === 'image/svg+xml') {
+      try {
+        sanitizeSvg(buffer);
+      } catch (svgErr) {
+        return res.status(400).json({ success: false, error: svgErr.message });
+      }
+    }
+
     // Determine extension
     let ext = '.jpg';
     if (mimeType === 'image/png') ext = '.png';
@@ -532,26 +585,30 @@ router.post('/media/upload', requireAuth, (req, res) => {
     else if (mimeType === 'image/svg+xml') ext = '.svg';
     else if (mimeType === 'image/gif') ext = '.gif';
 
-    const safeBaseName = path.basename(filename, path.extname(filename)).replace(/[^a-zA-Z0-9-_]/g, '-').toLowerCase();
+    const safeBaseName = sanitizeFilename(path.basename(filename, path.extname(filename)));
     const uniqueFileName = `${safeBaseName}-${Date.now()}${ext}`;
-    const uploadsDir = path.join(__dirname, '..', '..', 'images', 'uploads');
+    const uploadsDir = path.resolve(__dirname, '..', '..', 'images', 'uploads');
 
     if (!fs.existsSync(uploadsDir)) {
       fs.mkdirSync(uploadsDir, { recursive: true });
     }
 
-    const filePath = path.join(uploadsDir, uniqueFileName);
+    const filePath = path.resolve(uploadsDir, uniqueFileName);
+    if (!filePath.startsWith(uploadsDir)) {
+      return res.status(400).json({ success: false, error: 'Invalid upload destination path' });
+    }
+
     fs.writeFileSync(filePath, buffer);
 
     const publicUrl = `images/uploads/${uniqueFileName}`;
 
     const mediaRecord = DB.createMedia({
       filename: uniqueFileName,
-      original_name: filename,
+      original_name: sanitizeFilename(filename),
       mime_type: mimeType,
       size: buffer.length,
       url: publicUrl,
-      alt_text: altText || safeBaseName
+      alt_text: stripHtml(altText || safeBaseName)
     });
 
     res.status(201).json({
@@ -644,6 +701,10 @@ router.post('/users', requireAuth, requireRole(['dev', 'admin']), (req, res) => 
 router.put('/users/:id', requireAuth, requireRole(['dev', 'admin']), (req, res) => {
   try {
     const targetId = Number(req.params.id);
+    if (!Number.isInteger(targetId) || targetId <= 0) {
+      return res.status(400).json({ success: false, error: 'Invalid user ID' });
+    }
+
     const targetUser = DB.getUserById(targetId);
     if (!targetUser) {
       return res.status(404).json({ success: false, error: 'User not found' });
@@ -658,7 +719,51 @@ router.put('/users/:id', requireAuth, requireRole(['dev', 'admin']), (req, res) 
       return res.status(403).json({ success: false, error: 'Only Lead Developer can promote a user to Developer' });
     }
 
-    const updated = DB.updateUser(targetId, req.body);
+    // Prevent self-lockout
+    if (targetId === req.user.id && req.body.active === 0) {
+      return res.status(400).json({ success: false, error: 'You cannot deactivate your own account' });
+    }
+
+    if (targetId === req.user.id && req.body.role && req.body.role !== req.user.role) {
+      return res.status(400).json({ success: false, error: 'You cannot change your own role' });
+    }
+
+    const allowedRoles = ['dev', 'admin', 'marketing'];
+    const updatePayload = {};
+
+    if (req.body.full_name !== undefined) {
+      updatePayload.full_name = stripHtml(String(req.body.full_name).trim());
+    }
+    if (req.body.email !== undefined) {
+      const email = String(req.body.email).trim().toLowerCase();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        return res.status(400).json({ success: false, error: 'Invalid email address' });
+      }
+      updatePayload.email = email;
+    }
+    if (req.body.role !== undefined) {
+      if (!allowedRoles.includes(req.body.role)) {
+        return res.status(400).json({ success: false, error: 'Invalid role specified' });
+      }
+      updatePayload.role = req.body.role;
+    }
+    if (req.body.active !== undefined) {
+      updatePayload.active = req.body.active ? 1 : 0;
+    }
+    if (req.body.password !== undefined && req.body.password) {
+      if (typeof req.body.password !== 'string' || req.body.password.length < 8) {
+        return res.status(400).json({ success: false, error: 'Password must be at least 8 characters long' });
+      }
+      updatePayload.password = req.body.password;
+    }
+
+    const updated = DB.updateUser(targetId, updatePayload);
+
+    // If password was updated or user was deactivated, revoke other active sessions
+    if (updatePayload.password || updatePayload.active === 0) {
+      DB.deleteSessionsByUserId(targetId, targetId === req.user.id ? req.token : null);
+    }
+
     res.json({ success: true, message: 'User updated successfully', data: updated });
   } catch (err) {
     res.status(500).json({ success: false, error: 'Failed to update user' });
@@ -820,8 +925,16 @@ router.post('/dev/test-endpoint', requireAuth, requireRole(['dev']), (req, res) 
  * POST /api/admin/dev/run-e2e-test
  * Executes complete End-to-End Story Lifecycle Test Suite (Create -> Modify -> Delete)
  */
-router.post('/dev/run-e2e-test', requireAuth, requireRole(['dev']), async (req, res) => {
+router.post('/dev/run-e2e-test', requireAuth, requireRole(['dev']), devTestLimiter, async (req, res) => {
+  if (isE2eTestRunning) {
+    return res.status(429).json({
+      success: false,
+      error: 'An automated diagnostic test run is currently in progress. Please wait for it to complete.'
+    });
+  }
+
   try {
+    isE2eTestRunning = true;
     const { runFullLifecycleTest } = require('../devTestRunner');
     const report = await runFullLifecycleTest(req.user.username);
     res.json({
@@ -834,6 +947,8 @@ router.post('/dev/run-e2e-test', requireAuth, requireRole(['dev']), async (req, 
       success: false,
       error: 'E2E Test execution failed: ' + err.message
     });
+  } finally {
+    isE2eTestRunning = false;
   }
 });
 

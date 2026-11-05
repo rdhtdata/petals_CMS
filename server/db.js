@@ -7,6 +7,7 @@
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+const { stripHtml, sanitizeHtml } = require('./utils/sanitize');
 
 // Data file paths
 const DATA_DIR = path.join(__dirname, 'data');
@@ -558,6 +559,21 @@ const DB = {
     return true;
   },
 
+  deleteSessionsByUserId(userId, exceptToken = null) {
+    if (!userId) return false;
+    if (useSqlite) {
+      if (exceptToken) {
+        db.prepare('DELETE FROM sessions WHERE user_id = ? AND token != ?').run(userId, exceptToken);
+      } else {
+        db.prepare('DELETE FROM sessions WHERE user_id = ?').run(userId);
+      }
+    } else {
+      memoryStore.sessions = memoryStore.sessions.filter(s => s.user_id !== userId || (exceptToken && s.token === exceptToken));
+      saveJsonStore();
+    }
+    return true;
+  },
+
   // ---- Category Management ----
   getAllCategories() {
     if (useSqlite) {
@@ -776,7 +792,16 @@ const DB = {
     }
 
     const now = new Date().toISOString();
-    const title = (data.title || 'Untitled Article').trim();
+    const rawTitle = (data.title || 'Untitled Article').trim();
+    const title = stripHtml(rawTitle);
+    const excerpt = stripHtml(data.excerpt || '');
+    const content = sanitizeHtml(data.content || '');
+    const author = stripHtml(data.author || 'Petals Hospitality Editorial');
+    const author_role = stripHtml(data.author_role || 'Corporate Stays Desk');
+    const category = stripHtml(data.category || 'Business Travel');
+    const seo_title = stripHtml(data.seo_title || title);
+    const seo_description = stripHtml(data.seo_description || excerpt);
+
     let slug = (data.slug || title).toLowerCase()
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/(^-|-$)/g, '');
@@ -790,33 +815,34 @@ const DB = {
     const isPublished = status === 'published';
     const publishedAt = isPublished ? (data.published_at || now) : null;
     const displayDate = publishedAt ? new Intl.DateTimeFormat('en-US', { month: 'long', day: 'numeric', year: 'numeric' }).format(new Date(publishedAt)) : 'Draft';
-    const tagsArray = Array.isArray(data.tags) ? data.tags : (typeof data.tags === 'string' ? data.tags.split(',').map(s => s.trim()).filter(Boolean) : []);
+    const tagsArray = Array.isArray(data.tags) ? data.tags.map(t => stripHtml(String(t))) : (typeof data.tags === 'string' ? data.tags.split(',').map(s => stripHtml(s.trim())).filter(Boolean) : []);
     const tagsJson = JSON.stringify(tagsArray);
+    const seo_keywords = stripHtml(data.seo_keywords || tagsArray.join(', '));
 
     // Calculate reading time (~200 wpm)
-    const wordCount = (data.content || '').replace(/<[^>]+>/g, ' ').split(/\s+/).filter(Boolean).length;
+    const wordCount = content.replace(/<[^>]+>/g, ' ').split(/\s+/).filter(Boolean).length;
     const calculatedReadTime = `${Math.max(1, Math.ceil(wordCount / 200))} min read`;
 
     const blogRecord = {
       id,
       title,
       slug,
-      excerpt: data.excerpt || '',
-      content: data.content || '',
+      excerpt,
+      content,
       featured_image: data.featured_image || '',
-      featured_image_alt: data.featured_image_alt || title,
+      featured_image_alt: stripHtml(data.featured_image_alt || title),
       category_id: data.category_id || null,
-      category: data.category || 'Business Travel',
-      author: data.author || 'Petals Hospitality Editorial',
-      author_role: data.author_role || 'Corporate Stays Desk',
+      category,
+      author,
+      author_role,
       status,
       published_at: publishedAt,
       display_date: displayDate,
       read_time: data.read_time || calculatedReadTime,
       tags: tagsJson,
-      seo_title: data.seo_title || title,
-      seo_description: data.seo_description || data.excerpt || '',
-      seo_keywords: data.seo_keywords || tagsArray.join(', '),
+      seo_title,
+      seo_description,
+      seo_keywords,
       canonical_url: data.canonical_url || `https://petalshotels.com/blogs.html?article=${slug}`,
       views: 0,
       created_at: now,
@@ -880,16 +906,28 @@ const DB = {
 
     const displayDate = publishedAt ? new Intl.DateTimeFormat('en-US', { month: 'long', day: 'numeric', year: 'numeric' }).format(new Date(publishedAt)) : 'Draft';
 
+    const sanitizedTitle = data.title !== undefined ? stripHtml(data.title) : undefined;
+    const sanitizedExcerpt = data.excerpt !== undefined ? stripHtml(data.excerpt) : undefined;
+    const sanitizedContent = data.content !== undefined ? sanitizeHtml(data.content) : undefined;
+    const sanitizedAuthor = data.author !== undefined ? stripHtml(data.author) : undefined;
+    const sanitizedAuthorRole = data.author_role !== undefined ? stripHtml(data.author_role) : undefined;
+    const sanitizedCategory = data.category !== undefined ? stripHtml(data.category) : undefined;
+    const sanitizedSeoTitle = data.seo_title !== undefined ? stripHtml(data.seo_title) : undefined;
+    const sanitizedSeoDesc = data.seo_description !== undefined ? stripHtml(data.seo_description) : undefined;
+    const sanitizedImageAlt = data.featured_image_alt !== undefined ? stripHtml(data.featured_image_alt) : undefined;
+
     let tagsJson = existing.tags ? JSON.stringify(existing.tags) : '[]';
+    let tagsArray = existing.tags || [];
     if (data.tags !== undefined) {
-      const tagsArray = Array.isArray(data.tags) ? data.tags : (typeof data.tags === 'string' ? data.tags.split(',').map(s => s.trim()).filter(Boolean) : []);
+      tagsArray = Array.isArray(data.tags) ? data.tags.map(t => stripHtml(String(t))) : (typeof data.tags === 'string' ? data.tags.split(',').map(s => stripHtml(s.trim())).filter(Boolean) : []);
       tagsJson = JSON.stringify(tagsArray);
     }
+    const sanitizedSeoKeywords = data.seo_keywords !== undefined ? stripHtml(data.seo_keywords) : (data.tags !== undefined ? tagsArray.join(', ') : undefined);
 
     // Auto update reading time if content changed
     let readTime = data.read_time || existing.read_time;
-    if (data.content && !data.read_time) {
-      const wordCount = data.content.replace(/<[^>]+>/g, ' ').split(/\s+/).filter(Boolean).length;
+    if (sanitizedContent && !data.read_time) {
+      const wordCount = sanitizedContent.replace(/<[^>]+>/g, ' ').split(/\s+/).filter(Boolean).length;
       readTime = `${Math.max(1, Math.ceil(wordCount / 200))} min read`;
     }
 
@@ -917,31 +955,32 @@ const DB = {
           updated_at = ?
         WHERE id = ?
       `).run(
-        toDb(data.title), toDb(data.excerpt), toDb(data.content), toDb(data.featured_image), toDb(data.featured_image_alt),
-        toDb(data.category_id), toDb(data.category), toDb(data.author), toDb(data.author_role), toDb(data.status),
-        toDb(publishedAt), toDb(displayDate), toDb(readTime), toDb(tagsJson), toDb(data.seo_title), toDb(data.seo_description),
-        toDb(data.seo_keywords), toDb(data.canonical_url), now, id
+        toDb(sanitizedTitle), toDb(sanitizedExcerpt), toDb(sanitizedContent), toDb(data.featured_image), toDb(sanitizedImageAlt),
+        toDb(data.category_id), toDb(sanitizedCategory), toDb(sanitizedAuthor), toDb(sanitizedAuthorRole), toDb(data.status),
+        toDb(publishedAt), toDb(displayDate), toDb(readTime), toDb(tagsJson), toDb(sanitizedSeoTitle), toDb(sanitizedSeoDesc),
+        toDb(sanitizedSeoKeywords), toDb(data.canonical_url), now, id
       );
     } else {
       const target = memoryStore.blogs.find(b => b.id === id);
       if (!target) return null;
       Object.assign(target, {
-        title: data.title !== undefined ? data.title : target.title,
-        excerpt: data.excerpt !== undefined ? data.excerpt : target.excerpt,
-        content: data.content !== undefined ? data.content : target.content,
+        title: sanitizedTitle !== undefined ? sanitizedTitle : target.title,
+        excerpt: sanitizedExcerpt !== undefined ? sanitizedExcerpt : target.excerpt,
+        content: sanitizedContent !== undefined ? sanitizedContent : target.content,
         featured_image: data.featured_image !== undefined ? data.featured_image : target.featured_image,
-        featured_image_alt: data.featured_image_alt !== undefined ? data.featured_image_alt : target.featured_image_alt,
+        featured_image_alt: sanitizedImageAlt !== undefined ? sanitizedImageAlt : target.featured_image_alt,
         category_id: data.category_id !== undefined ? data.category_id : target.category_id,
-        category: data.category !== undefined ? data.category : target.category,
-        author: data.author !== undefined ? data.author : target.author,
-        author_role: data.author_role !== undefined ? data.author_role : target.author_role,
+        category: sanitizedCategory !== undefined ? sanitizedCategory : target.category,
+        author: sanitizedAuthor !== undefined ? sanitizedAuthor : target.author,
+        author_role: sanitizedAuthorRole !== undefined ? sanitizedAuthorRole : target.author_role,
         status: data.status !== undefined ? data.status : target.status,
         published_at: publishedAt,
         display_date: displayDate,
         read_time: readTime,
-        tags: data.tags !== undefined ? (Array.isArray(data.tags) ? data.tags : data.tags.split(',').map(s=>s.trim()).filter(Boolean)) : target.tags,
-        seo_title: data.seo_title !== undefined ? data.seo_title : target.seo_title,
-        seo_description: data.seo_description !== undefined ? data.seo_description : target.seo_description,
+        tags: data.tags !== undefined ? tagsArray : target.tags,
+        seo_title: sanitizedSeoTitle !== undefined ? sanitizedSeoTitle : target.seo_title,
+        seo_description: sanitizedSeoDesc !== undefined ? sanitizedSeoDesc : target.seo_description,
+        seo_keywords: sanitizedSeoKeywords !== undefined ? sanitizedSeoKeywords : target.seo_keywords,
         seo_keywords: data.seo_keywords !== undefined ? data.seo_keywords : target.seo_keywords,
         canonical_url: data.canonical_url !== undefined ? data.canonical_url : target.canonical_url,
         updated_at: now
@@ -1079,8 +1118,9 @@ const DB = {
 
     // Delete physical file if inside uploads directory
     try {
-      const filePath = path.join(__dirname, '..', media.url.replace(/^\//, ''));
-      if (fs.existsSync(filePath)) {
+      const uploadsDir = path.resolve(__dirname, '..', 'images', 'uploads');
+      const filePath = path.resolve(__dirname, '..', media.url.replace(/^\//, ''));
+      if (filePath.startsWith(uploadsDir) && fs.existsSync(filePath)) {
         fs.unlinkSync(filePath);
       }
     } catch (err) {

@@ -13,7 +13,11 @@ function parseCookies(cookieHeader) {
     if (parts.length >= 2) {
       const name = parts[0].trim();
       const val = parts.slice(1).join('=').trim();
-      cookies[name] = decodeURIComponent(val);
+      try {
+        cookies[name] = decodeURIComponent(val);
+      } catch (_) {
+        cookies[name] = val;
+      }
     }
   });
   return cookies;
