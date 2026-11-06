@@ -540,6 +540,16 @@ router.get('/media', requireAuth, (req, res) => {
  */
 router.post('/media/upload', requireAuth, mediaUploadLimiter, (req, res) => {
   try {
+    // Storage Quota Enforcement: Maximum 75 photos allowed in media library
+    const MAX_MEDIA_LIMIT = 75;
+    const currentMediaCount = DB.getMediaCount();
+    if (currentMediaCount >= MAX_MEDIA_LIMIT) {
+      return res.status(403).json({
+        success: false,
+        error: `Media library storage limit reached (${MAX_MEDIA_LIMIT}/${MAX_MEDIA_LIMIT} photos). Please delete existing photos before uploading new ones.`
+      });
+    }
+
     const { base64Data, filename, altText } = req.body;
 
     if (!base64Data || !filename) {

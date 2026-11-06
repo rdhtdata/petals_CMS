@@ -1214,13 +1214,59 @@
   /* ==========================================================================
      9. Media Library View & Upload Handler
      ========================================================================== */
+  const MAX_MEDIA_QUOTA = 75;
+
   async function loadMediaLibrary() {
     const res = await apiFetch('/api/admin/media');
     if (!res.success) return;
 
     App.media = res.data || [];
-    document.getElementById('media-count-badge').textContent = `${App.media.length} items`;
+    updateMediaQuotaUi();
     renderMediaGrid();
+  }
+
+  function updateMediaQuotaUi() {
+    const count = App.media.length;
+    const badge = document.getElementById('media-count-badge');
+    const banner = document.getElementById('media-limit-banner');
+    const dropzone = document.getElementById('media-page-dropzone');
+    const dropTitle = document.getElementById('media-dropzone-title');
+    const dropDesc = document.getElementById('media-dropzone-desc');
+
+    if (badge) {
+      if (count >= MAX_MEDIA_QUOTA) {
+        badge.innerHTML = `<i class="fa-solid fa-triangle-exclamation" style="margin-right: 4px;"></i> ${count} / ${MAX_MEDIA_QUOTA} photos (Full)`;
+        badge.style.background = 'rgba(239, 68, 68, 0.16)';
+        badge.style.color = '#ef4444';
+        badge.style.borderColor = 'rgba(239, 68, 68, 0.35)';
+      } else if (count >= 65) {
+        badge.innerHTML = `<i class="fa-solid fa-circle-exclamation" style="margin-right: 4px;"></i> ${count} / ${MAX_MEDIA_QUOTA} photos`;
+        badge.style.background = 'rgba(245, 158, 11, 0.16)';
+        badge.style.color = '#f59e0b';
+        badge.style.borderColor = 'rgba(245, 158, 11, 0.35)';
+      } else {
+        badge.innerHTML = `<i class="fa-regular fa-image" style="margin-right: 4px;"></i> ${count} / ${MAX_MEDIA_QUOTA} photos`;
+        badge.style.background = 'var(--bg-panel)';
+        badge.style.color = 'var(--text-secondary)';
+        badge.style.borderColor = 'var(--border-hairline)';
+      }
+    }
+
+    if (banner) {
+      banner.style.display = count >= MAX_MEDIA_QUOTA ? 'flex' : 'none';
+    }
+
+    if (dropzone && dropTitle && dropDesc) {
+      if (count >= MAX_MEDIA_QUOTA) {
+        dropzone.style.opacity = '0.6';
+        dropTitle.textContent = 'Storage Quota Limit Reached';
+        dropDesc.textContent = `Library contains maximum allowed photos (${MAX_MEDIA_QUOTA}/${MAX_MEDIA_QUOTA}). Delete existing photos to upload more.`;
+      } else {
+        dropzone.style.opacity = '1';
+        dropTitle.textContent = 'Drag & Drop Photography Here';
+        dropDesc.textContent = `Supports high-resolution JPG, PNG, WebP up to 10MB per file (${MAX_MEDIA_QUOTA - count} slots remaining)`;
+      }
+    }
   }
 
   function renderMediaGrid() {
@@ -1304,18 +1350,38 @@
   async function handleMediaUploadFiles(files) {
     if (!files || !files.length) return;
 
-    showToast(`Uploading ${files.length} image${files.length === 1 ? '' : 's'}...`, 'info');
+    const currentCount = App.media.length;
+    if (currentCount >= MAX_MEDIA_QUOTA) {
+      showToast(`Media library storage limit reached (${MAX_MEDIA_QUOTA}/${MAX_MEDIA_QUOTA} photos). Please delete existing photos to upload more.`, 'error');
+      return;
+    }
+
+    const availableSlots = MAX_MEDIA_QUOTA - currentCount;
+    const fileArray = Array.from(files);
+    const filesToUpload = fileArray.slice(0, availableSlots);
+
+    if (fileArray.length > availableSlots) {
+      showToast(`Only ${availableSlots} more photo${availableSlots === 1 ? '' : 's'} can be added before reaching the ${MAX_MEDIA_QUOTA}-photo limit. Excess files were skipped.`, 'warning');
+    }
+
+    showToast(`Uploading ${filesToUpload.length} image${filesToUpload.length === 1 ? '' : 's'}...`, 'info');
 
     let uploaded = 0;
-    for (const file of Array.from(files)) {
+    for (const file of filesToUpload) {
       if (!file.type.startsWith('image/')) {
         showToast(`Skipped non-image file: ${file.name}`, 'error');
         continue;
       }
       try {
         const res = await uploadFileAsBase64(file);
-        if (res.success) uploaded++;
-        else showToast(res.error || `Failed to upload ${file.name}`, 'error');
+        if (res.success) {
+          uploaded++;
+        } else {
+          showToast(res.error || `Failed to upload ${file.name}`, 'error');
+          if (res.error && res.error.includes('limit reached')) {
+            break;
+          }
+        }
       } catch (err) {
         showToast(`Error uploading ${file.name}`, 'error');
       }
@@ -1891,18 +1957,27 @@
     featuredFileInput.addEventListener('change', async () => {
       const file = featuredFileInput.files[0];
       if (!file) return;
+
+      if (App.media.length >= MAX_MEDIA_QUOTA) {
+        showToast(`Media library storage limit reached (${MAX_MEDIA_QUOTA}/${MAX_MEDIA_QUOTA} photos). Please select an existing photo or delete unused photos in the Media Library.`, 'error');
+        featuredFileInput.value = '';
+        return;
+      }
+
       showToast('Uploading featured image...', 'info');
       try {
         const res = await uploadFileAsBase64(file);
         if (res.success && res.data) {
           setFeaturedImage(res.data.url, res.data.alt_text);
           showToast('Featured image uploaded!', 'success');
+          loadMediaLibrary();
         } else {
           showToast(res.error || 'Failed to upload image', 'error');
         }
       } catch (err) {
         showToast('Error uploading image', 'error');
       }
+      featuredFileInput.value = '';
     });
 
     // Featured Image Drag & Drop
@@ -1914,11 +1989,18 @@
       featuredDropzone.style.borderColor = '';
       const file = e.dataTransfer.files[0];
       if (file && file.type.startsWith('image/')) {
+        if (App.media.length >= MAX_MEDIA_QUOTA) {
+          showToast(`Media library storage limit reached (${MAX_MEDIA_QUOTA}/${MAX_MEDIA_QUOTA} photos). Please select an existing photo or delete unused photos in the Media Library.`, 'error');
+          return;
+        }
         showToast('Uploading dropped image...', 'info');
         const res = await uploadFileAsBase64(file);
         if (res.success && res.data) {
           setFeaturedImage(res.data.url, res.data.alt_text);
           showToast('Featured image uploaded!', 'success');
+          loadMediaLibrary();
+        } else {
+          showToast(res.error || 'Failed to upload image', 'error');
         }
       }
     });

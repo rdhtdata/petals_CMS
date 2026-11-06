@@ -1090,6 +1090,13 @@ const DB = {
     return [...memoryStore.media].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
   },
 
+  getMediaCount() {
+    if (useSqlite) {
+      return db.prepare('SELECT COUNT(*) as count FROM media').get().count;
+    }
+    return memoryStore.media.length;
+  },
+
   getMediaById(id) {
     if (useSqlite) {
       return db.prepare('SELECT * FROM media WHERE id = ?').get(id);
@@ -1098,6 +1105,11 @@ const DB = {
   },
 
   createMedia({ filename, original_name, mime_type, size, url, alt_text = '', width = 0, height = 0 }) {
+    // Defense-in-depth: Enforce 75-item media library limit to prevent storage & DB exploitation
+    if (this.getMediaCount() >= 75) {
+      throw new Error('Media library storage limit reached (75/75 photos). Please delete existing photos before uploading new ones.');
+    }
+
     const id = generateToken(16);
     const now = new Date().toISOString();
 
