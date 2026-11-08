@@ -782,7 +782,7 @@ const DB = {
     const status = data.status || 'draft';
 
     // Enforcement: Maximum 5 drafts permitted to protect database integrity
-    if (status === 'draft') {
+    if (status === 'draft' && !data.skipDraftLimit) {
       const MAX_DRAFTS = 5;
       const currentDraftsCount = this.getDraftsCount();
       if (currentDraftsCount >= MAX_DRAFTS) {

@@ -946,7 +946,10 @@ router.post('/dev/run-e2e-test', requireAuth, requireRole(['dev']), devTestLimit
   try {
     isE2eTestRunning = true;
     const { runFullLifecycleTest } = require('../devTestRunner');
-    const report = await runFullLifecycleTest(req.user.username);
+    const holdMs = (req.body && typeof req.body.holdMs === 'number' && req.body.holdMs >= 0 && req.body.holdMs <= 60000)
+      ? req.body.holdMs
+      : 20000;
+    const report = await runFullLifecycleTest(req.user.username, { holdMs, count: 3 });
     res.json({
       success: true,
       report

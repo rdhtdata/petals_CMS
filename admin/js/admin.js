@@ -1673,13 +1673,14 @@
       statusBadge.style.borderColor = 'rgba(212, 163, 115, 0.3)';
     }
 
-    for (let i = 1; i <= 6; i++) {
-      const card = document.getElementById(`e2e-card-step-${i}`);
-      if (card) {
-        card.classList.remove('status-passed', 'status-failed');
-        card.classList.add('status-running');
-      }
-    }
+    document.querySelectorAll('.e2e-step-card').forEach(card => {
+      card.classList.remove('status-passed', 'status-failed');
+      card.classList.add('status-running');
+    });
+    document.querySelectorAll('.e2e-step-time').forEach(el => el.textContent = '--');
+    document.querySelectorAll('.e2e-assertion-list').forEach(el => {
+      el.innerHTML = '<li class="e2e-assertion-item"><i class="fa-regular fa-circle"></i> Waiting to execute...</li>';
+    });
 
     if (terminalEl) {
       terminalEl.innerHTML = `
