@@ -829,19 +829,35 @@ function initRecentBlogs() {
   const container = document.getElementById('home-recent-blogs-grid');
   if (!container) return;
 
+  const CMS_API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+    ? ''
+    : 'https://admin.petalshotels.com';
+
+  function resolveImageUrl(url) {
+    if (!url) return 'images/brand icon.jpeg';
+    if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:')) {
+      return url;
+    }
+    if (url.startsWith('images/uploads/') || url.startsWith('/images/uploads/')) {
+      const cleanPath = url.startsWith('/') ? url : `/${url}`;
+      return `${CMS_API_BASE}${cleanPath}`;
+    }
+    return url;
+  }
+
   function renderRecent(blogsList) {
     if (!blogsList || !blogsList.length) return;
-    const sorted = [...blogsList].sort((a, b) => new Date(b.date) - new Date(a.date));
+    const sorted = [...blogsList].sort((a, b) => new Date(b.published_at || b.date) - new Date(a.published_at || a.date));
     const recent3 = sorted.slice(0, 3);
 
     container.innerHTML = recent3.map(blog => {
-      const articleUrl = `blogs.html?article=${encodeURIComponent(blog.id)}`;
+      const articleUrl = `blogs.html?article=${encodeURIComponent(blog.id || blog.slug)}`;
       const safeTitle = escapeHTML(blog.title);
       const safeCategory = escapeHTML(blog.category);
       const safeDate = escapeHTML(blog.displayDate || blog.date);
       const safeReadTime = escapeHTML(blog.readTime || '5 min read');
       const safeExcerpt = escapeHTML(blog.excerpt);
-      const safeImg = escapeHTML(blog.image || blog.featured_image || 'images/brand icon.jpeg');
+      const safeImg = escapeHTML(resolveImageUrl(blog.image || blog.featured_image));
 
       return `
         <article class="home-blog-card">
@@ -881,7 +897,7 @@ function initRecentBlogs() {
   }
 
   // 2. Dynamic live update from CMS API
-  fetch('/api/blogs?limit=3', { cache: 'no-cache' })
+  fetch(`${CMS_API_BASE}/api/blogs?limit=3`, { cache: 'no-cache' })
     .then(res => res.json())
     .then(json => {
       if (json && json.success && Array.isArray(json.data) && json.data.length > 0) {

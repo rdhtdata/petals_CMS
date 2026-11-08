@@ -6,14 +6,49 @@
 (function () {
   'use strict';
 
+  const CMS_API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+    ? ''
+    : 'https://admin.petalshotels.com';
+
+  function resolveImageUrl(url) {
+    if (!url) return 'images/brand icon.jpeg';
+    if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:')) {
+      return url;
+    }
+    if (url.startsWith('images/uploads/') || url.startsWith('/images/uploads/')) {
+      const cleanPath = url.startsWith('/') ? url : `/${url}`;
+      return `${CMS_API_BASE}${cleanPath}`;
+    }
+    return url;
+  }
+
+  function resolveArticleContentImages(html) {
+    if (!html || !CMS_API_BASE) return html || '';
+    return html.replace(/src="((\/)?images\/uploads\/[^"]+)"/g, (match, path) => {
+      const cleanPath = path.startsWith('/') ? path : `/${path}`;
+      return `src="${CMS_API_BASE}${cleanPath}"`;
+    });
+  }
+
+  function normalizeArticle(article) {
+    if (!article) return article;
+    const resolvedImg = resolveImageUrl(article.image || article.featured_image);
+    return {
+      ...article,
+      image: resolvedImg,
+      featured_image: resolvedImg,
+      content: resolveArticleContentImages(article.content)
+    };
+  }
+
   function getArticles() {
+    let raw = [];
     if (typeof window !== 'undefined' && Array.isArray(window.BLOGS_DATA) && window.BLOGS_DATA.length > 0) {
-      return [...window.BLOGS_DATA];
+      raw = [...window.BLOGS_DATA];
+    } else if (typeof BLOGS_DATA !== 'undefined' && Array.isArray(BLOGS_DATA) && BLOGS_DATA.length > 0) {
+      raw = [...BLOGS_DATA];
     }
-    if (typeof BLOGS_DATA !== 'undefined' && Array.isArray(BLOGS_DATA) && BLOGS_DATA.length > 0) {
-      return [...BLOGS_DATA];
-    }
-    return [];
+    return raw.map(normalizeArticle);
   }
 
   // Application State
@@ -62,12 +97,13 @@
      ========================================================================== */
   async function loadLiveArticles() {
     try {
-      const res = await fetch('/api/blogs?limit=100', { cache: 'no-cache' });
+      const res = await fetch(`${CMS_API_BASE}/api/blogs?limit=100`, { cache: 'no-cache' });
       if (res.ok) {
         const json = await res.json();
         if (json.success && Array.isArray(json.data) && json.data.length > 0) {
-          state.articles = json.data;
-          window.BLOGS_DATA = json.data;
+          const normalized = json.data.map(normalizeArticle);
+          state.articles = normalized;
+          window.BLOGS_DATA = normalized;
           syncCategoryPills();
 
           // If on hub, refresh grid
@@ -95,12 +131,13 @@
       const token = urlParams.get('token') || '';
       const previewParam = isPreview ? `?preview=true&token=${encodeURIComponent(token)}` : '';
 
-      const res = await fetch(`/api/blogs/${encodeURIComponent(slug)}${previewParam}`);
+      const res = await fetch(`${CMS_API_BASE}/api/blogs/${encodeURIComponent(slug)}${previewParam}`);
       if (res.ok) {
         const json = await res.json();
         if (json.success && json.data) {
-          state.articles.push(json.data);
-          return json.data;
+          const norm = normalizeArticle(json.data);
+          state.articles.push(norm);
+          return norm;
         }
       }
     } catch (err) {
