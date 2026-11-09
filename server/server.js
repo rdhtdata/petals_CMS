@@ -50,7 +50,12 @@ app.use(helmet({
         "https://maps.google.com",
         "https://www.google.com"
       ],
-      connectSrc: ["'self'"],
+      connectSrc: [
+        "'self'",
+        "https://admin.petalshotels.com",
+        "https://petalshotels.com",
+        "https://www.petalshotels.com"
+      ],
       upgradeInsecureRequests: null
     }
   },

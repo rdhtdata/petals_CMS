@@ -21,7 +21,7 @@ async function runFullLifecycleTest(triggeredBy = 'dev', options = {}) {
   const logs = [];
   const steps = [];
 
-  const holdMs = (typeof options.holdMs === 'number' && options.holdMs >= 0) ? options.holdMs : 20000;
+  const holdMs = (typeof options.holdMs === 'number' && options.holdMs >= 0) ? options.holdMs : 30000;
   const storyCount = (typeof options.count === 'number' && options.count >= 2 && options.count <= 5) ? options.count : 3;
 
   function log(level, message, metadata = null) {

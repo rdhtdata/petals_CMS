@@ -1097,6 +1097,12 @@
                 <span class="badge" id="e2e-overall-status-badge" style="background: var(--bg-hover); color: var(--text-muted); border: 1px solid var(--border-hairline);">
                   <i class="fa-solid fa-circle-notch"></i> Ready to Run
                 </span>
+                <select id="dev-e2e-hold-select" class="form-control" style="width: auto; display: inline-block; font-size: 12px; padding: 6px 10px; height: 34px; background: var(--bg-surface); border: 1px solid var(--border-subtle); color: var(--text-primary); border-radius: 6px;" aria-label="Select live website inspection hold time">
+                  <option value="30000" selected>Inspection Hold: 30s</option>
+                  <option value="45000">Inspection Hold: 45s</option>
+                  <option value="60000">Inspection Hold: 60s</option>
+                  <option value="90000">Inspection Hold: 90s</option>
+                </select>
                 <button type="button" class="btn btn-primary" id="dev-run-e2e-btn">
                   <i class="fa-solid fa-play"></i> Run Full Lifecycle Test
                 </button>

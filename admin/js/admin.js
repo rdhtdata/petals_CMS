@@ -1693,7 +1693,12 @@
     }
 
     try {
-      const res = await apiFetch('/api/admin/dev/run-e2e-test', { method: 'POST' });
+      const holdSelect = document.getElementById('dev-e2e-hold-select');
+      const holdMs = holdSelect ? parseInt(holdSelect.value, 10) : 30000;
+      const res = await apiFetch('/api/admin/dev/run-e2e-test', {
+        method: 'POST',
+        body: JSON.stringify({ holdMs })
+      });
       if (res.success && res.report) {
         renderE2eReport(res.report);
         await loadE2eHistory();
