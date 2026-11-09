@@ -41,18 +41,19 @@ Welcome to the **Petals Suites & Hotel Content Management System (CMS)**! This g
 ```
 
 ### Team Roles & Access Levels
-The CMS features dedicated role permissions to keep daily work focused:
+The CMS features dedicated role permissions to keep daily work clear and focused:
 
 1. **Marketing Desk (`marketing`):**
-   * Full access to write, edit, preview, publish, and delete blog articles.
-   * Full access to upload, search, copy URLs, and manage imagery in the Media Library.
-   * Full access to add and manage blog categories.
-   * Dedicated profile settings to update personal name, email, and password.
-2. **Administrator (`admin`):**
-   * Contains all Marketing Desk capabilities.
-   * Additional ability to invite team members, adjust team roles, and manage user accounts.
-
-*(Note: Developer diagnostic tools, database low-level tests, and server telemetry are handled automatically by engineering behind the scenes and are hidden from editorial views).*
+   * Full access to write, edit, preview, publish, unpublish, and delete blog articles.
+   * Full access to upload, search, copy URLs, and manage photography in the Media Vault (up to 75 photos).
+   * Full access to create and organize blog taxonomy categories.
+   * Personal profile management to update your name, email, and password.
+2. **Hotel Administrator (`admin`):**
+   * Includes all Marketing Desk editorial, media, and publishing capabilities.
+   * Full access to inspect team member rosters and monitor the Master Editorial Ledger.
+3. **Lead Developer / Technical Administrator (`dev`):**
+   * Handles user account provisioning and technical administration.
+   * *(Note: To maintain security and prevent unauthorized access, creating new team member accounts and performing administrative password resets are managed centrally by the Lead Developer. If a new team member needs CMS access, please contact the Lead Developer).*
 
 ---
 
@@ -157,6 +158,17 @@ The Article Studio includes an intuitive formatting toolbar:
 ### Step 6: Topic Tags
 * Type a keyword into the tag input (e.g., `Manyata Tech Park`, `Executive Stay`, `Airport Shuttle`) and press **Enter**.
 * Tags appear as clickable chips that help visitors find related articles. Click the `×` on any tag to remove it.
+
+### Step 7: Publishing to the Live Website & Zero-Delay Sync
+When your article is written and reviewed in Live Preview, you have two options:
+
+1. **Publishing Live:** Click the gold **Publish** button. In real time, the article goes live immediately:
+   * **Live Public Catalog:** Visitors on [petalshotels.com/blogs.html](https://petalshotels.com/blogs.html) can read your article right away.
+   * **Homepage Spotlight:** The latest published article automatically takes the top spotlight on the main [petalshotels.com](https://petalshotels.com) homepage.
+   * **Search Engine Sitemap:** The canonical article URL is added immediately to `https://petalshotels.com/sitemap.xml` for Google discovery.
+2. **Saving as Draft:** Click **Save Draft** if you want to keep working privately. Drafts remain strictly confidential within the Editorial Studio and are never visible to hotel visitors.
+3. **Instant Live Updates:** If you ever spot a typo or want to update a headline or photo on an already published story, simply open it, make your changes, and click **Publish**. Your corrections appear on the live website immediately without any caching delay.
+4. **Unpublishing:** If an article needs to be taken down temporarily (for instance, an expired seasonal offer), click **Unpublish**. It immediately vanishes from the public website and returns safely to your draft sanctuary.
 
 ---
 
@@ -306,18 +318,22 @@ To maintain the luxury boutique identity of Petals Suites & Hotel, follow these 
 ## 10. Account Security & Profile Management
 
 ### Updating Your Profile & Password
-1. Click **Profile & Settings** in the left sidebar (or click your username handle).
+1. Click **Profile & Settings** in the left sidebar (or click your user avatar and name).
 2. You can update your **Display Name** and **Email Address**.
-3. **Changing Passwords:**
+3. **Changing Your Own Password:**
    * Enter your current password.
    * Enter your new secure password (minimum 8 characters, recommended combination of letters, numbers, and symbols).
-   * Click **Update Security Credentials**.
+   * Confirm the new password and click **Update Security Credentials**.
+
+### Password Resets & New Team Members
+* **Forgotten Passwords:** If you forget your login password, reach out to your **Lead Developer**. The Lead Developer can verify your credentials, review your current password, or assign a secure replacement on demand.
+* **New Team Member Onboarding:** To ensure strict editorial security, account creation is managed centrally by the Lead Developer. Administrators and editors should request new user onboarding from the Lead Developer with the member's full name, email, and designated role (`marketing` or `admin`).
 
 ### Session Best Practices
-* Always click **Sign Out** from the sidebar when working on shared devices.
-* Your session automatically expires after 7 days of inactivity.
+* Always click **Sign Out** from the sidebar when finishing your workday or working on shared hotel computers.
+* Your session automatically expires after 7 days of inactivity to keep property content secure.
 
 ---
 
-*Petals Suites & Hotel Editorial Handbook — Version 1.0 (2026 Edition)*  
-*For technical support or infrastructure inquiries, contact your System Administrator.*
+*Petals Suites & Hotel Editorial Handbook — Version 1.1 (2026 Edition)*  
+*For new account requests or credential assistance, contact your Lead Developer.*
