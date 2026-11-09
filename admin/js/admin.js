@@ -2082,9 +2082,13 @@
 
     document.getElementById('media-search-input').addEventListener('input', renderMediaGrid);
 
-    // User Management Modal
+    // User Management Modal (Lead Developer Only for account creation)
     const userModal = document.getElementById('user-modal');
     document.getElementById('open-add-user-modal').addEventListener('click', () => {
+      if (App.user.role !== 'dev') {
+        showToast('Permission denied: Only Lead Developer can create new team accounts.', 'error');
+        return;
+      }
       document.getElementById('manage-user-id').value = '';
       document.getElementById('manage-user-fullname').value = '';
       document.getElementById('manage-user-username').value = '';
@@ -2107,6 +2111,10 @@
 
     document.getElementById('user-create-form').addEventListener('submit', async (e) => {
       e.preventDefault();
+      if (App.user.role !== 'dev') {
+        showToast('Permission denied: Only Lead Developer can create new team accounts.', 'error');
+        return;
+      }
       const full_name = document.getElementById('manage-user-fullname').value.trim();
       const username = document.getElementById('manage-user-username').value.trim();
       const email = document.getElementById('manage-user-email').value.trim();

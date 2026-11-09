@@ -665,8 +665,9 @@ router.get('/users', requireAuth, requireRole(['dev', 'admin']), (req, res) => {
 
 /**
  * POST /api/admin/users
+ * Creates a new member account (Lead Developer Only)
  */
-router.post('/users', requireAuth, requireRole(['dev', 'admin']), (req, res) => {
+router.post('/users', requireAuth, requireRole(['dev']), (req, res) => {
   try {
     const { username, email, password, full_name, role } = req.body;
     if (!username || !email || !password || !full_name) {
