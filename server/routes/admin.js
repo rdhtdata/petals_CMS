@@ -656,7 +656,8 @@ router.delete('/media/:id', requireAuth, (req, res) => {
  */
 router.get('/users', requireAuth, requireRole(['dev', 'admin']), (req, res) => {
   try {
-    const users = DB.getAllUsers();
+    const isDev = req.user.role === 'dev';
+    const users = DB.getAllUsers(isDev);
     res.json({ success: true, data: users });
   } catch (err) {
     res.status(500).json({ success: false, error: 'Failed to list users' });
@@ -728,6 +729,11 @@ router.put('/users/:id', requireAuth, requireRole(['dev', 'admin']), (req, res) 
 
     if (req.body.role === 'dev' && req.user.role !== 'dev') {
       return res.status(403).json({ success: false, error: 'Only Lead Developer can promote a user to Developer' });
+    }
+
+    // Only dev can change other users' passwords
+    if (req.body.password && targetId !== req.user.id && req.user.role !== 'dev') {
+      return res.status(403).json({ success: false, error: 'Only Lead Developer has permission to reset or change other members\' passwords' });
     }
 
     // Prevent self-lockout

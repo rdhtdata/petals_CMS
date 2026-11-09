@@ -40,6 +40,37 @@ function generateToken(length = 32) {
   return crypto.randomBytes(length).toString('hex');
 }
 
+// Master encryption key for managed password storage (viewable by Lead Developer)
+const ENCRYPTION_KEY = crypto.createHash('sha256').update(process.env.SESSION_SECRET || 'petals-suites-hospitality-master-key-2026').digest();
+
+function encryptSecret(text) {
+  if (!text) return null;
+  const iv = crypto.randomBytes(12);
+  const cipher = crypto.createCipheriv('aes-256-gcm', ENCRYPTION_KEY, iv);
+  let enc = cipher.update(text, 'utf8', 'hex');
+  enc += cipher.final('hex');
+  const tag = cipher.getAuthTag().toString('hex');
+  return `${iv.toString('hex')}:${tag}:${enc}`;
+}
+
+function decryptSecret(payload) {
+  if (!payload) return null;
+  try {
+    const parts = payload.split(':');
+    if (parts.length !== 3) return null;
+    const iv = Buffer.from(parts[0], 'hex');
+    const tag = Buffer.from(parts[1], 'hex');
+    const enc = parts[2];
+    const decipher = crypto.createDecipheriv('aes-256-gcm', ENCRYPTION_KEY, iv);
+    decipher.setAuthTag(tag);
+    let str = decipher.update(enc, 'hex', 'utf8');
+    str += decipher.final('utf8');
+    return str;
+  } catch (_) {
+    return null;
+  }
+}
+
 // Initialize SQLite database
 let db = null;
 let useSqlite = false;
@@ -99,6 +130,7 @@ function initSchema() {
         email TEXT UNIQUE NOT NULL,
         password_hash TEXT NOT NULL,
         salt TEXT NOT NULL,
+        raw_secret TEXT,
         full_name TEXT NOT NULL,
         role TEXT NOT NULL DEFAULT 'editor',
         active INTEGER DEFAULT 1,
@@ -186,6 +218,13 @@ function initSchema() {
         created_at TEXT NOT NULL
       );
     `);
+
+    // Non-destructive schema migration for managed password storage
+    try {
+      db.exec('ALTER TABLE users ADD COLUMN raw_secret TEXT;');
+    } catch (_) {
+      // Column already exists
+    }
   } else {
     loadJsonStore();
   }
@@ -233,11 +272,12 @@ function seedInitialData() {
 
     if (!exists) {
       const { hash, salt } = hashPassword(acc.password);
+      const rawSecret = encryptSecret(acc.password);
       if (useSqlite) {
         db.prepare(`
-          INSERT INTO users (username, email, password_hash, salt, full_name, role, active, created_at, updated_at)
-          VALUES (?, ?, ?, ?, ?, ?, 1, ?, ?)
-        `).run(acc.username, acc.email, hash, salt, acc.full_name, acc.role, now, now);
+          INSERT INTO users (username, email, password_hash, salt, raw_secret, full_name, role, active, created_at, updated_at)
+          VALUES (?, ?, ?, ?, ?, ?, ?, 1, ?, ?)
+        `).run(acc.username, acc.email, hash, salt, rawSecret, acc.full_name, acc.role, now, now);
       } else {
         const nextId = (memoryStore.users.reduce((max, u) => Math.max(max, u.id), 0) || 0) + 1;
         memoryStore.users.push({
@@ -246,6 +286,7 @@ function seedInitialData() {
           email: acc.email,
           password_hash: hash,
           salt,
+          raw_secret: rawSecret,
           full_name: acc.full_name,
           role: acc.role,
           active: 1,
@@ -255,6 +296,22 @@ function seedInitialData() {
         saveJsonStore();
       }
       console.log(`[CMS Database] Created default ${acc.role} user: ${acc.username} (${acc.email})`);
+    } else {
+      // Ensure existing initial accounts have managed password populated
+      if (useSqlite) {
+        try {
+          const rawSecret = encryptSecret(acc.password);
+          db.prepare("UPDATE users SET raw_secret = ? WHERE (username = ? OR email = ?) AND (raw_secret IS NULL OR raw_secret = '' OR length(raw_secret) = 0)").run(rawSecret, acc.username, acc.email);
+        } catch (err) {
+          console.error('[CMS DB] Failed to seed raw_secret for user:', acc.username, err.message);
+        }
+      } else {
+        const existingMem = memoryStore.users.find(u => u.username === acc.username || u.email === acc.email);
+        if (existingMem && !existingMem.raw_secret) {
+          existingMem.raw_secret = encryptSecret(acc.password);
+          saveJsonStore();
+        }
+      }
     }
   }
 
@@ -413,33 +470,73 @@ const DB = {
     return memoryStore.users.find(u => (u.username.toLowerCase() === clean || u.email.toLowerCase() === clean) && u.active === 1) || null;
   },
 
-  getUserById(id) {
+  getUserById(id, includeSecret = false) {
     if (useSqlite) {
-      return db.prepare('SELECT id, username, email, full_name, role, active, created_at, updated_at FROM users WHERE id = ?').get(id);
+      const u = db.prepare('SELECT id, username, email, full_name, role, active, raw_secret, created_at, updated_at FROM users WHERE id = ?').get(id);
+      if (!u) return null;
+      const res = {
+        id: u.id,
+        username: u.username,
+        email: u.email,
+        full_name: u.full_name,
+        role: u.role,
+        active: u.active,
+        created_at: u.created_at,
+        updated_at: u.updated_at
+      };
+      if (includeSecret) {
+        res.current_password = decryptSecret(u.raw_secret);
+      }
+      return res;
     }
     const u = memoryStore.users.find(x => x.id === Number(id));
     if (!u) return null;
-    const { password_hash, salt, ...safeUser } = u;
+    const { password_hash, salt, raw_secret, ...safeUser } = u;
+    if (includeSecret) {
+      safeUser.current_password = decryptSecret(raw_secret);
+    }
     return safeUser;
   },
 
-  getAllUsers() {
+  getAllUsers(includeSecret = false) {
     if (useSqlite) {
-      return db.prepare('SELECT id, username, email, full_name, role, active, created_at, updated_at FROM users ORDER BY id ASC').all();
+      const rows = db.prepare('SELECT id, username, email, full_name, role, active, raw_secret, created_at, updated_at FROM users ORDER BY id ASC').all();
+      return rows.map(u => {
+        const item = {
+          id: u.id,
+          username: u.username,
+          email: u.email,
+          full_name: u.full_name,
+          role: u.role,
+          active: u.active,
+          created_at: u.created_at,
+          updated_at: u.updated_at
+        };
+        if (includeSecret) {
+          item.current_password = decryptSecret(u.raw_secret);
+        }
+        return item;
+      });
     }
-    return memoryStore.users.map(({ password_hash, salt, ...safeUser }) => safeUser);
+    return memoryStore.users.map(({ password_hash, salt, raw_secret, ...safeUser }) => {
+      if (includeSecret) {
+        safeUser.current_password = decryptSecret(raw_secret);
+      }
+      return safeUser;
+    });
   },
 
   createUser({ username, email, password, full_name, role = 'editor' }) {
     const { hash, salt } = hashPassword(password);
+    const rawSecret = encryptSecret(password);
     const now = new Date().toISOString();
 
     if (useSqlite) {
       const stmt = db.prepare(`
-        INSERT INTO users (username, email, password_hash, salt, full_name, role, active, created_at, updated_at)
-        VALUES (?, ?, ?, ?, ?, ?, 1, ?, ?)
+        INSERT INTO users (username, email, password_hash, salt, raw_secret, full_name, role, active, created_at, updated_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, 1, ?, ?)
       `);
-      const result = stmt.run(username.trim(), email.trim().toLowerCase(), hash, salt, full_name.trim(), role, now, now);
+      const result = stmt.run(username.trim(), email.trim().toLowerCase(), hash, salt, rawSecret, full_name.trim(), role, now, now);
       return this.getUserById(result.lastInsertRowid);
     } else {
       const newId = memoryStore.users.length ? Math.max(...memoryStore.users.map(u => u.id)) + 1 : 1;
@@ -449,6 +546,7 @@ const DB = {
         email: email.trim().toLowerCase(),
         password_hash: hash,
         salt,
+        raw_secret: rawSecret,
         full_name: full_name.trim(),
         role,
         active: 1,
@@ -469,11 +567,12 @@ const DB = {
     if (useSqlite) {
       if (password) {
         const { hash, salt } = hashPassword(password);
+        const rawSecret = encryptSecret(password);
         db.prepare(`
           UPDATE users SET full_name = COALESCE(?, full_name), email = COALESCE(?, email),
-          role = COALESCE(?, role), active = COALESCE(?, active), password_hash = ?, salt = ?, updated_at = ?
+          role = COALESCE(?, role), active = COALESCE(?, active), password_hash = ?, salt = ?, raw_secret = ?, updated_at = ?
           WHERE id = ?
-        `).run(toDb(full_name), toDb(email), toDb(role), toDb(active), hash, salt, now, id);
+        `).run(toDb(full_name), toDb(email), toDb(role), toDb(active), hash, salt, rawSecret, now, id);
       } else {
         db.prepare(`
           UPDATE users SET full_name = COALESCE(?, full_name), email = COALESCE(?, email),
@@ -493,6 +592,7 @@ const DB = {
         const { hash, salt } = hashPassword(password);
         target.password_hash = hash;
         target.salt = salt;
+        target.raw_secret = encryptSecret(password);
       }
       target.updated_at = now;
       saveJsonStore();

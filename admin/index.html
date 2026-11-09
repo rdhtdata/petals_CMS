@@ -880,6 +880,7 @@
                       <th>User</th>
                       <th>Email</th>
                       <th>Role</th>
+                      <th class="dev-only-col" id="user-th-password" style="display: none;">Password</th>
                       <th>Status</th>
                       <th>Created</th>
                       <th class="text-right">Actions</th>
@@ -1424,6 +1425,42 @@
             <i class="fa-solid fa-trash"></i> Permanently Delete
           </button>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 6: Dev Change Member Password Modal -->
+  <div class="cms-modal-overlay" id="dev-change-pw-modal" style="display: none;">
+    <div class="cms-modal modal-sm">
+      <div class="panel-header">
+        <h3 class="panel-title" id="dev-change-pw-title" style="display: flex; align-items: center; gap: 8px;">
+          <i class="fa-solid fa-key" style="color: var(--accent-gold);"></i>
+          <span>Change Member Password</span>
+        </h3>
+        <button type="button" class="modal-close-btn" id="close-dev-pw-modal-btn" aria-label="Close dialog">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="panel-body">
+        <form id="dev-change-pw-form">
+          <input type="hidden" id="dev-change-pw-userid" value="">
+          <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 14px;" id="dev-change-pw-desc">
+            Set a new password for this team account.
+          </p>
+          <div class="form-group">
+            <label class="form-label" for="dev-new-password-input">New Password <span class="req">*</span></label>
+            <div style="display: flex; gap: 8px;">
+              <input type="text" id="dev-new-password-input" class="form-input" minlength="8" placeholder="Enter new password" required style="font-family: monospace;">
+              <button type="button" class="btn btn-secondary" id="dev-gen-pw-btn" title="Generate strong password" style="white-space: nowrap; padding: 0 12px;">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+              </button>
+            </div>
+            <span style="font-size: 11px; color: var(--text-muted); margin-top: 4px; display: block;">Must be at least 8 characters long.</span>
+          </div>
+          <div class="form-actions mt-4">
+            <button type="submit" class="btn btn-primary btn-block">Update & Apply Password</button>
+          </div>
+        </form>
       </div>
     </div>
   </div>

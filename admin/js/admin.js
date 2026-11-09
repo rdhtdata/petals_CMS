@@ -1452,6 +1452,12 @@
     const tbody = document.getElementById('users-table-tbody');
     if (!tbody) return;
 
+    const isDev = App.user && App.user.role === 'dev';
+    const pwTh = document.getElementById('user-th-password');
+    if (pwTh) {
+      pwTh.style.display = isDev ? '' : 'none';
+    }
+
     tbody.innerHTML = App.users.map(u => {
       let roleBadgeHtml = '';
       if (u.role === 'dev') {
@@ -1462,14 +1468,51 @@
         roleBadgeHtml = '<span class="badge" style="background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3);"><i class="fa-solid fa-bullhorn" style="font-size: 10px; margin-right: 4px;"></i> Marketing Desk</span>';
       }
 
+      let passwordColHtml = '';
+      if (isDev) {
+        if (u.current_password) {
+          passwordColHtml = `
+            <td>
+              <div style="display: inline-flex; align-items: center; gap: 6px; font-family: monospace; font-size: 12px; background: var(--bg-surface); padding: 4px 8px; border-radius: 4px; border: 1px solid var(--border-hairline);">
+                <span class="user-pw-mask" id="pw-mask-${u.id}">••••••••</span>
+                <span class="user-pw-plain" id="pw-plain-${u.id}" style="display: none; user-select: all; font-weight: 500;">${escapeHtml(u.current_password)}</span>
+                <button type="button" class="btn-icon-subtle toggle-pw-btn" data-id="${u.id}" title="Reveal / Hide Password" style="background: none; border: none; cursor: pointer; color: var(--text-secondary); padding: 2px;">
+                  <i class="fa-solid fa-eye" id="pw-icon-${u.id}"></i>
+                </button>
+                <button type="button" class="btn-icon-subtle copy-pw-btn" data-pw="${escapeHtml(u.current_password)}" title="Copy Password" style="background: none; border: none; cursor: pointer; color: var(--text-secondary); padding: 2px;">
+                  <i class="fa-solid fa-copy"></i>
+                </button>
+              </div>
+            </td>
+          `;
+        } else {
+          passwordColHtml = `
+            <td>
+              <span class="text-muted text-xs" style="font-style: italic;">Hashed</span>
+            </td>
+          `;
+        }
+      }
+
+      let changePwBtnHtml = '';
+      if (isDev) {
+        changePwBtnHtml = `<button type="button" class="action-icon-btn change-pw-btn" data-id="${u.id}" data-name="${escapeHtml(u.full_name)}" data-username="${escapeHtml(u.username)}" title="Change Member Password"><i class="fa-solid fa-key"></i></button>`;
+      }
+
       let actionHtml = '';
       if (u.id === App.user.id) {
-        actionHtml = '<span class="text-muted text-xs">Current User</span>';
+        actionHtml = `
+          <div class="table-actions">
+            ${changePwBtnHtml}
+            <span class="text-muted text-xs" style="margin-left: 6px;">Current User</span>
+          </div>
+        `;
       } else if (u.role === 'dev' && App.user.role !== 'dev') {
         actionHtml = '<span class="text-muted text-xs">Protected (Dev)</span>';
       } else {
         actionHtml = `
           <div class="table-actions">
+            ${changePwBtnHtml}
             <button type="button" class="action-icon-btn danger delete-user-btn" data-id="${u.id}" data-name="${escapeHtml(u.full_name)}" title="Remove User"><i class="fa-solid fa-trash"></i></button>
           </div>
         `;
@@ -1485,6 +1528,7 @@
           </td>
           <td>${escapeHtml(u.email)}</td>
           <td>${roleBadgeHtml}</td>
+          ${passwordColHtml}
           <td>
             <span class="badge ${u.active ? 'badge-published' : 'badge-draft'}">
               ${u.active ? 'Active' : 'Inactive'}
@@ -1498,9 +1542,69 @@
       `;
     }).join('');
 
+    // Bind Toggle Password Visibility
+    tbody.querySelectorAll('.toggle-pw-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-id');
+        const mask = document.getElementById(`pw-mask-${id}`);
+        const plain = document.getElementById(`pw-plain-${id}`);
+        const icon = document.getElementById(`pw-icon-${id}`);
+        if (!mask || !plain) return;
+        const isHidden = plain.style.display === 'none';
+        if (isHidden) {
+          plain.style.display = '';
+          mask.style.display = 'none';
+          if (icon) {
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+          }
+        } else {
+          plain.style.display = 'none';
+          mask.style.display = '';
+          if (icon) {
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+          }
+        }
+      });
+    });
+
+    // Bind Copy Password
+    tbody.querySelectorAll('.copy-pw-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const pw = btn.getAttribute('data-pw');
+        if (pw) {
+          navigator.clipboard.writeText(pw).then(() => {
+            showToast('Password copied to clipboard!', 'success');
+          }).catch(() => {
+            showToast('Failed to copy password', 'error');
+          });
+        }
+      });
+    });
+
+    // Bind Change Password Button
+    tbody.querySelectorAll('.change-pw-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-id');
+        const name = btn.getAttribute('data-name');
+        const username = btn.getAttribute('data-username');
+        openChangePasswordModal(id, name, username);
+      });
+    });
+
     tbody.querySelectorAll('.delete-user-btn').forEach(btn => {
       btn.addEventListener('click', () => deleteUser(btn.getAttribute('data-id'), btn.getAttribute('data-name')));
     });
+  }
+
+  function openChangePasswordModal(userId, fullName, username) {
+    const modal = document.getElementById('dev-change-pw-modal');
+    if (!modal) return;
+    document.getElementById('dev-change-pw-userid').value = userId;
+    document.getElementById('dev-change-pw-desc').textContent = `Set a new password for ${fullName} (@${username}). This will immediately update their account and terminate any other active sessions.`;
+    document.getElementById('dev-new-password-input').value = '';
+    modal.style.display = 'flex';
   }
 
   /* ==========================================================================
@@ -2134,6 +2238,59 @@
         showToast(res.error || 'Failed to create user', 'error');
       }
     });
+
+    // Dev Change Member Password Modal handlers
+    const devPwModal = document.getElementById('dev-change-pw-modal');
+    const closeDevPwBtn = document.getElementById('close-dev-pw-modal-btn');
+    if (closeDevPwBtn && devPwModal) {
+      closeDevPwBtn.addEventListener('click', () => {
+        devPwModal.style.display = 'none';
+      });
+    }
+
+    const devGenPwBtn = document.getElementById('dev-gen-pw-btn');
+    if (devGenPwBtn) {
+      devGenPwBtn.addEventListener('click', () => {
+        const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789!@#$%';
+        let generated = 'Petals@';
+        for (let i = 0; i < 6; i++) {
+          generated += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        const pwInput = document.getElementById('dev-new-password-input');
+        if (pwInput) {
+          pwInput.value = generated;
+          showToast('Generated strong password: ' + generated, 'info');
+        }
+      });
+    }
+
+    const devPwForm = document.getElementById('dev-change-pw-form');
+    if (devPwForm) {
+      devPwForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const userId = document.getElementById('dev-change-pw-userid').value;
+        const password = document.getElementById('dev-new-password-input').value;
+        if (!userId || !password) return;
+
+        if (password.length < 8) {
+          showToast('Password must be at least 8 characters long', 'error');
+          return;
+        }
+
+        const res = await apiFetch(`/api/admin/users/${userId}`, {
+          method: 'PUT',
+          body: JSON.stringify({ password })
+        });
+
+        if (res.success) {
+          showToast('Password updated successfully!', 'success');
+          if (devPwModal) devPwModal.style.display = 'none';
+          loadUsersList();
+        } else {
+          showToast(res.error || 'Failed to update password', 'error');
+        }
+      });
+    }
 
     // Profile & Password Forms
     document.getElementById('profile-info-form').addEventListener('submit', async (e) => {
