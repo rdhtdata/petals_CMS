@@ -404,17 +404,18 @@ button {
   width: 100%;
   height: var(--header-height);
   z-index: 1000;
-  transition: var(--transition-base);
+  transition: height 0.35s var(--ease-luxury), background 0.35s var(--ease-luxury), box-shadow 0.35s var(--ease-luxury), border-color 0.35s var(--ease-luxury);
   background: linear-gradient(180deg, rgba(18, 15, 13, 0.88) 0%, rgba(18, 15, 13, 0.52) 65%, rgba(18, 15, 13, 0) 100%);
 }
 
 .main-header.scrolled {
   height: var(--header-height-scrolled);
-  background-color: rgba(250, 247, 242, 0.96);
+  background: rgba(250, 247, 242, 0.98) !important;
+  background-image: none !important;
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--border-subtle);
-  box-shadow: 0 4px 20px rgba(30, 26, 23, 0.05);
+  box-shadow: 0 4px 20px rgba(30, 26, 23, 0.06);
 }
 
 .header-container {
@@ -474,7 +475,7 @@ button {
 }
 
 .main-header.scrolled .brand-sub {
-  color: var(--text-muted);
+  color: var(--text-secondary);
 }
 
 /* Desktop Nav Links */
@@ -515,12 +516,22 @@ button {
 }
 
 .main-header.scrolled .nav-link {
-  color: var(--text-secondary);
+  color: var(--text-primary);
+  font-weight: 500;
 }
 
 .main-header.scrolled .nav-link:hover,
 .main-header.scrolled .nav-link.active {
-  color: var(--text-primary);
+  color: var(--accent-hover);
+}
+
+.main-header.scrolled .nav-link-manage {
+  color: var(--accent-hover);
+  font-weight: 600;
+}
+
+.main-header.scrolled .nav-link-manage i {
+  color: var(--accent);
 }
 
 .nav-link-manage i {
@@ -568,15 +579,18 @@ button {
 .main-header.scrolled .call-btn-header {
   color: var(--text-primary);
   background: var(--bg-secondary);
+  border: 1px solid var(--border-medium);
 }
 
 .main-header.scrolled .call-btn-header.alt-call-btn {
   background: var(--bg-tertiary);
-  border: 1px solid var(--border-subtle);
+  border: 1px solid var(--border-medium);
 }
 
 .main-header.scrolled .call-btn-header:hover {
   background: var(--bg-tertiary);
+  color: var(--accent-hover);
+  border-color: var(--accent);
 }
 
 .book-now-btn {
