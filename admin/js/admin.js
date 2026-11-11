@@ -1636,6 +1636,18 @@
 
       const dbSizeEl = document.getElementById('dev-db-size');
       if (dbSizeEl) dbSizeEl.textContent = `${d.database.sizeKb} KB (${d.database.sizeBytes.toLocaleString()} bytes)`;
+
+      const dbPathEl = document.getElementById('dev-db-path');
+      if (dbPathEl) dbPathEl.textContent = d.database.filePath || 'petals_cms.db';
+
+      const dataDirEl = document.getElementById('dev-db-datadir');
+      if (dataDirEl) {
+        if (d.database.dataDirEnv) {
+          dataDirEl.innerHTML = `<span class="badge badge-published" style="font-size: 10px;">Persistent: ${escapeHtml(d.database.dataDirEnv)}</span>`;
+        } else {
+          dataDirEl.innerHTML = `<span class="badge" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3); font-size: 10px;">Default (./server/data)</span> <span style="font-size: 10px; color: var(--text-muted); margin-left: 4px;">Set CMS_DATA_DIR=../petals_data in Hostinger</span>`;
+        }
+      }
     }
 
     await loadE2eHistory();

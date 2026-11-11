@@ -853,7 +853,10 @@ router.get('/dev/system-stats', requireAuth, requireRole(['dev']), (req, res) =>
           driver: 'SQLite 3 (node:sqlite)',
           mode: 'WAL (Write-Ahead Logging)',
           sizeBytes: dbSize,
-          sizeKb: (dbSize / 1024).toFixed(1)
+          sizeKb: (dbSize / 1024).toFixed(1),
+          filePath: DB.getDbFilePath(),
+          dataDirEnv: process.env.CMS_DATA_DIR || null,
+          suggestedPersistentDir: path.resolve(process.cwd(), '..', 'petals_data')
         },
         environment: process.env.NODE_ENV || 'development'
       }
