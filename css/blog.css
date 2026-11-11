@@ -966,6 +966,51 @@
   margin: 32px 0 14px;
 }
 
+.article-rich-body ul:not(.article-checklist) {
+  margin: 18px 0 24px 24px;
+  list-style-type: disc;
+}
+
+.article-rich-body ul:not(.article-checklist) li {
+  margin-bottom: 10px;
+  line-height: 1.75;
+}
+
+.article-rich-body ol {
+  margin: 18px 0 24px 24px;
+  list-style-type: decimal;
+}
+
+.article-rich-body ol li {
+  margin-bottom: 10px;
+  line-height: 1.75;
+}
+
+.article-faq-item {
+  background: #FFFFFF;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 20px 24px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 10px rgba(18, 16, 14, 0.02);
+}
+
+.article-faq-item h4 {
+  font-family: var(--font-title);
+  font-size: 1.18rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+  line-height: 1.35;
+}
+
+.article-faq-item p {
+  margin-bottom: 0 !important;
+  font-size: 0.98rem;
+  line-height: 1.7;
+  color: #4A443E;
+}
+
 /* Checklist Box with Warm Champagne Badges */
 .article-rich-body ul.article-checklist {
   list-style: none;
