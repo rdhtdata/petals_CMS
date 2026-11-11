@@ -957,6 +957,70 @@
               </div>
             </div>
           </div>
+
+          <!-- Database Backup & Disaster Recovery (Admin & Dev Only) -->
+          <div class="panel mt-4 admin-only-section" id="panel-db-backup" style="margin-top: 24px;">
+            <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-hairline); padding-bottom: 12px; margin-bottom: 16px;">
+              <div>
+                <h3 class="panel-title" style="display: flex; align-items: center; gap: 8px; font-size: 16px;">
+                  <i class="fa-solid fa-database" style="color: var(--accent-gold);"></i>
+                  <span>Database Backup & Disaster Recovery</span>
+                </h3>
+                <p class="panel-subtitle" style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">
+                  Download offline backups of your blogs, categories, and media. Restore data anytime if server files are lost or migrated.
+                </p>
+              </div>
+            </div>
+            <div class="panel-body">
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 20px;">
+                <!-- Download Card -->
+                <div style="background: rgba(255, 255, 255, 0.02); padding: 18px; border-radius: 8px; border: 1px solid var(--border-hairline);">
+                  <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
+                    <div style="width: 32px; height: 32px; border-radius: 6px; background: rgba(212, 175, 55, 0.15); display: flex; align-items: center; justify-content: center; color: var(--accent-gold);">
+                      <i class="fa-solid fa-cloud-arrow-down"></i>
+                    </div>
+                    <div>
+                      <h4 style="font-size: 14px; font-weight: 600; color: var(--text-primary); margin: 0;">Download Offline Backup</h4>
+                      <span style="font-size: 11px; color: var(--text-muted);">Self-contained snapshots of live data</span>
+                    </div>
+                  </div>
+                  <p style="font-size: 12px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 16px;">
+                    Save a full copy of your current database before pushing code updates or making large changes.
+                  </p>
+                  <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <a href="/api/admin/backup/export?format=db" class="btn btn-primary btn-sm" id="btn-export-db" download style="text-decoration: none;">
+                      <i class="fa-solid fa-file-shield"></i> Download SQLite (.db)
+                    </a>
+                    <a href="/api/admin/backup/export?format=json" class="btn btn-secondary btn-sm" id="btn-export-json" download style="text-decoration: none;">
+                      <i class="fa-solid fa-file-code"></i> Download JSON (.json)
+                    </a>
+                  </div>
+                </div>
+
+                <!-- Restore Card -->
+                <div style="background: rgba(255, 255, 255, 0.02); padding: 18px; border-radius: 8px; border: 1px solid var(--border-hairline);">
+                  <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
+                    <div style="width: 32px; height: 32px; border-radius: 6px; background: rgba(56, 189, 248, 0.15); display: flex; align-items: center; justify-content: center; color: #38bdf8;">
+                      <i class="fa-solid fa-cloud-arrow-up"></i>
+                    </div>
+                    <div>
+                      <h4 style="font-size: 14px; font-weight: 600; color: var(--text-primary); margin: 0;">Restore From Backup</h4>
+                      <span style="font-size: 11px; color: var(--text-muted);">Recover lost blogs from .db or .json</span>
+                    </div>
+                  </div>
+                  <p style="font-size: 12px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 16px;">
+                    Upload a previously downloaded <code style="font-size: 11px;">.db</code> or <code style="font-size: 11px;">.json</code> file to restore missing content. An automatic safety backup is created first.
+                  </p>
+                  <div>
+                    <input type="file" id="restore-backup-file-input" accept=".db,.sqlite,.json" style="display: none;">
+                    <button type="button" class="btn btn-secondary btn-sm" id="btn-trigger-restore-modal">
+                      <i class="fa-solid fa-upload"></i> Upload & Restore Backup
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </section>
 
         <!-- ================================================================
@@ -1461,6 +1525,38 @@
             <button type="submit" class="btn btn-primary btn-block">Update & Apply Password</button>
           </div>
         </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 7: Database Restore Confirmation Modal -->
+  <div class="cms-modal-overlay" id="db-restore-confirm-modal" style="display: none;">
+    <div class="cms-modal modal-sm">
+      <div class="panel-header">
+        <h3 class="panel-title" style="display: flex; align-items: center; gap: 8px; color: #f59e0b;">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+          <span>Confirm Database Restore</span>
+        </h3>
+        <button type="button" class="modal-close-btn" id="close-db-restore-modal-btn" aria-label="Close dialog">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="panel-body">
+        <p style="font-size: 13px; color: var(--text-primary); margin-bottom: 10px;">
+          You are about to restore the database from:
+        </p>
+        <div style="background: var(--bg-surface); padding: 10px; border-radius: 6px; border: 1px solid var(--border-hairline); font-family: monospace; font-size: 12px; color: var(--accent-gold); word-break: break-all; margin-bottom: 14px;" id="restore-selected-filename">
+          filename.db
+        </div>
+        <p style="font-size: 12px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 20px;">
+          This will update the live CMS records with the data from this backup. An automatic safety copy of your current database will be preserved on the server.
+        </p>
+        <div class="form-actions" style="justify-content: flex-end; gap: 10px;">
+          <button type="button" class="btn btn-secondary btn-sm" id="cancel-db-restore-btn">Cancel</button>
+          <button type="button" class="btn btn-primary btn-sm" id="confirm-db-restore-action-btn" style="background: #f59e0b; border-color: #f59e0b; color: #000;">
+            <i class="fa-solid fa-arrow-rotate-left"></i> Restore Data Now
+          </button>
+        </div>
       </div>
     </div>
   </div>

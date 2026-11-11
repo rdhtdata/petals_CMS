@@ -3,6 +3,16 @@ node_modules/
 .DS_Store
 *.log
 npm-debug.log*
+
+# CMS Database & runtime backups
+server/data/*.db
 server/data/*.db-shm
 server/data/*.db-wal
+server/data/*.db.backup*
+server/data/*.safety-backup*
+server/data/*.bak
+server/data/*_backup.json
 
+# User uploaded media (keep folder via .gitkeep)
+images/uploads/*
+!images/uploads/.gitkeep

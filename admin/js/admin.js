@@ -2337,6 +2337,112 @@
       }
     });
 
+    // Database Backup & Disaster Recovery handlers
+    const restoreFileInput = document.getElementById('restore-backup-file-input');
+    const triggerRestoreModalBtn = document.getElementById('btn-trigger-restore-modal');
+    const restoreConfirmModal = document.getElementById('db-restore-confirm-modal');
+    const closeRestoreModalBtn = document.getElementById('close-db-restore-modal-btn');
+    const cancelRestoreBtn = document.getElementById('cancel-db-restore-btn');
+    const confirmRestoreBtn = document.getElementById('confirm-db-restore-action-btn');
+    const restoreFilenameSpan = document.getElementById('restore-selected-filename');
+
+    let pendingRestoreFile = null;
+
+    if (triggerRestoreModalBtn && restoreFileInput) {
+      triggerRestoreModalBtn.addEventListener('click', () => {
+        restoreFileInput.value = '';
+        restoreFileInput.click();
+      });
+
+      restoreFileInput.addEventListener('change', () => {
+        const file = restoreFileInput.files[0];
+        if (!file) return;
+
+        pendingRestoreFile = file;
+        if (restoreFilenameSpan) {
+          restoreFilenameSpan.textContent = `${file.name} (${Math.round(file.size / 1024)} KB)`;
+        }
+        if (restoreConfirmModal) {
+          restoreConfirmModal.style.display = 'flex';
+        }
+      });
+    }
+
+    if (closeRestoreModalBtn && restoreConfirmModal) {
+      closeRestoreModalBtn.addEventListener('click', () => {
+        restoreConfirmModal.style.display = 'none';
+        pendingRestoreFile = null;
+      });
+    }
+
+    if (cancelRestoreBtn && restoreConfirmModal) {
+      cancelRestoreBtn.addEventListener('click', () => {
+        restoreConfirmModal.style.display = 'none';
+        pendingRestoreFile = null;
+      });
+    }
+
+    if (confirmRestoreBtn) {
+      confirmRestoreBtn.addEventListener('click', async () => {
+        if (!pendingRestoreFile) return;
+
+        confirmRestoreBtn.disabled = true;
+        confirmRestoreBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Restoring...';
+
+        try {
+          const isJson = pendingRestoreFile.name.endsWith('.json');
+          let payload = '';
+
+          if (isJson) {
+            payload = await new Promise((resolve, reject) => {
+              const reader = new FileReader();
+              reader.onload = () => resolve(reader.result);
+              reader.onerror = reject;
+              reader.readAsText(pendingRestoreFile);
+            });
+          } else {
+            payload = await new Promise((resolve, reject) => {
+              const reader = new FileReader();
+              reader.onload = () => {
+                const base64 = reader.result.split(',')[1];
+                resolve(base64);
+              };
+              reader.onerror = reject;
+              reader.readAsDataURL(pendingRestoreFile);
+            });
+          }
+
+          const res = await apiFetch('/api/admin/backup/restore', {
+            method: 'POST',
+            body: JSON.stringify({
+              format: isJson ? 'json' : 'sqlite',
+              filename: pendingRestoreFile.name,
+              payload
+            })
+          });
+
+          if (res.success) {
+            showToast('Database restored successfully!', 'success');
+            if (restoreConfirmModal) restoreConfirmModal.style.display = 'none';
+            pendingRestoreFile = null;
+            await Promise.all([
+              loadDashboard(),
+              loadBlogs(),
+              loadCategories(),
+              loadMediaLibrary()
+            ]);
+          } else {
+            showToast(res.error || 'Failed to restore database', 'error');
+          }
+        } catch (err) {
+          showToast('Error reading or restoring backup file: ' + err.message, 'error');
+        } finally {
+          confirmRestoreBtn.disabled = false;
+          confirmRestoreBtn.innerHTML = '<i class="fa-solid fa-arrow-rotate-left"></i> Restore Data Now';
+        }
+      });
+    }
+
     // Launchpad Quick Draft Scratchpad
     const quickDraftForm = document.getElementById('quick-draft-form');
     if (quickDraftForm) {

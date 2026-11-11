@@ -1014,4 +1014,81 @@ router.delete('/dev/test-logs', requireAuth, requireRole(['dev']), (req, res) =>
   }
 });
 
+/**
+ * GET /api/admin/backup/export
+ * Downloads either a raw SQLite database (.db) or a JSON content snapshot
+ * Accessible to dev and admin
+ */
+router.get('/backup/export', requireAuth, requireRole(['dev', 'admin']), (req, res) => {
+  try {
+    const format = (req.query.format || 'db').toLowerCase();
+    const dateStr = new Date().toISOString().replace(/[:.]/g, '-');
+
+    if (format === 'json') {
+      const snapshot = DB.exportJsonSnapshot();
+      res.setHeader('Content-Type', 'application/json');
+      res.setHeader('Content-Disposition', `attachment; filename="petals_cms_backup_${dateStr}.json"`);
+      return res.send(JSON.stringify(snapshot, null, 2));
+    }
+
+    // Default: SQLite .db file
+    DB.checkpoint();
+    const dbPath = DB.getDbFilePath();
+    if (!fs.existsSync(dbPath)) {
+      return res.status(404).json({ success: false, error: 'Database file not found on server' });
+    }
+
+    res.download(dbPath, `petals_cms_backup_${dateStr}.db`, (err) => {
+      if (err && !res.headersSent) {
+        console.error('[CMS Backup] Download error:', err);
+        res.status(500).json({ success: false, error: 'Failed to download database backup' });
+      }
+    });
+  } catch (err) {
+    console.error('[CMS Backup] Export error:', err);
+    res.status(500).json({ success: false, error: 'Failed to generate database export' });
+  }
+});
+
+/**
+ * POST /api/admin/backup/restore
+ * Restores database from an uploaded .db or .json backup payload
+ * Accessible to dev and admin
+ */
+router.post('/backup/restore', requireAuth, requireRole(['dev', 'admin']), (req, res) => {
+  try {
+    const { format, payload, filename } = req.body;
+    if (!payload) {
+      return res.status(400).json({ success: false, error: 'Missing backup payload' });
+    }
+
+    let result;
+    if (format === 'sqlite' || (filename && (filename.endsWith('.db') || filename.endsWith('.sqlite')))) {
+      const buffer = Buffer.from(payload, 'base64');
+      result = DB.restoreFromDbBuffer(buffer);
+      DB.logActivity(req.user.id, req.user.full_name, 'restore_db', `Restored SQLite database from backup (${filename || 'uploaded file'})`);
+    } else {
+      let snapshotData = payload;
+      if (typeof snapshotData === 'string') {
+        try {
+          snapshotData = JSON.parse(snapshotData);
+        } catch (_) {
+          return res.status(400).json({ success: false, error: 'Invalid JSON syntax in backup file' });
+        }
+      }
+      result = DB.restoreFromJsonSnapshot(snapshotData);
+      DB.logActivity(req.user.id, req.user.full_name, 'restore_json', `Restored content snapshot (${result.restoredBlogs} blogs, ${result.restoredCategories} categories, ${result.restoredMedia} media)`);
+    }
+
+    res.json({
+      success: true,
+      message: 'Database backup restored successfully',
+      data: result
+    });
+  } catch (err) {
+    console.error('[CMS Backup] Restore error:', err);
+    res.status(500).json({ success: false, error: err.message || 'Failed to restore database from backup' });
+  }
+});
+
 module.exports = router;

@@ -75,20 +75,25 @@ function decryptSecret(payload) {
 let db = null;
 let useSqlite = false;
 
-try {
-  const { DatabaseSync } = require('node:sqlite');
-  db = new DatabaseSync(DB_FILE);
-  // Enable WAL mode for high concurrency
-  db.exec('PRAGMA journal_mode = WAL;');
-  db.exec('PRAGMA foreign_keys = ON;');
-  db.exec('PRAGMA busy_timeout = 5000;');
-  db.exec('PRAGMA synchronous = NORMAL;');
-  useSqlite = true;
-  console.log('[CMS Database] Initialized embedded SQLite database with WAL mode:', DB_FILE);
-} catch (err) {
-  console.warn('[CMS Database] node:sqlite not available on this Node version. Falling back to persistent JSON storage:', err.message);
-  useSqlite = false;
+function openSqliteConnection() {
+  try {
+    const { DatabaseSync } = require('node:sqlite');
+    db = new DatabaseSync(DB_FILE);
+    db.exec('PRAGMA journal_mode = WAL;');
+    db.exec('PRAGMA foreign_keys = ON;');
+    db.exec('PRAGMA busy_timeout = 5000;');
+    db.exec('PRAGMA synchronous = NORMAL;');
+    useSqlite = true;
+    console.log('[CMS Database] Connected to SQLite database with WAL mode:', DB_FILE);
+    return true;
+  } catch (err) {
+    console.warn('[CMS Database] node:sqlite not available on this Node version. Falling back to persistent JSON storage:', err.message);
+    useSqlite = false;
+    return false;
+  }
 }
+
+openSqliteConnection();
 
 // In-memory / JSON store fallback
 let memoryStore = {
@@ -1422,6 +1427,209 @@ const DB = {
     } else {
       return (memoryStore.activity_logs || []).slice(0, cappedLimit);
     }
+  },
+
+  checkpoint() {
+    if (useSqlite && db) {
+      try {
+        db.exec('PRAGMA wal_checkpoint(TRUNCATE);');
+      } catch (err) {
+        console.warn('[CMS Database] WAL checkpoint warning:', err.message);
+      }
+    }
+  },
+
+  getDbFilePath() {
+    return DB_FILE;
+  },
+
+  exportJsonSnapshot() {
+    this.checkpoint();
+    const categories = this.getAllCategories() || [];
+    let blogs = [];
+    if (useSqlite && db) {
+      blogs = db.prepare('SELECT * FROM blogs ORDER BY created_at DESC').all();
+    } else {
+      blogs = memoryStore.blogs || [];
+    }
+    const media = this.getAllMedia() || [];
+    return {
+      timestamp: new Date().toISOString(),
+      format: 'petals_cms_content_snapshot',
+      version: '1.2.0',
+      stats: {
+        blogsCount: blogs.length,
+        categoriesCount: categories.length,
+        mediaCount: media.length
+      },
+      categories,
+      blogs,
+      media
+    };
+  },
+
+  restoreFromJsonSnapshot(snapshot) {
+    if (!snapshot || typeof snapshot !== 'object') {
+      throw new Error('Invalid JSON backup: root payload is not an object');
+    }
+    const blogs = Array.isArray(snapshot.blogs) ? snapshot.blogs : [];
+    const categories = Array.isArray(snapshot.categories) ? snapshot.categories : [];
+    const media = Array.isArray(snapshot.media) ? snapshot.media : [];
+
+    if (blogs.length === 0 && categories.length === 0 && media.length === 0) {
+      throw new Error('No blogs, categories, or media records found in backup payload');
+    }
+
+    let restoredBlogs = 0;
+    let restoredCategories = 0;
+    let restoredMedia = 0;
+    const now = new Date().toISOString();
+
+    if (useSqlite && db) {
+      if (categories.length > 0) {
+        const catStmt = db.prepare(`
+          INSERT INTO categories (id, name, slug, description, display_order, created_at)
+          VALUES (?, ?, ?, ?, ?, ?)
+          ON CONFLICT(id) DO UPDATE SET
+            name = excluded.name,
+            slug = excluded.slug,
+            description = excluded.description,
+            display_order = excluded.display_order
+        `);
+        for (const c of categories) {
+          try {
+            catStmt.run(c.id, c.name, c.slug, c.description || '', c.display_order || 0, c.created_at || now);
+            restoredCategories++;
+          } catch (_) {}
+        }
+      }
+
+      if (blogs.length > 0) {
+        const blogStmt = db.prepare(`
+          INSERT INTO blogs (
+            id, title, slug, excerpt, content, featured_image, featured_image_alt,
+            category, author, author_role, status, published_at, display_date,
+            read_time, tags, seo_title, seo_description, seo_keywords,
+            canonical_url, views, created_at, updated_at
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          ON CONFLICT(id) DO UPDATE SET
+            title = excluded.title,
+            slug = excluded.slug,
+            excerpt = excluded.excerpt,
+            content = excluded.content,
+            featured_image = excluded.featured_image,
+            featured_image_alt = excluded.featured_image_alt,
+            category = excluded.category,
+            author = excluded.author,
+            author_role = excluded.author_role,
+            status = excluded.status,
+            published_at = excluded.published_at,
+            display_date = excluded.display_date,
+            read_time = excluded.read_time,
+            tags = excluded.tags,
+            seo_title = excluded.seo_title,
+            seo_description = excluded.seo_description,
+            seo_keywords = excluded.seo_keywords,
+            canonical_url = excluded.canonical_url,
+            views = excluded.views,
+            updated_at = excluded.updated_at
+        `);
+        for (const b of blogs) {
+          try {
+            blogStmt.run(
+              b.id, b.title, b.slug, b.excerpt || '', b.content || '', b.featured_image || '',
+              b.featured_image_alt || '', b.category || 'Business Travel', b.author || 'Petals Editorial',
+              b.author_role || 'Staff Writer', b.status || 'draft', b.published_at || null,
+              b.display_date || '', b.read_time || '3 min read', typeof b.tags === 'string' ? b.tags : JSON.stringify(b.tags || []),
+              b.seo_title || '', b.seo_description || '', b.seo_keywords || '', b.canonical_url || '',
+              b.views || 0, b.created_at || now, b.updated_at || now
+            );
+            restoredBlogs++;
+          } catch (err) {
+            console.error('[CMS DB] Error restoring blog record:', b.id, err.message);
+          }
+        }
+      }
+
+      if (media.length > 0) {
+        const mediaStmt = db.prepare(`
+          INSERT INTO media (id, filename, original_name, mime_type, size_bytes, url, alt_text, created_at)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+          ON CONFLICT(id) DO UPDATE SET
+            filename = excluded.filename,
+            original_name = excluded.original_name,
+            mime_type = excluded.mime_type,
+            size_bytes = excluded.size_bytes,
+            url = excluded.url,
+            alt_text = excluded.alt_text
+        `);
+        for (const m of media) {
+          try {
+            mediaStmt.run(m.id, m.filename, m.original_name || m.filename, m.mime_type || 'image/jpeg', m.size_bytes || 0, m.url, m.alt_text || '', m.created_at || now);
+            restoredMedia++;
+          } catch (_) {}
+        }
+      }
+    } else {
+      snapshot.categories && (memoryStore.categories = snapshot.categories);
+      snapshot.blogs && (memoryStore.blogs = snapshot.blogs);
+      snapshot.media && (memoryStore.media = snapshot.media);
+      saveJsonStore();
+      restoredBlogs = (snapshot.blogs || []).length;
+      restoredCategories = (snapshot.categories || []).length;
+      restoredMedia = (snapshot.media || []).length;
+    }
+
+    return {
+      success: true,
+      format: 'json',
+      restoredBlogs,
+      restoredCategories,
+      restoredMedia
+    };
+  },
+
+  restoreFromDbBuffer(buffer) {
+    if (!buffer || buffer.length < 100) {
+      throw new Error('Invalid backup file: file is empty or corrupted');
+    }
+    const header = buffer.subarray(0, 16).toString('utf8');
+    if (!header.startsWith('SQLite format 3')) {
+      throw new Error('Invalid backup file: not a valid SQLite database header');
+    }
+
+    if (fs.existsSync(DB_FILE)) {
+      const safetyBackup = `${DB_FILE}.safety-backup-${Date.now()}`;
+      try {
+        fs.copyFileSync(DB_FILE, safetyBackup);
+        console.log('[CMS Database] Created automatic safety backup prior to restore:', safetyBackup);
+      } catch (err) {
+        console.warn('[CMS Database] Failed to create safety backup:', err.message);
+      }
+    }
+
+    closeDatabase();
+
+    try {
+      if (fs.existsSync(`${DB_FILE}-wal`)) fs.unlinkSync(`${DB_FILE}-wal`);
+      if (fs.existsSync(`${DB_FILE}-shm`)) fs.unlinkSync(`${DB_FILE}-shm`);
+    } catch (_) {}
+
+    fs.writeFileSync(DB_FILE, buffer);
+
+    openSqliteConnection();
+    initSchema();
+
+    return {
+      success: true,
+      format: 'sqlite',
+      stats: {
+        blogsCount: (this.getAdminBlogs() || []).length,
+        categoriesCount: (this.getAllCategories() || []).length,
+        usersCount: (this.getAllUsers() || []).length,
+        mediaCount: (this.getAllMedia() || []).length
+      }
+    };
   }
 };
 
